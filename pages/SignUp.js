@@ -11,11 +11,12 @@ import {
   Alert
 } from 'react-native';
 
-export default class Login extends Component {
+export default class SignUp extends Component {
 
   constructor(props) {
     super(props);
     state = {
+      fullName: '',
       email   : '',
       password: '',
     }
@@ -28,6 +29,15 @@ export default class Login extends Component {
   render() {
     return (
       <View style={styles.container}>
+        <View style={styles.inputContainer}>
+          <Image style={styles.inputIcon} source={{uri: 'https://png.icons8.com/male-user/ultraviolet/50/3498db'}}/>
+          <TextInput style={styles.inputs}
+              placeholder="Full name"
+              keyboardType="email-address"
+              underlineColorAndroid='transparent'
+              onChangeText={(fullName) => this.setState({fullName})}/>
+        </View>
+
         <View style={styles.inputContainer}>
           <Image style={styles.inputIcon} source={{uri: 'https://png.icons8.com/message/ultraviolet/50/3498db'}}/>
           <TextInput style={styles.inputs}
@@ -46,16 +56,8 @@ export default class Login extends Component {
               onChangeText={(password) => this.setState({password})}/>
         </View>
 
-        <TouchableOpacity style={[styles.buttonContainer, styles.loginButton]} onPress={() => this.props.navigation.navigate('HomePage')}>
-          <Text style={styles.loginText}>Login</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.buttonContainer} onPress={() => this.onClickListener('restore_password')}>
-            <Text>Forgot your password?</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.buttonContainer} onPress={() => this.props.navigation.navigate('SignUp')}>
-            <Text>Register</Text>
+        <TouchableOpacity style={[styles.buttonContainer, styles.signupButton]} onPress={() => this.props.navigation.navigate('Login')}>
+          <Text style={styles.signUpText}>Sign up</Text>
         </TouchableOpacity>
       </View>
     );
@@ -67,7 +69,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#DCDCDC',
+    backgroundColor: '#00b5ec',
   },
   inputContainer: {
       borderBottomColor: '#F5FCFF',
@@ -101,10 +103,10 @@ const styles = StyleSheet.create({
     width:250,
     borderRadius:30,
   },
-  loginButton: {
-    backgroundColor: "#00b5ec",
+  signupButton: {
+    backgroundColor: "#FF4DFF",
   },
-  loginText: {
+  signUpText: {
     color: 'white',
   }
 });
