@@ -16,6 +16,7 @@ import OtherProfile from './pages/otherProfile'
 import Notifications from './pages/Notifications';
 import SearchUser from './pages/SearchUser'
 import News from './pages/News'
+import Publications from './pages/Publications'
 
 const PlaceholderImage = require('./assets/images/background.jpg');
 const Stack = createStackNavigator();
@@ -24,14 +25,16 @@ export default function App() {
   return (
     <NavigationContainer>
       
-    <Stack.Navigator intialRouteName='HomePage'>
+    <Stack.Navigator intialRouteName='Login'>
+    <Stack.Screen name="Login" component={Login} />
     <Stack.Screen name="HomePage" component={HomePage} />
     <Stack.Screen name="SearchUser" component={SearchUser}/>
     <Stack.Screen name="Notifications" component={Notifications}/>
     <Stack.Screen name="News" component={News}/>
+    <Stack.Screen name="Publications" component={Publications}/>
       
       <Stack.Screen name="Followers" component={Followers}/>
-      <Stack.Screen name="Login" component={Login} />
+      
       
       <Stack.Screen name="Inbox" component={Inbox}/>
       <Stack.Screen name="Chat" component={Chat}/>

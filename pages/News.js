@@ -62,7 +62,7 @@ export default class Blog extends Component {
                   <View style={styles.socialBarContainer}>
                     <View style={styles.socialBarSection}>
                       <TouchableOpacity style={styles.socialBarButton}>
-                        <Image style={styles.icon} source={{uri: 'https://img.icons8.com/material/96/2ecc71/visible.png'}}/>
+                        <Image style={styles.icon} source={{uri: 'https://img.icons8.com/stickers/512/good-quality.png'}}/>
                         <Text style={styles.socialBarLabel}>78</Text>
                       </TouchableOpacity>
                     </View>

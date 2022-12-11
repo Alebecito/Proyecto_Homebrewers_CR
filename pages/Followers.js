@@ -31,7 +31,7 @@ export default class Users extends Component {
   }
 
   clickEventListenerProfile(item) {
-    Alert.alert(item.name)
+   
     
     this.props.navigation.navigate("OtherProfile")
   }

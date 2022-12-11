@@ -67,7 +67,7 @@ export default class Notifications extends Component {
   }
 
   clickEventListener(item) {
-    Alert.alert(item.name);
+   
     this.props.navigation.navigate("Chat")
   }
 
@@ -88,15 +88,7 @@ export default class Notifications extends Component {
           let attachment = <View />;
 
           let mainContentStyle;
-          if (Notification.attachment) {
-            mainContentStyle = styles.mainContent;
-            attachment = (
-              <Image
-                style={styles.attachment}
-                source={{ uri: Notification.attachment }}
-              />
-            );
-          }
+         
           return (
            // <View style={styles.container}>
               <TouchableOpacity

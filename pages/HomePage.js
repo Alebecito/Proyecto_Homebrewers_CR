@@ -23,7 +23,7 @@ export default class Menu extends Component {
         {id:3, title: "Notificaciones",     color:"#7c3f04", members:12, image:"https://img.icons8.com/stickers/512/alarm.png", tipo: "Notificaciones", direccion:"Notifications"} ,
         {id:4, title: "Sección de Noticias",   color:"#d4ccce", members:5,  image:"https://img.icons8.com/stickers/512/news--v1.png", tipo: "Noticias", direccion:"News"} ,
         {id:5, title: "Buscar Usuarios",  color:"#342404", members:6,  image:"https://img.icons8.com/stickers/512/find-user-male.png", tipo: "", direccion:"SearchUser"} ,
-        {id:6, title: "Explorador de Publicaciones",   color:"#ce5e04", members:7,  image:"https://img.icons8.com/stickers/512/activity-feed-2.png", tipo: "Publicaciones", direccion:""} ,
+        {id:6, title: "Explorador de Publicaciones",   color:"#ce5e04", members:7,  image:"https://img.icons8.com/stickers/512/activity-feed-2.png", tipo: "Publicaciones", direccion:"Publications"} ,
         {id:7, title: "Buzón de Mensajería",   color:"#f46f04", members:8,  image:"https://img.icons8.com/stickers/512/communication.png", tipo: "Mensajes", direccion:"Inbox"} ,
         {id:8, title: "Calculadora para producción",    color:"#7c3f04", members:23, image:"https://img.icons8.com/stickers/512/calculator--v1.png", tipo: "", direccion:""} ,
         {id:9, title: "Consejos y Tips", color:"#d4ccce", members:45, image:"https://img.icons8.com/stickers/512/tuition.png", tipo: "", direccion:""} ,
