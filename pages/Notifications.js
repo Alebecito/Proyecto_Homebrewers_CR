@@ -20,7 +20,7 @@ export default class Notifications extends Component {
         {id:5, image: "https://bootdey.com/img/Content/avatar/avatar3.png", name:"Maria More More",  text:"Un usuario que sigues ha publicado recientemente!", attachment:"", tiempo:"4", visto: true},
         {id:1, image: "https://img.icons8.com/stickers/512/system-report.png", name:"Notificación del Sistema",    text:"Un producto en tu inventario está próximo a alcanzar su fecha de caducidad!", attachment:"https://via.placeholder.com/100x100/7B68EE/000000", tiempo:"12", visto: true},
         {id:6, image: "https://img.icons8.com/stickers/512/system-report.png", name:"Notificación del Sistema", text:"Una de tus publicaciones ha sido eliminada pues ha alcanzado su fecha de caducidad ", attachment:"", tiempo:"7", visto: true},
-        {id:7, image: "https://bootdey.com/img/Content/avatar/avatar5.png", name:"The googler",      text:"Un nuevo usuario te ha empezado a seguir.", attachment:"", visto: true},
+        {id:7, image: "https://bootdey.com/img/Content/avatar/avatar5.png", name:"The googler",      text:"Un usuario ha comentado una de tus publicaciones.", attachment:"", visto: true},
       ]
     }
   }

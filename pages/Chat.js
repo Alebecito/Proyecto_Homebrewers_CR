@@ -21,6 +21,11 @@ export default class Chat extends Component {
     this.state = {
       msg: '',
       messages: [
+        {id:9, sent: true,  msg: 'Lorem ipsum dolor',   image:'https://www.bootdey.com/img/Content/avatar/avatar1.png'},
+        {id:20, sent: true,  msg: 'sit amet, consectetuer',   image:'https://www.bootdey.com/img/Content/avatar/avatar1.png'},
+        {id:10, sent: true,  msg: 'Lorem ipsum dolor',   image:'https://www.bootdey.com/img/Content/avatar/avatar1.png'},
+        {id:29, sent: true,  msg: 'sit amet, consectetuer',   image:'https://www.bootdey.com/img/Content/avatar/avatar1.png'},
+
         {id:1, sent: true,  msg: 'Lorem ipsum dolor',   image:'https://www.bootdey.com/img/Content/avatar/avatar1.png'},
         {id:2, sent: true,  msg: 'sit amet, consectetuer',   image:'https://www.bootdey.com/img/Content/avatar/avatar1.png'},
         {id:3, sent: false, msg: 'adipiscing elit. Aenean ', image:'https://www.bootdey.com/img/Content/avatar/avatar6.png'},
@@ -64,6 +69,7 @@ export default class Chat extends Component {
   }
 
   _renderItem = ({item}) => {
+   
     if (item.sent === false) {
       return (
         <View style={styles.eachMsg}>
@@ -84,6 +90,16 @@ export default class Chat extends Component {
       );
     }
   };
+
+  clickEventListenerMyProfile() {
+   
+    this.props.navigation.navigate("MyProfile")
+  }
+
+  clickEventListenerOtherProfile() {
+   
+    this.props.navigation.navigate("OtherProfile")
+  }
 
   render() {
     return (

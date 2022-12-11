@@ -1,0 +1,30 @@
+<View style={{ alignItems: 'center', marginHorizontal: 30 }}>
+            <Image style={styles.productImg} source={{ uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQnk8TdboBlcYde9vFO1xpBR2_RxJ578Zhey4LcEsxw5UgkpqFEABDChloQ1tiItk-cTgI&usqp=CAU" }} />
+            <Text style={styles.name}>25 kilos sobrantes de Lúpulos</Text>
+            <Text style={styles.price}>₡ 12.22</Text>
+            <Text style={styles.description}>
+              Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
+              Aenean commodo ligula eget dolor. Aenean massa. Cum sociis
+              natoque penatibus et magnis dis parturient montes,
+              nascetur ridiculus mus. Donec quam felis, ultricies nec
+            </Text>
+          </View>
+          <View style={styles.starContainer}>
+            <Text>Fecha de caducidad de publicación: 12/12/45</Text>
+          </View>
+          <View style={styles.contentColors}>
+            <Image style={styles.productImg} source={{ uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQnk8TdboBlcYde9vFO1xpBR2_RxJ578Zhey4LcEsxw5UgkpqFEABDChloQ1tiItk-cTgI&usqp=CAU" }} />
+
+          </View>
+          <View style={styles.contentSize}>
+            <TouchableOpacity style={styles.btnSize}><Text>S</Text></TouchableOpacity>
+            <TouchableOpacity style={styles.btnSize}><Text>M</Text></TouchableOpacity>
+            <TouchableOpacity style={styles.btnSize}><Text>L</Text></TouchableOpacity>
+            <TouchableOpacity style={styles.btnSize}><Text>XL</Text></TouchableOpacity>
+          </View>
+          <View style={styles.separator}></View>
+          <View style={styles.addToCarContainer}>
+            <TouchableOpacity style={styles.shareButton} onPress={() => this.clickEventListener()}>
+              <Text style={styles.shareButtonText}>Añadir comentario</Text>
+            </TouchableOpacity>
+          </View>

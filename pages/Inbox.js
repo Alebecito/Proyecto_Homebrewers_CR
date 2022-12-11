@@ -5,7 +5,7 @@ import {
   View,
   TouchableOpacity,
   Image,
-  FlatList, Alert
+  FlatList, Alert, TextInput
 } from "react-native";
 
 export default class Notifications extends Component {
@@ -67,56 +67,68 @@ export default class Notifications extends Component {
   }
 
   clickEventListener(item) {
-   
+
     this.props.navigation.navigate("Chat")
   }
 
   render() {
     return (
-      <FlatList
-        style={styles.root}
-        data={this.state.data}
-        extraData={this.state}
-        ItemSeparatorComponent={() => {
-          return <View style={styles.separator} />;
-        }}
-        keyExtractor={(item) => {
-          return item.id;
-        }}
-        renderItem={(item) => {
-          const Notification = item.item;
-          let attachment = <View />;
+      <View style={styles.containerView}>
+        <View style={styles.formContent}>
+          <View style={styles.inputContainer}>
+            <Image style={[styles.icon, styles.inputIcon]} source={{ uri: 'https://png.icons8.com/search/androidL/100/000000' }} />
+            <TextInput style={styles.inputs}
+              ref={'txtPassword'}
+              placeholder="Buscar contactos"
+              underlineColorAndroid='transparent'
+              onChangeText={(name_address) => this.setState({ name_address })} />
+          </View>
+        </View>
+        <FlatList
+          style={styles.root}
+          data={this.state.data}
+          extraData={this.state}
+          ItemSeparatorComponent={() => {
+            return <View style={styles.separator} />;
+          }}
+          keyExtractor={(item) => {
+            return item.id;
+          }}
+          renderItem={(item) => {
+            const Notification = item.item;
+            let attachment = <View />;
 
-          let mainContentStyle;
-         
-          return (
-           // <View style={styles.container}>
+            let mainContentStyle;
+
+            return (
+              // <View style={styles.container}>
               <TouchableOpacity
                 style={styles.container}
                 onPress={() => {
-                  {this.clickEventListener(Notification)}
+                  { this.clickEventListener(Notification) }
                 }}
               >
-                 <Image
-                source={{ uri: Notification.image }}
-                style={styles.avatar}
-              />
-              <View style={styles.content}>
-                <View style={mainContentStyle}>
-                  <View style={styles.text}>
-                    <Text style={styles.name}>{Notification.name}</Text>
-                    <Text>{Notification.text}</Text>
+                <Image
+                  source={{ uri: Notification.image }}
+                  style={styles.avatar}
+                />
+                <View style={styles.content}>
+                  <View style={mainContentStyle}>
+                    <View style={styles.text}>
+                      <Text style={styles.name}>{Notification.name}</Text>
+                      <Text>{Notification.text}</Text>
+                    </View>
+                    <Text style={styles.timeAgo}>2 hours ago</Text>
                   </View>
-                  <Text style={styles.timeAgo}>2 hours ago</Text>
+                  {attachment}
                 </View>
-                {attachment}
-              </View>
               </TouchableOpacity>
-             
-           // </View>
-          );
-        }}
-      />
+
+              // </View>
+            );
+          }}
+        />
+      </View>
     );
   }
 }
@@ -131,6 +143,10 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderColor: "#FFFFFF",
     alignItems: "flex-start",
+  },
+  containerView: {
+    flex: 1,
+    backgroundColor: '#EBEBEB',
   },
   avatar: {
     width: 50,
@@ -149,6 +165,21 @@ const styles = StyleSheet.create({
   },
   mainContent: {
     marginRight: 60,
+  },
+  formContent: {
+    flexDirection: 'row',
+   
+  },
+  inputContainer: {
+    borderBottomColor: '#F5FCFF',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 30,
+    borderBottomWidth: 1,
+    height: 45,
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+    margin: 10,
   },
   img: {
     height: 50,
@@ -173,7 +204,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#1E90FF",
   },
-  chatbox:{
+  chatbox: {
     backgroundColor: "red", padding: 20, height: 50,
     width: 100,
   },

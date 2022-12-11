@@ -25,13 +25,13 @@ export default class ProfileView extends Component {
           <View style={styles.profileDetail}>
            
             <TouchableOpacity style={styles.detailContent}onPress={() => {
-                  {this.props.navigation.navigate("Followers")}
+                  {this.props.navigation.navigate("OtherFollowers")}
                 }}>
               <Text style={styles.title}>Followers</Text>
               <Text style={styles.count}>200</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.detailContent} onPress={() => {
-                  {this.props.navigation.navigate("Following")}
+                  {this.props.navigation.navigate("OtherFollowing")}
                 }}>
               <Text style={styles.title}>Following</Text>
               <Text style={styles.count}>200</Text>
@@ -40,8 +40,8 @@ export default class ProfileView extends Component {
 
           <View style={styles.body}>
             <View style={styles.bodyContent}>
-              <TouchableOpacity style={styles.buttonContainer}>
-                <Text>Opcion 1</Text>  
+              <TouchableOpacity style={styles.buttonContainer} onPress={() => this.props.navigation.navigate("Chat")}>
+                <Text>Enviar Mensaje</Text>  
               </TouchableOpacity> 
               <Text style={styles.description}>Lorem ipsum dolor sit amet, saepe sapientem eu nam. Qui ne assum electram expetendis, omittam deseruisse consequuntur ius an,</Text>
             </View>
