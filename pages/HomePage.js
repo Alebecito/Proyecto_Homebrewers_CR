@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 import {
   StyleSheet,
   Text,
@@ -10,28 +12,37 @@ import {
   FlatList,
 } from 'react-native';
 
-export default class Home extends Component {
+export default class Menu extends Component {
 
   constructor(props) {
     super(props);
     this.state = {
       data: [
-        {id:1, title: "Option 1", image:"https://img.icons8.com/color/70/000000/cottage.png"},
-        {id:1, title: "Option 2", image:"https://img.icons8.com/color/70/000000/administrator-male.png"},
-        {id:2, title: "Option 3", image:"https://img.icons8.com/color/70/000000/filled-like.png"} ,
-        {id:3, title: "Option 4", image:"https://img.icons8.com/color/70/000000/facebook-like.png"} ,
-        {id:4, title: "Option 5", image:"https://img.icons8.com/color/70/000000/shutdown.png"} ,
-        {id:5, title: "Option 6", image:"https://img.icons8.com/color/70/000000/traffic-jam.png"} ,
-        {id:6, title: "Option 7", image:"https://img.icons8.com/dusk/70/000000/visual-game-boy.png"} ,
-        {id:8, title: "Option 8", image:"https://img.icons8.com/flat_round/70/000000/cow.png"} ,
-        {id:9, title: "Option 9", image:"https://img.icons8.com/color/70/000000/coworking.png"} ,
-        {id:9, title: "Option 10",image:"https://img.icons8.com/nolan/70/000000/job.png"} ,
+        {id:1, title: "Perfil Personal",      color:"#ce5e04", members:8,  image:"https://img.icons8.com/stickers/512/gender-neutral-user.png", tipo: "", direccion:"MyProfile"},
+        {id:2, title: "Inventario Personal",     color:"#f46f04", members:6,  image:"https://img.icons8.com/stickers/512/warehouse-1.png", tipo: "", direccion:""} , 
+        {id:3, title: "Notificaciones",     color:"#7c3f04", members:12, image:"https://img.icons8.com/stickers/512/alarm.png", tipo: "Notificaciones", direccion:"Notifications"} ,
+        {id:4, title: "Sección de Noticias",   color:"#d4ccce", members:5,  image:"https://img.icons8.com/stickers/512/news--v1.png", tipo: "Noticias", direccion:"News"} ,
+        {id:5, title: "Buscar Usuarios",  color:"#342404", members:6,  image:"https://img.icons8.com/stickers/512/find-user-male.png", tipo: "", direccion:"SearchUser"} ,
+        {id:6, title: "Explorador de Publicaciones",   color:"#ce5e04", members:7,  image:"https://img.icons8.com/stickers/512/activity-feed-2.png", tipo: "Publicaciones", direccion:""} ,
+        {id:7, title: "Buzón de Mensajería",   color:"#f46f04", members:8,  image:"https://img.icons8.com/stickers/512/communication.png", tipo: "Mensajes", direccion:"Inbox"} ,
+        {id:8, title: "Calculadora para producción",    color:"#7c3f04", members:23, image:"https://img.icons8.com/stickers/512/calculator--v1.png", tipo: "", direccion:""} ,
+        {id:9, title: "Consejos y Tips", color:"#d4ccce", members:45, image:"https://img.icons8.com/stickers/512/tuition.png", tipo: "", direccion:""} ,
+        {id:10, title: "Reglas de la comunidad",     color:"#342404", members:13, image:"https://img.icons8.com/stickers/512/information.png", tipo: "", direccion:""} ,
       ]
     };
   }
 
   clickEventListener(item) {
-    Alert.alert(item.title)
+    
+    if(item.direccion !==""){
+    
+      this.props.navigation.navigate(item.direccion)
+    }else{
+      Alert.alert(item.title)
+    }
+  }
+  showItemAmount(item){
+    return <Text style={styles.subTitle}>Tienes {item.members} {item.tipo} sin revisar</Text>
   }
 
   render() {
@@ -46,19 +57,31 @@ export default class Home extends Component {
             return item.id;
           }}
           renderItem={({item}) => {
-            return (
-              <View>
-                <TouchableOpacity style={styles.card} onPress={() => {this.clickEventListener(item)}}>
-                  <Image style={styles.cardImage} source={{uri:item.image}}/>
-                </TouchableOpacity>
-
-                <View style={styles.cardHeader}>
-                  <View style={{alignItems:"center", justifyContent:"center"}}>
-                    <Text style={styles.title}>{item.title}</Text>
-                  </View>
-                </View>
-              </View>
-            )
+            if(item.tipo === ""){
+                return (
+                    <TouchableOpacity style={[styles.card, {backgroundColor:"#e9f1f5"}]} onPress={() => {this.clickEventListener(item)}}>
+                      <View style={styles.cardHeader}>
+                        <Text style={styles.title}>{item.title}</Text>
+                      </View>
+                      <Image style={styles.cardImage} source={{uri:item.image}}/>
+                      <View style={styles.cardFooter}>
+                        
+                      </View>
+                    </TouchableOpacity>
+                  )
+            } else{
+                return (
+                    <TouchableOpacity style={[styles.card, {backgroundColor:"#e9f1f5"}]} onPress={() => {this.clickEventListener(item)}}>
+                      <View style={styles.cardHeader}>
+                        <Text style={styles.title}>{item.title}</Text>
+                      </View>
+                      <Image style={styles.cardImage} source={{uri:item.image}}/>
+                      <View style={styles.cardFooter}>
+                        <Text style={styles.subTitle}>Tienes {item.members} {item.tipo} sin revisar</Text>
+                      </View>
+                    </TouchableOpacity>
+                  )
+            }
           }}/>
       </View>
     );
@@ -68,36 +91,20 @@ export default class Home extends Component {
 const styles = StyleSheet.create({
   container:{
     flex:1,
-    marginTop:40,
-    backgroundColor:'#f6f6f6',
+    marginTop:20,
   },
   list: {
-    paddingHorizontal: 5,
-    backgroundColor:"#f6f6f6",
+    //paddingHorizontal: 5,
+    backgroundColor:"#FFFFFF",
   },
   listContainer:{
     alignItems:'center'
   },
   /******** card **************/
   card:{
-    shadowColor: '#474747',
-    shadowOffset: {
-      width: 0,
-      height: 6,
-    },
-    shadowOpacity: 0.37,
-    shadowRadius: 7.49,
-
-    elevation: 12,
-    marginVertical: 20,
-    marginHorizontal: 40,
-    backgroundColor:"#e2e2e2",
-    //flexBasis: '42%',
-    width:120,
-    height:120,
-    borderRadius:60,
-    alignItems:'center',
-    justifyContent:'center'
+    marginHorizontal:2,
+    marginVertical:2,
+    flexBasis: '48%',
   },
   cardHeader: {
     paddingVertical: 17,
@@ -122,14 +129,23 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 1,
   },
   cardImage:{
-    height: 50,
-    width: 50,
+    height: 70,
+    width: 70,
     alignSelf:'center'
   },
   title:{
-    fontSize:18,
+    fontSize:16,
     flex:1,
-    alignSelf:'center',
-    color:"#696969"
+    color:"#37393b",
+    fontWeight:'bold'
   },
+  subTitle:{
+    fontSize:12,
+    flex:1,
+    color:"#37393b",
+  },
+  icon:{
+    height: 20,
+    width: 20, 
+  }
 });    
