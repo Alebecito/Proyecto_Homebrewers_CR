@@ -109,7 +109,7 @@ export default class Store extends Component {
                   <View style={styles.cardHeader}>
                     <View>
                       <Text style={styles.title}>{item.title}</Text>
-                      <Text style={styles.price}>{item.price}</Text>
+                      <Text style={styles.price}>₡{item.price}</Text>
                     </View>
                   </View>
   

@@ -5,7 +5,7 @@ import {
   View,
   Image,
   TouchableOpacity,
-  ScrollView,FlatList
+  ScrollView, FlatList, TextInput
 } from 'react-native';
 
 export default class PostView extends Component {
@@ -24,126 +24,161 @@ export default class PostView extends Component {
     }
   }
 
-  navigateToOtherProfile(){
+  navigateToOtherProfile() {
     this.props.navigation.navigate("OtherProfile");
   }
 
-  headerComponent(navigationC){
+  footerComponent() {
     return(
-<View style={styles.container}>
-  
-          <View style={styles.header}>
-            <Image style={styles.productImg} source={{ uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQnk8TdboBlcYde9vFO1xpBR2_RxJ578Zhey4LcEsxw5UgkpqFEABDChloQ1tiItk-cTgI&usqp=CAU" }} />
-          </View>
+    <View style={styles.container}>
+        <View style={styles.postContent}>
+        <TextInput editable maxLength={255} style={{
+            margin: 15,
+            height: 120,
+            borderColor: '#000000',
+            borderWidth: 1, textAlignVertical: 'top'
+          }} placeholder="Agrega un comentario! (255 caracteres)" multiline={true}
+            numberOfLines={4} />
 
-          <View style={styles.postContent}>
-              <Text style={styles.postTitle}>
-                Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
-              </Text>
-
-              <Text style={styles.postDescription}>
-                Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. 
-                Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. 
-                Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. 
-              </Text>
-
-             
-
-              <Text style={styles.date}>
-                Fecha: 2017-11-27 
-              </Text>
-
-              <TouchableOpacity style={styles.shareButton}>
-                <Text style={styles.shareButtonText}>Me gusta</Text>  
-              </TouchableOpacity> 
-              <TouchableOpacity style={styles.shareButton}>
-                <Text style={styles.shareButtonText}>Comentar</Text>  
-              </TouchableOpacity> 
-          </View>
-          <Text style={{textAlign:"center"}}>Comentarios</Text>
+<TouchableOpacity style={styles.shareButton}>
+            <Text style={styles.shareButtonText}>Comentar</Text>
+          </TouchableOpacity>
         </View>
+
+
+    </View>
     )
-}
+  }
+
+  headerComponent(navigationC) {
+    return (
+      <View style={styles.container}>
+
+        <View style={styles.header}>
+          <Image style={styles.productImg} source={{ uri: "https://pixabay.com/get/g74019002753ebb836f43956c1a5742d1a3a091b6652d1c14ec6dbbae1db2ab42a1d4e87f3425a64bb777c6b6af115366_1280.jpg" }} />
+        </View>
+
+        <View style={styles.postContent}>
+          <Text style={styles.postTitle}>
+            Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
+          </Text>
+
+          <Text style={styles.postDescription}>
+            Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.
+            Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.
+            Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim.
+          </Text>
+
+        
+          <Text style={styles.date}>
+            Fecha: 2017-11-27
+          </Text>
+
+          <View style={styles.profile} >
+            
+
+            <Text style={styles.name}>
+            20 Me gusta 
+            </Text>
+            
+            
+              
+     
+          </View>
+          <TouchableOpacity style={styles.shareButton}>
+            <Text style={styles.shareButtonText}>Me gusta esta publicación</Text>
+          </TouchableOpacity>
+          
+          
+        </View>
+        <Text style={{ textAlign: "center" }}>Comentarios</Text>
+      </View>
+    )
+  }
 
   render() {
     return (
-  
-   
+
+      <View >
       <FlatList
-            style={styles2.root}
-            data={this.state2.data}
-            ListHeaderComponent={this.headerComponent(this.props.navigation)}
-            extraData={this.state2}
-            ItemSeparatorComponent={() => {
-              return (
-                <View style={styles2.separator} />
-              )
-            }}
-            keyExtractor={(item) => {
-              return item.id;
-            }}
-            renderItem={(item) => {
-              const Notification = item.item;
-              return (
-                <View style={styles2.container}>
-                  <TouchableOpacity onPress={() =>  this.props.navigation.navigate("OtherProfile")}>
-                    <Image style={styles2.image} source={{ uri: Notification.image }} />
-                  </TouchableOpacity>
-                  <View style={styles2.content}>
-                    <View style={styles2.contentHeader}>
-                      <Text style={styles2.name}>{Notification.name}</Text>
-                      <Text style={styles2.time}>
-                        9:58 am
-                      </Text>
-                    </View>
-                    <Text rkType='primary3 mediumLine'>{Notification.comment}</Text>
-                  </View>
+        style={styles2.root}
+        data={this.state2.data}
+        ListHeaderComponent={this.headerComponent(this.props.navigation)}
+        ListFooterComponent={this.footerComponent()}
+        extraData={this.state2}
+        ItemSeparatorComponent={() => {
+          return (
+            <View style={styles2.separator} />
+          )
+        }}
+        keyExtractor={(item) => {
+          return item.id;
+        }}
+        renderItem={(item) => {
+          const Notification = item.item;
+          return (
+            <View style={styles2.container}>
+              <TouchableOpacity onPress={() => this.props.navigation.navigate("OtherProfile")}>
+                <Image style={styles2.image} source={{ uri: Notification.image }} />
+              </TouchableOpacity>
+              <View style={styles2.content}>
+                <View style={styles2.contentHeader}>
+                  <Text style={styles2.name}>{Notification.name}</Text>
+                  <Text style={styles2.time}>
+                    9:58 am
+                  </Text>
                 </View>
-              );
-            }} />
-     
+                <Text rkType='primary3 mediumLine'>{Notification.comment}</Text>
+              </View>
+            </View>
+          );
+        }} />
+        </View>
+
     );
   }
 }
 
 const styles = StyleSheet.create({
-  container:{
-    flex:1,
+  container: {
+    flex: 1,
+
   },
-  header:{
-    padding:30,
+  header: {
+    padding: 30,
     alignItems: 'center',
     backgroundColor: "#FFFFFF",
+   
   },
-  headerTitle:{
-    fontSize:30,
-    color:"#FFFFFF",
-    marginTop:10,
+  headerTitle: {
+    fontSize: 30,
+    color: "#FFFFFF",
+    marginTop: 10,
   },
-  name:{
-    fontSize:22,
-    color:"#FFFFFF",
-    fontWeight:'600',
+  name: {
+    fontSize: 22,
+    color: "#FFFFFF",
+    fontWeight: '600',
   },
   postContent: {
     flex: 1,
-    padding:30,
+    padding: 30,
   },
-  postTitle:{
-    fontSize:26,
-    fontWeight:'600',
+  postTitle: {
+    fontSize: 26,
+    fontWeight: '600',
   },
-  postDescription:{
-    fontSize:16,
-    marginTop:10,
+  postDescription: {
+    fontSize: 16,
+    marginTop: 10,
   },
-  tags:{
+  tags: {
     color: '#00BFFF',
-    marginTop:10,
+    marginTop: 10,
   },
-  date:{
+  date: {
     color: '#696969',
-    marginTop:10,
+    marginTop: 10,
   },
   avatar: {
     width: 80,
@@ -152,40 +187,44 @@ const styles = StyleSheet.create({
     borderWidth: 4,
     borderColor: "#00BFFF",
   },
-  profile:{
+  profile: {
     flexDirection: 'row',
-    marginTop:20
+    marginTop: 20,
+    textAlign:"center"
   },
-  name:{
-    fontSize:22,
-    color:"#00BFFF",
-    fontWeight:'600',
-    alignSelf:'center',
-    marginLeft:10
-  }, 
+  name: {
+    fontSize: 22,
+    color: "#00BFFF",
+    fontWeight: '600',
+    alignSelf: 'center',
+    marginLeft: 10,
+    
+  },
   shareButton: {
-    marginTop:10,
-    height:45,
+    marginTop: 10,
+    height: 45,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius:30,
+    borderRadius: 30,
     backgroundColor: "#00BFFF",
   },
   productImg: {
-    width: 200,
+    width: 350,
     height: 200,
+    
   },
-  shareButtonText:{
+  shareButtonText: {
     color: "#FFFFFF",
-    fontSize:20,
+    fontSize: 20,
   }
 });
- 
+
 const styles2 = StyleSheet.create({
   root: {
     backgroundColor: "#ffffff",
     marginTop: 10,
+    flexGrow: 0
   },
   container: {
     paddingLeft: 19,

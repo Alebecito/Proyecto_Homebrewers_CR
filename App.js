@@ -21,6 +21,7 @@ import Publications from './pages/Publications'
 import PublicationContent from './pages/PublicationContent'
 import OtherFollowing from './pages/OtherFollowing'
 import OtherFollowers from './pages/OtherFollowers'
+import ReviewContent from './pages/ReviewContent'
 
 const PlaceholderImage = require('./assets/images/background.jpg');
 const Stack = createStackNavigator();
@@ -28,9 +29,13 @@ const Stack = createStackNavigator();
 export default function App() {
   return (
     <NavigationContainer>
-
+      
       <Stack.Navigator intialRouteName='Login'>
+      <Stack.Screen name="OtherProfile" component={OtherProfile} />
       <Stack.Screen name="HomePage" component={HomePage} />
+      <Stack.Screen name="ReviewContent" component={ReviewContent} />
+      
+      
         <Stack.Screen name="PublicationContent" component={PublicationContent} />
         <Stack.Screen name="NewsContent" component={NewsContent} />
       
@@ -51,7 +56,7 @@ export default function App() {
         <Stack.Screen name="Inbox" component={Inbox} />
         <Stack.Screen name="Chat" component={Chat} />
         <Stack.Screen name="Following" component={Following} />
-        <Stack.Screen name="OtherProfile" component={OtherProfile} />
+        
 
 
 

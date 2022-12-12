@@ -41,7 +41,7 @@ export default class ProfileView extends Component {
           <View style={styles.body}>
             <View style={styles.bodyContent}>
               <TouchableOpacity style={styles.buttonContainer}>
-                <Text>Opcion 1</Text>  
+                <Text>Editar</Text>  
               </TouchableOpacity> 
               <Text style={styles.description}>Lorem ipsum dolor sit amet, saepe sapientem eu nam. Qui ne assum electram expetendis, omittam deseruisse consequuntur ius an,</Text>
             </View>
