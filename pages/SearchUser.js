@@ -10,7 +10,7 @@
                  ScrollView,
                  TextInput,
                  FlatList,
-                 TouchableOpacity
+                 TouchableOpacity,Button
                } from 'react-native';
                
                export default class ContactsView extends Component {
@@ -41,12 +41,12 @@
                      <View style={styles.container}>
                        <View style={styles.formContent}>
                          <View style={styles.inputContainer}>
-                           <Image style={[styles.icon, styles.inputIcon]} source={{uri: 'https://png.icons8.com/search/androidL/100/000000'}}/>
+                          
                            <TextInput style={styles.inputs}
                                ref={'txtPassword'}
                                placeholder="Buscar nombre de usuario"
                                underlineColorAndroid='transparent'
-                               onChangeText={(name_address) => this.setState({name_address})}/>
+                              />
                          </View>
                        </View>
                

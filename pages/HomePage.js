@@ -19,7 +19,7 @@ export default class Menu extends Component {
     this.state = {
       data: [
         {id:1, title: "Perfil Personal",      color:"#ce5e04", members:8,  image:"https://img.icons8.com/stickers/512/gender-neutral-user.png", tipo: "", direccion:"MyProfile"},
-        {id:2, title: "Inventario Personal",     color:"#f46f04", members:6,  image:"https://img.icons8.com/stickers/512/warehouse-1.png", tipo: "", direccion:""} , 
+        {id:2, title: "Inventario Personal",     color:"#f46f04", members:6,  image:"https://img.icons8.com/stickers/512/warehouse-1.png", tipo: "", direccion:"Inventory"} , 
         {id:3, title: "Notificaciones",     color:"#7c3f04", members:12, image:"https://img.icons8.com/stickers/512/alarm.png", tipo: "Notificaciones", direccion:"Notifications"} ,
         {id:4, title: "Sección de Noticias",   color:"#d4ccce", members:5,  image:"https://img.icons8.com/stickers/512/news--v1.png", tipo: "Noticias", direccion:"News"} ,
         {id:5, title: "Buscar Usuarios",  color:"#342404", members:6,  image:"https://img.icons8.com/stickers/512/find-user-male.png", tipo: "", direccion:"SearchUser"} ,

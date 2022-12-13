@@ -10,12 +10,15 @@ import {
   FlatList,
   Button,TextInput
 } from 'react-native';
+import Checkbox from 'expo-checkbox';
 
 export default class Blog extends Component {
 
   constructor(props) {
     super(props);
     this.state = {
+      isChecked: false,
+
       data: [
         {id:1, title: "Lorem ipsum dolor",                  time:"2018-08-01 12:15 pm", image:"https://pixabay.com/get/g74019002753ebb836f43956c1a5742d1a3a091b6652d1c14ec6dbbae1db2ab42a1d4e87f3425a64bb777c6b6af115366_1280.jpg", description:"Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean  ligula...", teGusta:true},
         {id:2, title: "Sit amet, consectetuer",             time:"2018-08-12 12:00 pm", image:"https://pixabay.com/get/g4d4fbe9a7bb86a8903cb2c87195f501b93cc14f0cf086b132caf7a7ef98117cdb1fbf964f773e23ac3b6906444314881_1280.jpg", description:"Lorem  dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula...", teGusta:true} ,
@@ -29,6 +32,7 @@ export default class Blog extends Component {
       ]
     };
   }
+  handleChange = e => this.setState({ isChecked: e });
 
   goToNewsContent() {
     this.props.navigation.navigate('NewsContent');
@@ -36,6 +40,14 @@ export default class Blog extends Component {
   render() {
     return (
       <View style={styles.container}>
+        <View style={{ justifyContent: 'center', alignItems: 'center', }}>
+         
+
+         <Text >  <Checkbox value={this.state.isChecked} onValueChange={this.handleChange}  />  Mostrar solo noticias que te gustan </Text>
+        
+         
+         
+         </View>
  <View style={styles.formContent}>
           <View style={styles.inputContainer}>
             <Image style={[styles.icon, styles.inputIcon]} source={{ uri: 'https://png.icons8.com/search/androidL/100/000000' }} />

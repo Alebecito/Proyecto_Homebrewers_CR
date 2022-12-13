@@ -22,6 +22,8 @@ import PublicationContent from './pages/PublicationContent'
 import OtherFollowing from './pages/OtherFollowing'
 import OtherFollowers from './pages/OtherFollowers'
 import ReviewContent from './pages/ReviewContent'
+import Inventory from './pages/Inventory'
+import InventoryItem from './pages/InventoryItem'
 
 const PlaceholderImage = require('./assets/images/background.jpg');
 const Stack = createStackNavigator();
@@ -30,16 +32,20 @@ export default function App() {
   return (
     <NavigationContainer>
       
-      <Stack.Navigator intialRouteName='Login'>
-      <Stack.Screen name="OtherProfile" component={OtherProfile} />
+      <Stack.Navigator initialRouteName='HomePage'>
+      <Stack.Screen name="Publications" component={Publications} />
       <Stack.Screen name="HomePage" component={HomePage} />
+      <Stack.Screen name="OtherProfile" component={OtherProfile} />
+      <Stack.Screen name="Inventory" component={Inventory} />
+      <Stack.Screen name="InventoryItem" component={InventoryItem} />
+      
       <Stack.Screen name="ReviewContent" component={ReviewContent} />
       
       
         <Stack.Screen name="PublicationContent" component={PublicationContent} />
         <Stack.Screen name="NewsContent" component={NewsContent} />
       
-        <Stack.Screen name="Publications" component={Publications} />
+   
         <Stack.Screen name="OtherFollowing" component={OtherFollowing} />
         <Stack.Screen name="OtherFollowers" component={OtherFollowers} />
         
