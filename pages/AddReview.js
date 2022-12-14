@@ -76,7 +76,7 @@ export default class SignUp extends Component {
               <Picker.Item label={"5/5"} value={"5/5"}  />
             </Picker>
           </View>
-        <TouchableOpacity style={[styles.buttonContainer, styles.signupButton]} onPress={() => this.props.navigation.navigate('Login')}>
+        <TouchableOpacity style={[styles.buttonContainer, styles.signupButton]} onPress={() => this.props.navigation.navigate('HomePage')}>
           <Text style={styles.signUpText}>Añadir Reseña</Text>
         </TouchableOpacity>
 
@@ -147,7 +147,7 @@ const styles = StyleSheet.create({
     borderRadius:30,
   },
   signupButton: {
-    backgroundColor: "#FF4DFF",
+    backgroundColor: "#454545",
   },
   signUpText: {
     color: 'white',

@@ -8,11 +8,11 @@ import {
   TouchableHighlight,
   TouchableOpacity,
   Image,
-  Alert, ScrollView 
+  Alert, ScrollView
 } from 'react-native';
 
 import Checkbox from 'expo-checkbox';
-import { Picker } from '@react-native-picker/picker';
+
 export default class SignUp extends Component {
 
   constructor(props) {
@@ -36,52 +36,44 @@ export default class SignUp extends Component {
     return (
       <ScrollView>
       <View style={styles.container}>
-      <Text style={{color:"black", textAlign:"center", margin:20}}>Descripción corta de la reseña</Text>
+      <Text style={{color:"black", textAlign:"center", margin:20}}>Densidad Incial</Text>
         <View style={styles.inputContainer}>
           <Image style={styles.inputIcon} source={{uri: 'https://png.icons8.com/male-user/ultraviolet/50/3498db'}}/>
           <TextInput style={styles.inputs}
-              placeholder="Descripción Corta de la reseña"
-              defaultValue='Gran persona, muy amable y atenta'
+              placeholder="Ejemplo: 100"
+          
               underlineColorAndroid='transparent'
               onChangeText={(fullName) => this.setState({fullName})}/>
         </View>
-
-        <Text style={{color:"black", textAlign:"center", margin:20}}>Descripción amplia de la reseña</Text>
-        <View style={styles.inputContainerBox}>
+<Text style={{color:"black", textAlign:"center", margin:20}}>Densidad Final</Text>
+        <View style={styles.inputContainer}>
           <Image style={styles.inputIcon} source={{uri: 'https://png.icons8.com/message/ultraviolet/50/3498db'}}/>
-          <TextInput UselessTextInput
-        multiline
-        numberOfLines={4} style={styles.inputsBox}
-              placeholder="Explica a detalle tu experiencia con el usuario"
-              defaultValue='Gran persona, muy amable y atenta además de ser muy puntual y cumplir con lo que promete.'
+          <TextInput style={styles.inputs}
+              placeholder="Ejemplo: 100"
+            
               underlineColorAndroid='transparent'
               onChangeText={(email) => this.setState({email})}/>
         </View>
+       
+
         
-        
-        <Text style={{color:"black", textAlign:"center", margin:20}}>Nota que le das al usuario</Text>
-        <View style={[styles.inputContainer]}>
-
-            <Picker
-              selectedValue={"5/5"}
-              style={{ height: 50, width: 250, justifyContent: 'center', alignItems: 'center', }}
-
-            >
-
-              <Picker.Item label={"No seleccionado"} value={"No seleccionado"}  />
-              <Picker.Item label={"1/5"} value={"1/5"}  />
-              <Picker.Item label={"2/5"} value={"2/5"}  />
-              <Picker.Item label={"3/5"} value={"3/5"}  />
-              <Picker.Item label={"4/5"} value={"4/5"}  />
-              <Picker.Item label={"5/5"} value={"5/5"}  />
-            </Picker>
-          </View>
-        <TouchableOpacity style={[styles.buttonContainer, styles.signupButton]} onPress={() => this.props.navigation.navigate('Login')}>
-          <Text style={styles.signUpText}>Actualizar Reseña</Text>
+        <TouchableOpacity style={[styles.buttonContainer, styles.signupButton]} onPress={()=>{}}>
+          <Text style={styles.signUpText}>Limpiar</Text>
         </TouchableOpacity>
-
-        
+        <TouchableOpacity style={[styles.buttonContainer, styles.signupButton]} onPress={() => this.props.navigation.navigate('Login')}>
+          <Text style={styles.signUpText}>Calcular</Text>
+        </TouchableOpacity>
+        <Text style={{color:"black", textAlign:"center", margin:20}}>Resultado</Text>
+        <View style={styles.inputContainer}>
+          <Image style={styles.inputIcon} source={{uri: 'https://png.icons8.com/message/ultraviolet/50/3498db'}}/>
+          <TextInput style={styles.inputs}
+              placeholder="Resultado"
+            
+              underlineColorAndroid='transparent'
+              onChangeText={(email) => this.setState({email})}/>
+        </View>
       </View>
+          
       </ScrollView>
     );
   }
@@ -92,7 +84,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f7f6f2',
+    backgroundColor: '#white',
     marginTop:30
   },
   inputContainer: {

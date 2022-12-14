@@ -256,7 +256,7 @@ const styles = StyleSheet.create({
   },
   price: {
     fontSize: 16,
-    color: "green",
+    color: "#454545",
     marginTop: 5
   },
   buyNow: {
@@ -309,7 +309,7 @@ const styles = StyleSheet.create({
   },
   time: {
     fontSize: 13,
-    color: "#808080",
+    color: "#454545",
     marginTop: 5
   },
   socialBarButton: {

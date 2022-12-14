@@ -130,21 +130,21 @@ const styles = StyleSheet.create({
     width: 120,
     borderRadius:60,
     alignSelf:'center',
-    borderColor:"#DCDCDC",
+    borderColor:"#454545",
     borderWidth:3,
   },
   name:{
     fontSize:18,
     flex:1,
     alignSelf:'center',
-    color:"#008080",
+    color:"#454545",
     fontWeight:'bold'
   },
   position:{
     fontSize:14,
     flex:1,
     alignSelf:'center',
-    color:"#696969"
+    color:"#454545"
   },
   followButton: {
     marginTop:10,
@@ -154,7 +154,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius:30,
-    backgroundColor: "#0f8bff",
+    backgroundColor: "#454545",
   },
 
   UnfollowButton:{

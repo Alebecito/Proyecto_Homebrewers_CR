@@ -164,7 +164,7 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 18,
         flex: 1,
-        color: "#778899"
+        color: "#454545"
     },
     inputs: {
         height: 45,
@@ -175,6 +175,6 @@ const styles = StyleSheet.create({
     count: {
         fontSize: 18,
         flex: 1,
-        color: "#B0C4DE"
+        color: "#454545"
     },
 }); 

@@ -28,10 +28,12 @@ export default class Login extends Component {
   render() {
     return (
       <View style={styles.container}>
+        
+        <Image style={{width: 300, height: 200, marginBottom:40}} source={require('../assets/images/logo.png')}/>
         <View style={styles.inputContainer}>
           <Image style={styles.inputIcon} source={{uri: 'https://png.icons8.com/message/ultraviolet/50/3498db'}}/>
           <TextInput style={styles.inputs}
-              placeholder="Email"
+              placeholder="Correo Electrónico"
               keyboardType="email-address"
               underlineColorAndroid='transparent'
               onChangeText={(email) => this.setState({email})}/>
@@ -40,7 +42,7 @@ export default class Login extends Component {
         <View style={styles.inputContainer}>
           <Image style={styles.inputIcon} source={{uri: 'https://png.icons8.com/key-2/ultraviolet/50/3498db'}}/>
           <TextInput style={styles.inputs}
-              placeholder="Password"
+              placeholder="Contraseña"
               secureTextEntry={true}
               underlineColorAndroid='transparent'
               onChangeText={(password) => this.setState({password})}/>
@@ -67,7 +69,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#DCDCDC',
+    backgroundColor: '#white',
   },
   inputContainer: {
       borderBottomColor: '#F5FCFF',
@@ -102,7 +104,7 @@ const styles = StyleSheet.create({
     borderRadius:30,
   },
   loginButton: {
-    backgroundColor: "#00b5ec",
+    backgroundColor: "#454545",
   },
   loginText: {
     color: 'white',

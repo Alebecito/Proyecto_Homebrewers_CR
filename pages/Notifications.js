@@ -124,7 +124,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     borderBottomWidth: 1,
     borderColor: "black",
-    backgroundColor:"#7fd3fa",
+    backgroundColor:"#FBEAAB",
     alignItems: 'flex-start'
   },
   avatar: {
@@ -164,7 +164,7 @@ const styles = StyleSheet.create({
   },
   timeAgo:{
     fontSize:12,
-    color:"#696969"
+    color:"#454545"
   },
   icon:{
     width:20,
@@ -174,6 +174,6 @@ const styles = StyleSheet.create({
   },
   name:{
     fontSize:16,
-    color:"#1E90FF"
+    color:"#454545"
   }
 }); 

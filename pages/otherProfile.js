@@ -118,10 +118,10 @@ export default class ProfileView extends Component {
             }}>Bloquear Usuario</Text>
           </TouchableOpacity>
               <TouchableOpacity style={styles.buttonContainer} onPress={() => this.props.navigation.navigate("Chat")}>
-                <Text>Enviar Mensaje</Text>
+                <Text style={{color:"white"}}>Enviar Mensaje</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.buttonContainer} onPress={() => this.props.navigation.navigate("AddReview")}>
-                <Text>Añadir reseña</Text>
+                <Text style={{color:"white"}}>Añadir reseña</Text>
               </TouchableOpacity>
               
               
@@ -360,7 +360,7 @@ const styles = StyleSheet.create({
     height: 130,
     borderRadius: 63,
     borderWidth: 4,
-    borderColor: "white",
+    borderColor: "454545",
     marginBottom: 10,
   },
   name: {
@@ -383,7 +383,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 20,
-    color: "#00CED1"
+    color: "#454545"
   },
   count: {
     fontSize: 18,
@@ -397,7 +397,7 @@ const styles = StyleSheet.create({
   textInfo: {
     fontSize: 18,
     marginTop: 20,
-    color: "#696969",
+    color: "#454545",
   },
   buttonContainer: {
     marginTop: 10,
@@ -408,11 +408,11 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     width: 250,
     borderRadius: 30,
-    backgroundColor: "#00CED1",
+    backgroundColor: "#454545",
   },
   description: {
     fontSize: 20,
-    color: "#00CED1",
+    color: "#454545",
     marginTop: 10,
     textAlign: 'center'
   },
@@ -476,16 +476,16 @@ const styles2 = StyleSheet.create({
   /******** card components **************/
   title: {
     fontSize: 16,
-    color: "green",
+    color: "#454545",
     marginTop: 5
   },
   price: {
     fontSize: 16,
-    color: "lightblue",
+    color: "#454545",
     marginTop: 5
   },
   buyNow: {
-    color: "purple",
+    color: "#454545",
   },
   formContent: {
     flexDirection: 'row',
@@ -534,7 +534,7 @@ const styles2 = StyleSheet.create({
   },
   time: {
     fontSize: 13,
-    color: "#808080",
+    color: "#454545",
     marginTop: 5
   },
   socialBarButton: {
@@ -605,14 +605,14 @@ const stylesReport = StyleSheet.create({
     fontSize: 18,
     flex: 1,
     alignSelf: 'center',
-    color: "#008080",
+    color: "#454545",
     fontWeight: 'bold'
   },
   position: {
     fontSize: 14,
     flex: 1,
     alignSelf: 'center',
-    color: "#696969"
+    color: "#454545"
   },
   about: {
     marginHorizontal: 10
@@ -665,7 +665,7 @@ const stylesReport = StyleSheet.create({
   },
   btnClose: {
     height: 35,
-    backgroundColor: '#20b2aa',
+    backgroundColor: '#454545',
     width: 100
   },
   modalInfo: {

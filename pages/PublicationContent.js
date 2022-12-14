@@ -84,7 +84,7 @@ export default class PostView extends Component {
             Precio expuesto: ₡ 200
           </Text>
 
-          <Text style={styles.date}>
+          <Text style={[styles.date,{color:"#454545"}]}>
             Fecha de caducidad de la publicación: 2017-11-27
           </Text>
 
@@ -223,7 +223,7 @@ const styles = StyleSheet.create({
   },
   name: {
     fontSize: 22,
-    color: "#FFFFFF",
+    color: "#454545",
     fontWeight: '600',
   },
   postContent: {
@@ -239,11 +239,11 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   tags: {
-    color: '#00BFFF',
+    color: '#454545',
     marginTop: 10,
   },
   date: {
-    color: '#696969',
+    color: '#454545',
     marginTop: 10,
   },
   avatar: {
@@ -251,7 +251,7 @@ const styles = StyleSheet.create({
     height: 80,
     borderRadius: 35,
     borderWidth: 4,
-    borderColor: "#00BFFF",
+    borderColor: "#454545",
   },
   profile: {
     flexDirection: 'row',
@@ -259,7 +259,7 @@ const styles = StyleSheet.create({
   },
   name: {
     fontSize: 22,
-    color: "#00BFFF",
+    color: "#454545",
     fontWeight: '600',
     alignSelf: 'center',
     marginLeft: 10
@@ -271,7 +271,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 30,
-    backgroundColor: "#00BFFF",
+    backgroundColor: "#454545",
   },
   productImg: {
     width: 200,
@@ -389,14 +389,14 @@ const stylesReport = StyleSheet.create({
     fontSize: 18,
     flex: 1,
     alignSelf: 'center',
-    color: "#008080",
+    color: "#454545",
     fontWeight: 'bold'
   },
   position: {
     fontSize: 14,
     flex: 1,
     alignSelf: 'center',
-    color: "#696969"
+    color: "#454545"
   },
   about: {
     marginHorizontal: 10
@@ -449,7 +449,7 @@ const stylesReport = StyleSheet.create({
   },
   btnClose: {
     height: 35,
-    backgroundColor: '#20b2aa',
+    backgroundColor: '#454545',
     width: 100
   },
   modalInfo: {

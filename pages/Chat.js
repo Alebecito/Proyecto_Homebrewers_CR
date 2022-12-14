@@ -121,7 +121,7 @@ export default class Chat extends Component {
                 onChangeText={msg => this.setState({ msg })}
                 blurOnSubmit={false}
                 onSubmitEditing={() => this.send()}
-                placeholder="Type a message"
+                placeholder="Escribe tu mensaje..."
                 returnKeyType="send"/>
             </View>
           </KeyboardAvoidingView>
@@ -215,7 +215,7 @@ const styles = StyleSheet.create({
   rightBlock: {
     width: 220,
     borderRadius: 5,
-    backgroundColor: '#97c163',
+    backgroundColor: '#FBEAAB',
     padding: 10,
     shadowColor: '#3d3d3d',
     shadowRadius: 2,

@@ -23,7 +23,7 @@ export default class ProductDetail extends Component {
 
   render() {
     return (
-      <View style={styles.container}>
+      <View style={[styles.container,{backgroundColor:"#f0f2f5"}]}>
         <ScrollView>
           <View style={{alignItems:'center', marginHorizontal:30,}}>
             <Image style={styles.productImg} source={{uri:"https://pixabay.com/get/g905baba9b9b76350266df398110b6e23a5f5b83291495b169f6ef1bfe1d4a8e86f90c265d334d253b542411276cd208b_1280.jpg"}}/>
@@ -66,19 +66,19 @@ const styles = StyleSheet.create({
   },
   name:{
     fontSize:28,
-    color:"#696969",
+    color:"#454545",
     fontWeight:'bold'
   },
   price:{
     marginTop:10,
     fontSize:18,
-    color:"green",
+    color:"454545",
     fontWeight:'bold'
   },
   description:{
     textAlign:'center',
     marginTop:10,
-    color:"#696969",
+    color:"#454545",
   },
   star:{
     width:40,
@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
   },
   separator:{
     height:2,
-    backgroundColor:"#eeeeee",
+
     marginTop:20,
     marginHorizontal:30
   },
@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius:30,
-    backgroundColor: "#00BFFF",
+    backgroundColor: "#454545",
   },
   shareButtonText:{
     color: "#FFFFFF",

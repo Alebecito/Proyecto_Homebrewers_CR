@@ -202,7 +202,7 @@ const styles = StyleSheet.create({
   },
   name: {
     fontSize: 16,
-    color: "#1E90FF",
+    color: "#454545",
   },
   chatbox: {
     backgroundColor: "red", padding: 20, height: 50,

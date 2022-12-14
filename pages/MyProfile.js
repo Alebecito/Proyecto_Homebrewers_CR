@@ -72,7 +72,7 @@ export default class ProfileView extends Component {
           <View style={styles.body}>
             <View style={styles.bodyContent}>
               <TouchableOpacity style={styles.buttonContainer} onPress={()=>this.props.navigation.navigate("editProfile")}>
-                <Text>Editar Perfil</Text>
+                <Text style={{color:"white"}}>Editar Perfil</Text>
               </TouchableOpacity>
 
 
@@ -295,7 +295,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 20,
-    color: "#00CED1"
+    color: "#454545"
   },
   count: {
     fontSize: 18,
@@ -304,12 +304,12 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     padding: 30,
-    marginTop: 20
+    marginTop: 20,
   },
   textInfo: {
     fontSize: 18,
     marginTop: 20,
-    color: "#696969",
+    color: "#454545",
   },
   buttonContainer: {
     marginTop: 10,
@@ -320,11 +320,11 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     width: 250,
     borderRadius: 30,
-    backgroundColor: "#00CED1",
+    backgroundColor: "#454545",
   },
   description: {
     fontSize: 20,
-    color: "#00CED1",
+    color: "#454545",
     marginTop: 10,
     textAlign: 'center'
   },
@@ -388,16 +388,16 @@ const styles2 = StyleSheet.create({
   /******** card components **************/
   title: {
     fontSize: 16,
-    color: "green",
+    color: "#454545",
     marginTop: 5
   },
   price: {
     fontSize: 16,
-    color: "lightblue",
+    color: "#454545",
     marginTop: 5
   },
   buyNow: {
-    color: "purple",
+    color: "#454545",
   },
   formContent: {
     flexDirection: 'row',
@@ -446,7 +446,7 @@ const styles2 = StyleSheet.create({
   },
   time: {
     fontSize: 13,
-    color: "#808080",
+    color: "#454545",
     marginTop: 5
   },
   socialBarButton: {

@@ -162,7 +162,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f7f6f2',
+    backgroundColor: '#f0f2f5',
     marginTop: 30
   },
   inputContainer: {
@@ -217,7 +217,7 @@ const styles = StyleSheet.create({
     borderRadius: 30,
   },
   signupButton: {
-    backgroundColor: "#FF4DFF",
+    backgroundColor: "#454545",
   },
   signUpText: {
     color: 'white',

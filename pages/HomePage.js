@@ -25,9 +25,9 @@ export default class Menu extends Component {
         {id:5, title: "Buscar Usuarios",  color:"#342404", members:6,  image:"https://img.icons8.com/stickers/512/find-user-male.png", tipo: "", direccion:"SearchUser"} ,
         {id:6, title: "Explorador de Publicaciones",   color:"#ce5e04", members:7,  image:"https://img.icons8.com/stickers/512/activity-feed-2.png", tipo: "Publicaciones", direccion:"Publications"} ,
         {id:7, title: "Buzón de Mensajería",   color:"#f46f04", members:8,  image:"https://img.icons8.com/stickers/512/communication.png", tipo: "Mensajes", direccion:"Inbox"} ,
-        {id:8, title: "Calculadora para producción",    color:"#7c3f04", members:23, image:"https://img.icons8.com/stickers/512/calculator--v1.png", tipo: "", direccion:""} ,
-        {id:9, title: "Consejos y Tips", color:"#d4ccce", members:45, image:"https://img.icons8.com/stickers/512/tuition.png", tipo: "", direccion:""} ,
-        {id:10, title: "Reglas de la comunidad",     color:"#342404", members:13, image:"https://img.icons8.com/stickers/512/information.png", tipo: "", direccion:""} ,
+        {id:8, title: "Calculadora para producción",    color:"#7c3f04", members:23, image:"https://img.icons8.com/stickers/512/calculator--v1.png", tipo: "", direccion:"CalculatorMenu"} ,
+        {id:9, title: "Consejos", color:"#d4ccce", members:45, image:"https://img.icons8.com/stickers/512/tuition.png", tipo: "", direccion:"TricksAndTips"} ,
+        {id:10, title: "Reglas de la comunidad",     color:"#342404", members:13, image:"https://img.icons8.com/stickers/512/information.png", tipo: "", direccion:"TermsAndConditions"} ,
         {id:11, title: "Cerrar Sesión",     color:"#342404", members:13, image:"https://img.icons8.com/stickers/512/power-off-button.png", tipo: "", direccion:"Login"} ,
       ]
     };
@@ -60,7 +60,7 @@ export default class Menu extends Component {
           renderItem={({item}) => {
             if(item.tipo === ""){
                 return (
-                    <TouchableOpacity style={[styles.card, {backgroundColor:"#e9f1f5"}]} onPress={() => {this.clickEventListener(item)}}>
+                    <TouchableOpacity style={[styles.card, {backgroundColor:"#454545"}]} onPress={() => {this.clickEventListener(item)}}>
                       <View style={styles.cardHeader}>
                         <Text style={styles.title}>{item.title}</Text>
                       </View>
@@ -72,7 +72,7 @@ export default class Menu extends Component {
                   )
             } else{
                 return (
-                    <TouchableOpacity style={[styles.card, {backgroundColor:"#e9f1f5"}]} onPress={() => {this.clickEventListener(item)}}>
+                    <TouchableOpacity style={[styles.card, {backgroundColor:"#454545"}]} onPress={() => {this.clickEventListener(item)}}>
                       <View style={styles.cardHeader}>
                         <Text style={styles.title}>{item.title}</Text>
                       </View>
@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
   },
   list: {
     //paddingHorizontal: 5,
-    backgroundColor:"#FFFFFF",
+    backgroundColor:"#white",
   },
   listContainer:{
     alignItems:'center'
@@ -106,6 +106,7 @@ const styles = StyleSheet.create({
     marginHorizontal:2,
     marginVertical:2,
     flexBasis: '48%',
+    borderRadius:20
   },
   cardHeader: {
     paddingVertical: 17,
@@ -137,13 +138,13 @@ const styles = StyleSheet.create({
   title:{
     fontSize:16,
     flex:1,
-    color:"#37393b",
+    color:"white",
     fontWeight:'bold'
   },
   subTitle:{
     fontSize:12,
     flex:1,
-    color:"#37393b",
+    color:"white",
   },
   icon:{
     height: 20,

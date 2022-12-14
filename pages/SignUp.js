@@ -98,7 +98,7 @@ export default class SignUp extends Component {
         <View style={{ justifyContent: 'center', alignItems: 'center', marginBottom:20, marginTop:20}}>
 
 
-            <Text >  <Checkbox value={this.state.isChecked} onValueChange={this.handleChange} />  He leido y acepto los <Text style={{color:"blue"}} onPress={()=> {Alert.alert("Terminos y condiciones")}}>términos y condiciones</Text> </Text>
+            <Text >  <Checkbox value={this.state.isChecked} onValueChange={this.handleChange} />  He leido y acepto los <Text style={{color:"blue"}} onPress={()=> this.props.navigation.navigate("TermsAndConditions")}>términos y condiciones</Text> </Text>
 
           </View>
 
@@ -107,9 +107,10 @@ export default class SignUp extends Component {
         <TouchableOpacity style={[styles.buttonContainer, styles.signupButton]} onPress={() => this.props.navigation.navigate('Login')}>
           <Text style={styles.signUpText}>Registrarse</Text>
         </TouchableOpacity>
-
+        <Text style={{marginTop:20, marginBottom:20}}>¿Ya estás registrado? <Text style={{color:"blue"}} onPress={()=>this.props.navigation.navigate("Login")}>Inicia Sesión</Text></Text>
         
       </View>
+          
       </ScrollView>
     );
   }
@@ -120,7 +121,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f7f6f2',
+    backgroundColor: '#white',
     marginTop:30
   },
   inputContainer: {
@@ -175,7 +176,7 @@ const styles = StyleSheet.create({
     borderRadius:30,
   },
   signupButton: {
-    backgroundColor: "#FF4DFF",
+    backgroundColor: "#454545",
   },
   signUpText: {
     color: 'white',
