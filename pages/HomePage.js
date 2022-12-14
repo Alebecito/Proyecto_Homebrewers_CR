@@ -28,6 +28,7 @@ export default class Menu extends Component {
         {id:8, title: "Calculadora para producción",    color:"#7c3f04", members:23, image:"https://img.icons8.com/stickers/512/calculator--v1.png", tipo: "", direccion:""} ,
         {id:9, title: "Consejos y Tips", color:"#d4ccce", members:45, image:"https://img.icons8.com/stickers/512/tuition.png", tipo: "", direccion:""} ,
         {id:10, title: "Reglas de la comunidad",     color:"#342404", members:13, image:"https://img.icons8.com/stickers/512/information.png", tipo: "", direccion:""} ,
+        {id:11, title: "Cerrar Sesión",     color:"#342404", members:13, image:"https://img.icons8.com/stickers/512/power-off-button.png", tipo: "", direccion:"Login"} ,
       ]
     };
   }

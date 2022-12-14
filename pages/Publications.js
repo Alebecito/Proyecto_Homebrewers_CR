@@ -87,7 +87,7 @@ export default class Store extends Component {
               marginBottom: 10,
               marginTop: 20
             }}
-            onPress={() => { }}
+            onPress={() => { this.props.navigation.navigate("AddNewPublication")}}
           >
             <Text style={{ textAlign: "center", flex: 1, justifyContent: "center", fontSize: 15 }}>Crear nueva publicación</Text>
           </TouchableOpacity>

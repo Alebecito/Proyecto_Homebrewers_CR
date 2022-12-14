@@ -49,6 +49,7 @@ export default class Album extends Component {
                 <View style={{ justifyContent: 'center', alignItems: 'center', }}>
 
                 <TouchableOpacity
+                onPress={() => this.props.navigation.navigate("AddItemInventory")}
             style={{
               width: 300,
               alignItems: 'center',
@@ -62,7 +63,7 @@ export default class Album extends Component {
               marginBottom: 10,
               marginTop: 5
             }}
-            onPress={() => { }}
+            
           >
             <Text style={{ textAlign: "center", flex: 1, justifyContent: "center", fontSize: 15 }}>Agregar elemento al inventario</Text>
           </TouchableOpacity>

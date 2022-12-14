@@ -47,15 +47,15 @@ export default class Login extends Component {
         </View>
 
         <TouchableOpacity style={[styles.buttonContainer, styles.loginButton]} onPress={() => this.props.navigation.navigate('HomePage')}>
-          <Text style={styles.loginText}>Login</Text>
+          <Text style={styles.loginText}>Iniciar Sesión</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.buttonContainer} onPress={() => this.onClickListener('restore_password')}>
-            <Text>Forgot your password?</Text>
+        <TouchableOpacity style={styles.buttonContainer} onPress={() => this.props.navigation.navigate('RecoverPassword')}>
+            <Text>Recuperar contraseña</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.buttonContainer} onPress={() => this.props.navigation.navigate('SignUp')}>
-            <Text>Register</Text>
+            <Text>Registrate en la aplicación</Text>
         </TouchableOpacity>
       </View>
     );

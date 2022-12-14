@@ -24,6 +24,16 @@ import OtherFollowers from './pages/OtherFollowers'
 import ReviewContent from './pages/ReviewContent'
 import Inventory from './pages/Inventory'
 import InventoryItem from './pages/InventoryItem'
+import editProfile from './pages/editProfile'
+import AddItemInventory from './pages/AddItemInventory'
+import EditItem from './pages/EditItem'
+import MyPublicationContent from './pages/MyPublicationContent'
+import AddNewPublication from './pages/AddNewPublication'
+import MyReviewContent from './pages/MyReviewContent'
+import EditPublication from './pages/EditPublication'
+import EditReview from './pages/EditReview'
+import AddReview from './pages/AddReview'
+import RecoverPassword from './pages/recoverPassword'
 
 const PlaceholderImage = require('./assets/images/background.jpg');
 const Stack = createStackNavigator();
@@ -32,12 +42,24 @@ export default function App() {
   return (
     <NavigationContainer>
       
-      <Stack.Navigator initialRouteName='HomePage'>
+      <Stack.Navigator initialRouteName='Login'>
       <Stack.Screen name="Publications" component={Publications} />
+
+       
+      <Stack.Screen name="AddNewPublication" component={AddNewPublication} />
+      <Stack.Screen name="AddReview" component={AddReview} />
+      <Stack.Screen name="EditReview" component={EditReview} />
+      <Stack.Screen name="RecoverPassword" component={RecoverPassword} />
+      <Stack.Screen name="MyPublicationContent" component={MyPublicationContent} />
+      <Stack.Screen name="EditItem" component={EditItem} />
       <Stack.Screen name="HomePage" component={HomePage} />
+      <Stack.Screen name="EditPublication" component={EditPublication} />
       <Stack.Screen name="OtherProfile" component={OtherProfile} />
       <Stack.Screen name="Inventory" component={Inventory} />
       <Stack.Screen name="InventoryItem" component={InventoryItem} />
+      <Stack.Screen name="editProfile" component={editProfile} />
+      <Stack.Screen name="AddItemInventory" component={AddItemInventory} />
+      <Stack.Screen name="MyReviewContent" component={MyReviewContent} />
       
       <Stack.Screen name="ReviewContent" component={ReviewContent} />
       

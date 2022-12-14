@@ -36,12 +36,34 @@ export default class SignUp extends Component {
     return (
       <ScrollView>
       <View style={styles.container}>
+      <Text style={{color:"black", textAlign:"center", margin:20}}>Imagen de Perfil</Text>
+        
+
+        <Image
+          style={{ width: 200,
+            height: 200,}}
+          source={{uri: 'https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp'}}
+        />
+        <TouchableOpacity style={[styles.buttonContainer, styles.signupButton, {marginTop:20}]} onPress={() => {}}>
+          <Text style={styles.signUpText}>Seleccionar imagen</Text>
+        </TouchableOpacity>
+        <Text style={{color:"black", textAlign:"center", margin:20}}>Imagen de Portada</Text>
+        
+
+        <Image
+          style={{ width: 350,
+            height: 200,}}
+          source={{uri: 'https://pixabay.com/get/gee9404b3b57815cee91e8eb0f8882073f3dc1765243a24ad3fbe1bdce93ca640c619d5239a72df70b7dc5090ca7241e7_1280.jpg'}}
+        />
+        <TouchableOpacity style={[styles.buttonContainer, styles.signupButton, {marginTop:20}]} onPress={() => {}}>
+          <Text style={styles.signUpText}>Seleccionar imagen</Text>
+        </TouchableOpacity>
       <Text style={{color:"black", textAlign:"center", margin:20}}>Nombre Completo</Text>
         <View style={styles.inputContainer}>
           <Image style={styles.inputIcon} source={{uri: 'https://png.icons8.com/male-user/ultraviolet/50/3498db'}}/>
           <TextInput style={styles.inputs}
               placeholder="Nombre Completo"
-          
+              defaultValue={"Juan Alberto"}
               underlineColorAndroid='transparent'
               onChangeText={(fullName) => this.setState({fullName})}/>
         </View>
@@ -50,7 +72,7 @@ export default class SignUp extends Component {
           <Image style={styles.inputIcon} source={{uri: 'https://png.icons8.com/message/ultraviolet/50/3498db'}}/>
           <TextInput style={styles.inputs}
               placeholder="Correo Electrónico"
-            
+              defaultValue={"JuanAlberto@correo.com"}
               underlineColorAndroid='transparent'
               onChangeText={(email) => this.setState({email})}/>
         </View>
@@ -61,7 +83,7 @@ export default class SignUp extends Component {
         multiline
         numberOfLines={4} style={styles.inputsBox}
               placeholder="¿Cómo describes tu perfil? (Eg: Cervecero Artesanal)"
-            
+              defaultValue={"Agricultor de cebada, maíz y trigo."}
               underlineColorAndroid='transparent'
               onChangeText={(email) => this.setState({email})}/>
         </View>
@@ -70,6 +92,7 @@ export default class SignUp extends Component {
           <Image style={styles.inputIcon} source={{uri: 'https://png.icons8.com/key-2/ultraviolet/50/3498db'}}/>
           <TextInput style={styles.inputs}
               placeholder="Contraseña"
+              defaultValue={"Juan Alberto"}
               secureTextEntry={true}
               underlineColorAndroid='transparent'
               onChangeText={(password) => this.setState({password})}/>
@@ -79,33 +102,20 @@ export default class SignUp extends Component {
           <Image style={styles.inputIcon} source={{uri: 'https://png.icons8.com/key-2/ultraviolet/50/3498db'}}/>
           <TextInput style={styles.inputs}
               placeholder="Confirmar contraseña"
+              defaultValue={"Juan Alberto"}
               secureTextEntry={true}
               underlineColorAndroid='transparent'
               onChangeText={(password) => this.setState({password})}/>
         </View >
        
-        <Text style={{color:"black", textAlign:"center", margin:20}}>Agrega identificador personal (Cédula de mayor, licencia de conducción, etc)</Text>
-        <TouchableOpacity style={[styles.buttonContainer, styles.signupButton, {marginTop:20}]} onPress={() => {}}>
-          <Text style={styles.signUpText}>Seleccionar imagen</Text>
-        </TouchableOpacity>
+       
 
-        <Image
-          style={{ width: 300,
-            height: 200,}}
-          source={{uri: 'https://media.istockphoto.com/id/1073597286/vector/driver-license-with-male-photo-identification-or-id-card-template-vector-illustration.jpg?s=170667a&w=is&k=20&c=ZGfrRxbVbSOjW5dV0XKrfYOYHIuOJwo4Du3R5NDxcFY='}}
-        />
-
-        <View style={{ justifyContent: 'center', alignItems: 'center', marginBottom:20, marginTop:20}}>
-
-
-            <Text >  <Checkbox value={this.state.isChecked} onValueChange={this.handleChange} />  He leido y acepto los <Text style={{color:"blue"}} onPress={()=> {Alert.alert("Terminos y condiciones")}}>términos y condiciones</Text> </Text>
-
-          </View>
+       
 
         
 
         <TouchableOpacity style={[styles.buttonContainer, styles.signupButton]} onPress={() => this.props.navigation.navigate('Login')}>
-          <Text style={styles.signUpText}>Registrarse</Text>
+          <Text style={styles.signUpText}>Actualizar Perfil</Text>
         </TouchableOpacity>
 
         

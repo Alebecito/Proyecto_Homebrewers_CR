@@ -5,13 +5,14 @@ import {
   Text,
   View,
   Image,
-  TouchableOpacity, FlatList, ScrollView, Alert, ImageBackground
+  TouchableOpacity, FlatList, ScrollView, Alert, ImageBackground, Dimensions, Modal, TextInput
 } from 'react-native';
 
 export default class ProfileView extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      modalVisible: false,
       data: [
         { id: 1, title: "Product 1", price: " 25.00 ", image: "https://pixabay.com/get/g79f3315bdebe3f77372a3254710845fd9d0bdfb013ce7df55bef32c2cf7ecf9eca470ff3c5543b5309a7a3a717823e79_1280.jpg", teGusta: true, caducidad: "12/2/2022" },
         { id: 2, title: "Product 2", price: " 10.13 ", image: "https://pixabay.com/get/g974dfe2cd5041ad8f4867bd9e6d665bebba2348eea669d065cebba9f3753fcafa0a181d8c706ba8ebc6258736317ea06_1280.jpg", teGusta: true, caducidad: "12/2/2022" },
@@ -30,6 +31,14 @@ export default class ProfileView extends Component {
         { id: 3, title: "Gran Torino", price: "Contesta Rápido", image: "https://pixabay.com/get/g514cbf9f284baa71694ca8e538a0d3de6bd80f63df9beae02af764aad4161912736f31a88e22b3ea994c414a655f6e4f_1280.jpg", teGusta: true, caducidad: "12/2/2022" },
       ]
     };
+  }
+
+  clickEventListener = () => {
+    this.setModalVisible(true);
+  }
+
+  setModalVisible(visible) {
+    this.setState({ modalVisible: visible });
   }
   render() {
     return (
@@ -57,13 +66,13 @@ export default class ProfileView extends Component {
             <TouchableOpacity style={styles.detailContent} onPress={() => {
               { this.props.navigation.navigate("OtherFollowers") }
             }}>
-              <Text style={styles.title}>Followers</Text>
+              <Text style={styles.title}>Seguidores</Text>
               <Text style={styles.count}>200</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.detailContent} onPress={() => {
               { this.props.navigation.navigate("OtherFollowing") }
             }}>
-              <Text style={styles.title}>Following</Text>
+              <Text style={styles.title}>Seguidos</Text>
               <Text style={styles.count}>200</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.detailContent} onPress={() => {
@@ -73,15 +82,49 @@ export default class ProfileView extends Component {
 
             </TouchableOpacity>
           </View>
+          
 
           <View style={styles.body}>
+            
             <View style={styles.bodyContent}>
+            <TouchableOpacity style={{
+            width:120,
+            marginTop: 10,
+            height: 20,
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
+            borderRadius: 30,
+            backgroundColor: "red",
+          }} onPress={() => { this.clickEventListener() }}>
+            <Text style={{
+              color: "#FFFFFF",
+              fontSize: 10,
+            }}>Reportar Usuario</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={{
+            width:120,
+            marginTop: 10,
+            height: 20,
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
+            borderRadius: 30,
+            backgroundColor: "red",
+          }} onPress={() => Alert.alert("Bloquear Usuario")}>
+            <Text style={{
+              color: "#FFFFFF",
+              fontSize: 10,
+            }}>Bloquear Usuario</Text>
+          </TouchableOpacity>
               <TouchableOpacity style={styles.buttonContainer} onPress={() => this.props.navigation.navigate("Chat")}>
                 <Text>Enviar Mensaje</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.buttonContainer} onPress={() => this.props.navigation.navigate("Chat")}>
+              <TouchableOpacity style={styles.buttonContainer} onPress={() => this.props.navigation.navigate("AddReview")}>
                 <Text>Añadir reseña</Text>
               </TouchableOpacity>
+              
+              
 
 
             </View>
@@ -196,7 +239,7 @@ export default class ProfileView extends Component {
               const item = post.item;
               if (item.teGusta === true) {
                 return (
-                  <TouchableOpacity style={styles2.card} onPress={() => this.props.navigation.navigate("ReviewContent")}>
+                  <TouchableOpacity style={styles2.card} onPress={() => this.props.navigation.navigate("MyReviewContent")}>
 
                     <View style={styles2.cardHeader}>
                       <View>
@@ -225,7 +268,7 @@ export default class ProfileView extends Component {
 
               } else {
                 return (
-                  <TouchableOpacity style={styles2.card} onPress={() => this.props.navigation.navigate("ReviewContent")}>
+                  <TouchableOpacity style={styles2.card} onPress={() => this.props.navigation.navigate("MyReviewContent")}>
 
                     <View style={styles2.cardHeader}>
                       <View>
@@ -254,10 +297,47 @@ export default class ProfileView extends Component {
               }
 
             }} />
+<Modal
+          animationType={'fade'}
+          transparent={true}
+          onRequestClose={() => this.setModalVisible(false)}
+          visible={this.state.modalVisible}>
 
+          <View style={stylesReport.popupOverlay}>
+            <View style={stylesReport.popup}>
+              <View style={stylesReport.popupContent}>
+                <ScrollView contentContainerStyle={stylesReport.modalInfo}>
+                  <Image style={stylesReport.image} source={{ uri: "https://img.icons8.com/stickers/512/system-report.png" }} />
+                  <Text style={stylesReport.name}>Realizar un Reporte</Text>
+                  <Text style={stylesReport.about}>Descripción del reporte</Text>
+                </ScrollView>
+                <TextInput editable maxLength={255} style={{
+                  margin: 15,
+
+                  height: 80,
+                  borderColor: '#000000',
+                  borderWidth: 1, textAlignVertical: 'top'
+                }} placeholder="Describe el motivo del reporte (255 caracteres)" multiline={true}
+                  numberOfLines={4} />
+              </View>
+              <View style={stylesReport.popupButtons}>
+                <TouchableOpacity onPress={() => { this.setModalVisible(false) }} style={[stylesReport.btnClose, { marginRight: 10 }]}>
+                  <Text style={{ textAlign: "center", fontSize: 20, color: "white" }}>Cancelar</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => { this.setModalVisible(false) }} style={[stylesReport.btnClose, { marginLeft: 10 }]}>
+                  <Text style={{ textAlign: "center", fontSize: 20, color: "white" }}>Enviar</Text>
+                </TouchableOpacity>
+              </View>
+
+            </View>
+          </View>
+        </Modal>
 
         </View>
+     
+
       </ScrollView>
+      
 
 
 
@@ -463,3 +543,133 @@ const styles2 = StyleSheet.create({
     alignItems: 'center',
   }
 });  
+
+const stylesReport = StyleSheet.create({
+  container: {
+    flex: 1,
+    marginTop: 20,
+    backgroundColor: "#eeeeee"
+  },
+  header: {
+    backgroundColor: "#00CED1",
+    height: 200
+  },
+  headerContent: {
+    padding: 30,
+    alignItems: 'center',
+    flex: 1,
+  },
+  detailContent: {
+    top: 80,
+    height: 500,
+    width: Dimensions.get('screen').width - 90,
+    marginHorizontal: 30,
+    flexDirection: 'row',
+    position: 'absolute',
+    backgroundColor: "#ffffff"
+  },
+  userList: {
+    flex: 1,
+  },
+  cardContent: {
+    marginLeft: 20,
+    marginTop: 10
+  },
+  image: {
+    width: 90,
+    height: 90,
+    borderRadius: 45,
+  },
+
+
+
+  card: {
+    shadowColor: '#00000021',
+    shadowOffset: {
+      width: 0,
+      height: 6,
+    },
+    shadowOpacity: 0.37,
+    shadowRadius: 7.49,
+    elevation: 12,
+
+    marginVertical: 10,
+    marginHorizontal: 20,
+    backgroundColor: "white",
+    flexBasis: '46%',
+    padding: 10,
+    flexDirection: 'row'
+  },
+
+  name: {
+    fontSize: 18,
+    flex: 1,
+    alignSelf: 'center',
+    color: "#008080",
+    fontWeight: 'bold'
+  },
+  position: {
+    fontSize: 14,
+    flex: 1,
+    alignSelf: 'center',
+    color: "#696969"
+  },
+  about: {
+    marginHorizontal: 10
+  },
+
+  followButton: {
+    marginTop: 10,
+    height: 35,
+    width: 100,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 30,
+    backgroundColor: "#00BFFF",
+  },
+  followButtonText: {
+    color: "#FFFFFF",
+    fontSize: 20,
+  },
+  /************ modals ************/
+  popup: {
+    backgroundColor: 'white',
+    marginTop: 80,
+    marginHorizontal: 20,
+    borderRadius: 7,
+  },
+  popupOverlay: {
+    backgroundColor: "#00000057",
+    flex: 1,
+    marginTop: 30
+  },
+  popupContent: {
+    //alignItems: 'center',
+    margin: 5,
+    height: 250,
+  },
+  popupHeader: {
+    marginBottom: 45
+  },
+  popupButtons: {
+    marginTop: 15,
+    flexDirection: 'row',
+    borderTopWidth: 1,
+    borderColor: "#eee",
+    justifyContent: 'center'
+  },
+  popupButton: {
+    flex: 1,
+    marginVertical: 16
+  },
+  btnClose: {
+    height: 35,
+    backgroundColor: '#20b2aa',
+    width: 100
+  },
+  modalInfo: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  }
+});

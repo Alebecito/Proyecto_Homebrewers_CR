@@ -57,13 +57,13 @@ export default class ProfileView extends Component {
             <TouchableOpacity style={styles.detailContent} onPress={() => {
               { this.props.navigation.navigate("Followers") }
             }}>
-              <Text style={styles.title}>Followers</Text>
+              <Text style={styles.title}>Seguidores</Text>
               <Text style={styles.count}>200</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.detailContent} onPress={() => {
               { this.props.navigation.navigate("Following") }
             }}>
-              <Text style={styles.title}>Following</Text>
+              <Text style={styles.title}>Seguidos</Text>
               <Text style={styles.count}>200</Text>
             </TouchableOpacity>
            
@@ -71,7 +71,7 @@ export default class ProfileView extends Component {
 
           <View style={styles.body}>
             <View style={styles.bodyContent}>
-              <TouchableOpacity style={styles.buttonContainer} onPress={()=>{}}>
+              <TouchableOpacity style={styles.buttonContainer} onPress={()=>this.props.navigation.navigate("editProfile")}>
                 <Text>Editar Perfil</Text>
               </TouchableOpacity>
 
@@ -99,7 +99,7 @@ export default class ProfileView extends Component {
               const item = post.item;
               if (item.teGusta === true) {
                 return (
-                  <TouchableOpacity style={styles2.card} onPress={() => this.props.navigation.navigate("PublicationContent")}>
+                  <TouchableOpacity style={styles2.card} onPress={() => this.props.navigation.navigate("MyPublicationContent")}>
 
                     <View style={styles2.cardHeader}>
                       <View>
@@ -134,7 +134,7 @@ export default class ProfileView extends Component {
 
               } else {
                 return (
-                  <TouchableOpacity style={styles2.card} onPress={() => this.props.navigation.navigate("PublicationContent")}>
+                  <TouchableOpacity style={styles2.card} onPress={() => this.props.navigation.navigate("MyPublicationContent")}>
 
                     <View style={styles2.cardHeader}>
                       <View>

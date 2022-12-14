@@ -40,14 +40,7 @@ export default class Blog extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <View style={{ justifyContent: 'center', alignItems: 'center', }}>
-         
-
-         <Text >  <Checkbox value={this.state.isChecked} onValueChange={this.handleChange}  />  Mostrar solo noticias que te gustan </Text>
         
-         
-         
-         </View>
  <View style={styles.formContent}>
           <View style={styles.inputContainer}>
             <Image style={[styles.icon, styles.inputIcon]} source={{ uri: 'https://png.icons8.com/search/androidL/100/000000' }} />
@@ -58,6 +51,14 @@ export default class Blog extends Component {
               onChangeText={(name_address) => this.setState({ name_address })} />
           </View>
         </View>
+        <View style={{ justifyContent: 'center', alignItems: 'center', marginTop:20, marginBottom:20 }}>
+         
+
+         <Text >  <Checkbox value={this.state.isChecked} onValueChange={this.handleChange}  />  Mostrar solo noticias que te gustan </Text>
+        
+         
+         
+         </View>
         <FlatList style={styles.list}
           data={this.state.data}
           keyExtractor= {(item) => {

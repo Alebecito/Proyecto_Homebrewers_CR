@@ -18,7 +18,7 @@ export default class ProductDetail extends Component {
   }
 
   clickEventListener() {
-    Alert.alert("Success", "Product has beed added to cart")
+    Alert.alert("Producto Eliminado")
   }
 
   render() {
@@ -42,7 +42,7 @@ export default class ProductDetail extends Component {
          
           <View style={styles.separator}></View>
           <View style={styles.addToCarContainer}>
-            <TouchableOpacity style={styles.shareButton} onPress={()=> this.clickEventListener()}>
+            <TouchableOpacity style={styles.shareButton} onPress={()=> this.props.navigation.navigate("EditItem")}>
               <Text style={styles.shareButtonText}>Editar producto</Text>  
             </TouchableOpacity>
             <TouchableOpacity style={styles.shareButton} onPress={()=> this.clickEventListener()}>
