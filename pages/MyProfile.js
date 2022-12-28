@@ -5,7 +5,7 @@ import {
   Text,
   View,
   Image,
-  TouchableOpacity, FlatList, ScrollView, Alert, ImageBackground
+  TouchableOpacity, FlatList, ScrollView, Alert, ImageBackground, AsyncStorage
 } from 'react-native';
 
 export default class ProfileView extends Component {
@@ -30,6 +30,19 @@ export default class ProfileView extends Component {
         { id: 3, title: "Gran Torino", price: "Contesta Rápido", image: "https://pixabay.com/get/g514cbf9f284baa71694ca8e538a0d3de6bd80f63df9beae02af764aad4161912736f31a88e22b3ea994c414a655f6e4f_1280.jpg", teGusta: true, caducidad: "12/2/2022" },
       ]
     };
+  }
+  loadId = async () => {
+    try {
+      const id = await AsyncStorage.getItem('UsuarioLogeado');
+      console.log(id);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async componentDidMount() {
+    await this.loadId();
+    console.log("hola");
   }
   render() {
     return (
