@@ -121,8 +121,8 @@ export default class Store extends Component {
     Alert.alert('Te gusta')
   }
 
-  goToPublication = () => {
-    this.props.navigation.navigate("PublicationContent");
+  goToPublication = (item) => {
+    this.props.navigation.navigate("PublicationContent",{id:item});
   }
 
   async realizarBusqueda(input) {
@@ -246,7 +246,7 @@ export default class Store extends Component {
             const item = post.item;
             if (item.teGusta === true) {
               return (
-                <TouchableOpacity style={styles.card} onPress={() => this.goToPublication()}>
+                <TouchableOpacity style={styles.card} onPress={() => this.goToPublication(item.id)}>
 
                   <View style={styles.cardHeader}>
                     <View>
@@ -282,7 +282,7 @@ export default class Store extends Component {
 
             } else {
               return (
-                <TouchableOpacity style={styles.card} onPress={() => this.goToPublication()}>
+                <TouchableOpacity style={styles.card} onPress={() => this.goToPublication(item.id)}>
 
                   <View style={styles.cardHeader}>
                     <View>

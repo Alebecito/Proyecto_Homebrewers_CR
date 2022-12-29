@@ -46,7 +46,7 @@ const Stack = createStackNavigator();
 
 export default function App() {
   LogBox.ignoreAllLogs();//Ignore all log notifications
-
+  console.disableYellowBox = true; 
   return (
     <NavigationContainer>
       

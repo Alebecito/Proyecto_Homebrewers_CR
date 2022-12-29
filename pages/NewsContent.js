@@ -5,24 +5,131 @@ import {
   View,
   Image,
   TouchableOpacity,
-  ScrollView, FlatList, TextInput, Dimensions, Modal
+  ScrollView, FlatList, TextInput, Dimensions, Modal, AsyncStorage,
 } from 'react-native';
 
 export default class PostView extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      idNew: '',
       modalVisible: false,
-      data: [
-        { id: 1, image: "https://bootdey.com/img/Content/avatar/avatar1.png", name: "Frank Odalthh", comment: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor." },
-        { id: 2, image: "https://bootdey.com/img/Content/avatar/avatar6.png", name: "John DoeLink", comment: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor." },
-        { id: 3, image: "https://bootdey.com/img/Content/avatar/avatar7.png", name: "March SoulLaComa", comment: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor." },
-        { id: 4, image: "https://bootdey.com/img/Content/avatar/avatar2.png", name: "Finn DoRemiFaso", comment: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor." },
-        { id: 5, image: "https://bootdey.com/img/Content/avatar/avatar3.png", name: "Maria More More", comment: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor." },
-        { id: 6, image: "https://bootdey.com/img/Content/avatar/avatar4.png", name: "Clark June Boom!", comment: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor." },
-        { id: 7, image: "https://bootdey.com/img/Content/avatar/avatar5.png", name: "The googler", comment: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor." },
-      ]
+      valorDeBusqueda: "",
+      UsuarioLogeado: "",
+      relacionAuxiliar: false,
+      isChecked: false,
+      dataCargada: [{}],
+      data: []
     }
+  }
+
+  loadId = async () => {
+    try {
+      const id = await AsyncStorage.getItem("UsuarioLogeado");
+      this.setState({ UsuarioLogeado: id });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  formatDate(date) {
+    var temporalDate = new Date(date);
+    var month = temporalDate.getMonth() + 1;
+    var day = temporalDate.getDate();
+    var year = temporalDate.getFullYear();
+
+    var formattedDate = day + "/" + month + "/" + year + " ";
+    return formattedDate;
+  }
+
+  checkIfLike = async (id) => {
+    await fetch(
+      `http://10.0.2.2:5000/relaciones/getSpecificLikeState/${this.state.UsuarioLogeado}/${id}`,
+      { method: "GET" }
+    )
+      .then((response) => response.json())
+      .then((responseJson) => {
+        this.setState({
+          relacionAuxiliar: responseJson[0].length > 0 ? true : false,
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  loadNews = async () => {
+    await fetch(`http://10.0.2.2:5000/publicacionesnoticias/getAllNews/`, {
+      method: "GET",
+    })
+      .then((response) => response.json())
+      .then(async (responseJson) => {
+        var temporalData = [];
+        var temporalResult = [];
+        for (var i = 0; i < responseJson.length; i++) {
+          await this.checkIfLike(responseJson[i].publicacionNoticiaGUID);
+
+          temporalData.push({
+            id: responseJson[i].publicacionNoticiaGUID,
+            title: responseJson[i].titulo,
+            time: this.formatDate(responseJson[i].fecha),
+            image: responseJson[i].fotoPublicacionNoticia,
+            description: responseJson[i].cuerpo,
+            teGusta: this.state.relacionAuxiliar,
+            likes: responseJson[i].cantidadDeLikes,
+            comentarios: responseJson[i].cantidadDeComentarios,
+          });
+        }
+
+        for (var i = 0; i < temporalData.length; i++) {
+          if (temporalData[i].id === this.state.idNew) {
+            temporalResult.push(temporalData[i]);
+            break;
+          }
+        }
+
+
+
+
+        this.setState({ dataCargada: temporalResult });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  loadCommentaries = async () => {
+    await fetch(`http://10.0.2.2:5000/comentarios/getAllCommentsFromPublicationNew/${this.state.idNew}`, 
+    {method: "GET",}).then((response) => response.json()).then((responseJson) => {
+      
+      var temporalData = [];
+      for (var i = 0; i < responseJson[0].length; i++) {
+        
+
+        temporalData.push({
+          id: responseJson[0][i].comentariosGUID,
+          image: responseJson[0][i].fotoDePerfil,
+          name: responseJson[0][i].nombre,
+          comment: responseJson[0][i].contenido,
+          time: this.formatDate(responseJson[0][i].fecha),
+
+        });
+      }
+      this.setState({ data: temporalData });
+    }).catch((error) => {
+      console.log(error);
+    });
+      
+  }
+
+
+
+  async componentDidMount() {
+    const id = this.props.route.params.id;
+    await this.setState({ idNew: id });
+    await this.loadId();
+    await this.loadNews();
+    await this.loadCommentaries();
   }
 
   clickEventListener = () => {
@@ -36,11 +143,26 @@ export default class PostView extends Component {
     this.props.navigation.navigate("OtherProfile");
   }
 
+  renderIfyoulike() {
+    if (this.state.dataCargada[0].teGusta) {
+      return(<TouchableOpacity style={styles.shareButton}>
+        <Text style={styles.shareButtonText}>Me gusta esta noticia</Text>
+      </TouchableOpacity>)
+      
+    }else{
+      return(<TouchableOpacity style={styles.shareButton}>
+        <Text style={styles.shareButtonText}>Dar me gusta a esta noticia</Text>
+      </TouchableOpacity>)
+      
+    }
+  }
+
+
   footerComponent() {
-    return(
-    <View style={styles.container}>
+    return (
+      <View style={styles.container}>
         <View style={styles.postContent}>
-        <TextInput editable maxLength={255} style={{
+          <TextInput editable maxLength={255} style={{
             margin: 15,
             height: 120,
             borderColor: '#000000',
@@ -48,56 +170,54 @@ export default class PostView extends Component {
           }} placeholder="Agrega un comentario! (255 caracteres)" multiline={true}
             numberOfLines={4} />
 
-<TouchableOpacity style={styles.shareButton}>
+          <TouchableOpacity style={styles.shareButton}>
             <Text style={styles.shareButtonText}>Comentar</Text>
           </TouchableOpacity>
         </View>
 
 
-    </View>
+      </View>
     )
   }
+
 
   headerComponent(navigationC) {
     return (
       <View style={styles.container}>
 
         <View style={styles.header}>
-          <Image style={styles.productImg} source={{ uri: "https://pixabay.com/get/g74019002753ebb836f43956c1a5742d1a3a091b6652d1c14ec6dbbae1db2ab42a1d4e87f3425a64bb777c6b6af115366_1280.jpg" }} />
+          <Image style={styles.productImg} source={{ uri: this.state.dataCargada[0].image }} />
         </View>
 
         <View style={styles.postContent}>
           <Text style={styles.postTitle}>
-            Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
+            {this.state.dataCargada[0].title}
           </Text>
 
           <Text style={styles.postDescription}>
-            Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.
-            Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.
-            Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim.
+            {this.state.dataCargada[0].description}
           </Text>
 
-        
+
           <Text style={styles.date}>
-            Fecha: 2017-11-27
+            Fecha: {this.state.dataCargada[0].time}
           </Text>
 
           <View style={styles.profile} >
-            
+
 
             <Text style={styles.name}>
-            20 Me gusta 
+              {this.state.dataCargada[0].likes} Me gusta
             </Text>
-            
-            
-              
-     
+
+
+
+          
           </View>
-          <TouchableOpacity style={styles.shareButton}>
-            <Text style={styles.shareButtonText}>Me gusta esta noticia</Text>
-          </TouchableOpacity>
+          {this.renderIfyoulike()}
+          
           <TouchableOpacity style={{
-            width:120,
+            width: 120,
             marginTop: 10,
             height: 20,
             flexDirection: 'row',
@@ -111,8 +231,8 @@ export default class PostView extends Component {
               fontSize: 10,
             }}>Reportar Noticia</Text>
           </TouchableOpacity>
-          
-          
+
+
         </View>
         <Text style={{ textAlign: "center" }}>Comentarios</Text>
       </View>
@@ -123,39 +243,39 @@ export default class PostView extends Component {
     return (
 
       <View >
-      <FlatList
-        style={styles2.root}
-        data={this.state.data}
-        ListHeaderComponent={this.headerComponent(this.props.navigation)}
-        ListFooterComponent={this.footerComponent()}
-        extraData={this.state}
-        ItemSeparatorComponent={() => {
-          return (
-            <View style={styles2.separator} />
-          )
-        }}
-        keyExtractor={(item) => {
-          return item.id;
-        }}
-        renderItem={(item) => {
-          const Notification = item.item;
-          return (
-            <View style={styles2.container}>
-              <TouchableOpacity onPress={() => this.props.navigation.navigate("OtherProfile")}>
-                <Image style={styles2.image} source={{ uri: Notification.image }} />
-              </TouchableOpacity>
-              <View style={styles2.content}>
-                <View style={styles2.contentHeader}>
-                  <Text style={styles2.name}>{Notification.name}</Text>
-                  <Text style={styles2.time}>
-                    9:58 am
-                  </Text>
+        <FlatList
+          style={styles2.root}
+          data={this.state.data}
+          ListHeaderComponent={this.headerComponent(this.props.navigation)}
+          ListFooterComponent={this.footerComponent()}
+          extraData={this.state}
+          ItemSeparatorComponent={() => {
+            return (
+              <View style={styles2.separator} />
+            )
+          }}
+          keyExtractor={(item) => {
+            return item.id;
+          }}
+          renderItem={(item) => {
+            const Notification = item.item;
+            return (
+              <View style={styles2.container}>
+                <TouchableOpacity onPress={() => this.props.navigation.navigate("OtherProfile")}>
+                  <Image style={styles2.image} source={{ uri: Notification.image }} />
+                </TouchableOpacity>
+                <View style={styles2.content}>
+                  <View style={styles2.contentHeader}>
+                    <Text style={styles2.name}>{Notification.name}</Text>
+                    <Text style={styles2.time}>
+                     {Notification.time}
+                    </Text>
+                  </View>
+                  <Text rkType='primary3 mediumLine'>{Notification.comment}</Text>
                 </View>
-                <Text rkType='primary3 mediumLine'>{Notification.comment}</Text>
               </View>
-            </View>
-          );
-        }} />
+            );
+          }} />
         <Modal
           animationType={'fade'}
           transparent={true}
@@ -191,7 +311,7 @@ export default class PostView extends Component {
             </View>
           </View>
         </Modal>
-        </View>
+      </View>
 
     );
   }
@@ -206,7 +326,7 @@ const styles = StyleSheet.create({
     padding: 30,
     alignItems: 'center',
     backgroundColor: "#FFFFFF",
-   
+
   },
   headerTitle: {
     fontSize: 30,
@@ -248,7 +368,7 @@ const styles = StyleSheet.create({
   profile: {
     flexDirection: 'row',
     marginTop: 20,
-    textAlign:"center"
+    textAlign: "center"
   },
   name: {
     fontSize: 22,
@@ -256,7 +376,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     alignSelf: 'center',
     marginLeft: 10,
-    
+
   },
   shareButton: {
     marginTop: 10,
@@ -270,7 +390,7 @@ const styles = StyleSheet.create({
   productImg: {
     width: 350,
     height: 200,
-    
+
   },
   shareButtonText: {
     color: "#FFFFFF",
@@ -318,7 +438,7 @@ const styles2 = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
   },
-}); 
+});
 
 const stylesReport = StyleSheet.create({
   container: {

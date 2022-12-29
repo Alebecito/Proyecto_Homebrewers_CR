@@ -5,25 +5,147 @@ import {
   View,
   Image,
   TouchableOpacity,
-  ScrollView, FlatList, TextInput, Dimensions, Modal,
+  ScrollView, FlatList, TextInput, Dimensions, Modal, AsyncStorage
 } from 'react-native';
 
 export default class PostView extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      idPublication:"",
+      UsuarioLogeado: "",
       modalVisible: false,
-
-      data: [
-        { id: 1, image: "https://bootdey.com/img/Content/avatar/avatar1.png", name: "Frank Odalthh", comment: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor." },
-        { id: 2, image: "https://bootdey.com/img/Content/avatar/avatar6.png", name: "John DoeLink", comment: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor." },
-        { id: 3, image: "https://bootdey.com/img/Content/avatar/avatar7.png", name: "March SoulLaComa", comment: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor." },
-        { id: 4, image: "https://bootdey.com/img/Content/avatar/avatar2.png", name: "Finn DoRemiFaso", comment: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor." },
-        { id: 5, image: "https://bootdey.com/img/Content/avatar/avatar3.png", name: "Maria More More", comment: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor." },
-        { id: 6, image: "https://bootdey.com/img/Content/avatar/avatar4.png", name: "Clark June Boom!", comment: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor." },
-        { id: 7, image: "https://bootdey.com/img/Content/avatar/avatar5.png", name: "The googler", comment: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor." },
-      ]
+      relacionAuxiliar: false,
+      dataCargada: [{}],
+      data: []
     }
+  }
+
+
+  checkIfLike = async (id) => {
+    await fetch(
+      `http://10.0.2.2:5000/relaciones/getSpecificLikeState/${this.state.UsuarioLogeado}/${id}`,
+      { method: "GET" }
+    )
+      .then((response) => response.json())
+      .then((responseJson) => {
+        this.setState({
+          relacionAuxiliar: responseJson[0].length > 0 ? true : false,
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  formatDate(date) {
+    var temporalDate = new Date(date);
+    var month = temporalDate.getMonth() + 1;
+    var day = temporalDate.getDate();
+    var year = temporalDate.getFullYear();
+
+    var formattedDate = day + "/" + month + "/" + year + " ";
+    return formattedDate;
+  }
+
+  loadPublications = async () => {
+    await fetch(`http://10.0.2.2:5000/publicacionesnoticias/getAllActivePublications/${this.state.UsuarioLogeado}`, {
+      method: "GET",
+    })
+      .then((response) => response.json())
+      .then(async (responseJson) => {
+      
+        var temporalData = [];
+        var temporalResult = [];
+        for (var i = 0; i < responseJson.length; i++) {
+          await this.checkIfLike(responseJson[i].publicacionNoticiaGUID);
+          temporalData.push({
+            id: responseJson[i].publicacionNoticiaGUID,
+            title: responseJson[i].titulo,
+            time: this.formatDate(responseJson[i].fecha),
+            image: responseJson[i].fotoPublicacionNoticia,
+            description: responseJson[i].cuerpo,
+            teGusta: this.state.relacionAuxiliar,
+            likes: responseJson[i].cantidadDeLikes,
+            comentarios: responseJson[i].cantidadDeComentarios,
+            price: responseJson[i].precioExpuesto,
+            fotoPerfil: responseJson[i].fotoDePerfil,	
+            nombreUsuario: responseJson[i].nombreUsuario,
+          });
+        }
+
+        for (var i = 0; i < temporalData.length; i++) {
+          if (temporalData[i].id === this.state.idPublication) {
+            temporalResult.push(temporalData[i]);
+            break;
+          }
+        }
+
+
+
+
+        this.setState({ dataCargada: temporalResult });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+
+  loadCommentaries = async () => {
+    await fetch(`http://10.0.2.2:5000/comentarios/getAllCommentsFromPublicationNew/${this.state.idPublication}`, 
+    {method: "GET",}).then((response) => response.json()).then((responseJson) => {
+      
+      var temporalData = [];
+      for (var i = 0; i < responseJson[0].length; i++) {
+        
+
+        temporalData.push({
+          id: responseJson[0][i].comentariosGUID,
+          image: responseJson[0][i].fotoDePerfil,
+          name: responseJson[0][i].nombre,
+          comment: responseJson[0][i].contenido,
+          time: this.formatDate(responseJson[0][i].fecha),
+        });
+      }
+      this.setState({ data: temporalData });
+    }).catch((error) => {
+      console.log(error);
+    });
+      
+  }
+
+  loadId = async () => {
+    try {
+      const id = await AsyncStorage.getItem("UsuarioLogeado");
+      this.setState({ UsuarioLogeado: id });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  renderIfyoulike() {
+    if (this.state.dataCargada[0].teGusta) {
+      return(<TouchableOpacity style={styles.shareButton}>
+        <Text style={styles.shareButtonText}>Me gusta esta noticia</Text>
+      </TouchableOpacity>)
+      
+    }else{
+      return(<TouchableOpacity style={styles.shareButton}>
+        <Text style={styles.shareButtonText}>Dar me gusta a esta noticia</Text>
+      </TouchableOpacity>)
+      
+    }
+  }
+
+  async componentDidMount(){
+    const id = this.props.route.params.id;
+    await this.setState({ idPublication: id });
+    await this.loadId();
+    await this.loadPublications();
+    await this.loadCommentaries();
+   console.log(this.state.dataCargada);
+   
   }
 
 
@@ -66,43 +188,39 @@ export default class PostView extends Component {
       <View style={styles.container}>
 
         <View style={styles.header}>
-          <Image style={styles.productImg} source={{ uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQnk8TdboBlcYde9vFO1xpBR2_RxJ578Zhey4LcEsxw5UgkpqFEABDChloQ1tiItk-cTgI&usqp=CAU" }} />
+          <Image style={styles.productImg} source={{ uri: this.state.dataCargada[0].image }} />
         </View>
 
         <View style={styles.postContent}>
           <Text style={styles.postTitle}>
-            Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
+            {this.state.dataCargada[0].title}
           </Text>
 
           <Text style={styles.postDescription}>
-            Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.
-            Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.
-            Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim.
+          {this.state.dataCargada[0].description}
           </Text>
 
           <Text style={styles.tags}>
-            Precio expuesto: ₡ 200
+            Precio expuesto: ₡ {this.state.dataCargada[0].price}
           </Text>
 
           <Text style={[styles.date,{color:"#454545"}]}>
-            Fecha de caducidad de la publicación: 2017-11-27
+            Fecha de caducidad de la publicación: {this.state.dataCargada[0].time}
           </Text>
 
           <TouchableOpacity style={styles.profile} onPress={() => navigationC.navigate("OtherProfile")}>
             <Image style={styles.avatar}
-              source={{ uri: 'https://bootdey.com/img/Content/avatar/avatar1.png' }} />
+              source={{ uri: this.state.dataCargada[0].fotoPerfil }} />
 
             <Text style={styles.name}>
-              Johan Doe {"\n"}20 Me gusta
+              {this.state.dataCargada[0].nombreUsuario} {"\n"}{this.state.dataCargada[0].likes} Me gusta
             </Text>
 
 
 
 
           </TouchableOpacity>
-          <TouchableOpacity style={styles.shareButton}>
-            <Text style={styles.shareButtonText}>Me gusta esta publicación</Text>
-          </TouchableOpacity>
+          {this.renderIfyoulike()}
           <TouchableOpacity style={{
             width:120,
             marginTop: 10,
@@ -191,7 +309,7 @@ export default class PostView extends Component {
                   <View style={styles2.contentHeader}>
                     <Text style={styles2.name}>{Notification.name}</Text>
                     <Text style={styles2.time}>
-                      9:58 am
+                      {Notification.time}
                     </Text>
                   </View>
                   <Text rkType='primary3 mediumLine'>{Notification.comment}</Text>

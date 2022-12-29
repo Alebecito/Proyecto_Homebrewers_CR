@@ -50,8 +50,8 @@ export default class Blog extends Component {
     }
   };
 
-  goToNewsContent() {
-    this.props.navigation.navigate("NewsContent");
+  goToNewsContent(item) {
+    this.props.navigation.navigate("NewsContent", {id: item});
   }
 
   checkIfLike = async (id) => {
@@ -217,7 +217,7 @@ export default class Blog extends Component {
               return (
                 <TouchableOpacity
                   style={styles.card}
-                  onPress={() => this.goToNewsContent()}
+                  onPress={() => this.goToNewsContent(item.id)}
                 >
                   <Image
                     style={styles.cardImage}
@@ -266,7 +266,7 @@ export default class Blog extends Component {
               return (
                 <TouchableOpacity
                   style={styles.card}
-                  onPress={() => this.goToNewsContent()}
+                  onPress={() => this.goToNewsContent(item.id)}
                 >
                   <Image
                     style={styles.cardImage}
