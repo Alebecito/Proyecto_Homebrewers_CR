@@ -1,6 +1,7 @@
 import 'react-native-gesture-handler';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, View, Text } from 'react-native';
+import { LogBox } from 'react-native';
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -44,6 +45,8 @@ const PlaceholderImage = require('./assets/images/background.jpg');
 const Stack = createStackNavigator();
 
 export default function App() {
+  LogBox.ignoreAllLogs();//Ignore all log notifications
+
   return (
     <NavigationContainer>
       
