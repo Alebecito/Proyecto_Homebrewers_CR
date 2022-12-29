@@ -240,19 +240,7 @@ export default class Blog extends Component {
                   </View>
                   <View style={styles.cardFooter}>
                     <View style={styles.socialBarContainer}>
-                      <View style={styles.socialBarSection}>
-                        <View style={styles.socialBarButton}>
-                          <Image
-                            style={styles.icon}
-                            source={{
-                              uri: "https://img.icons8.com/ios-glyphs/75/2ecc71/comments.png",
-                            }}
-                          />
-                          <Text style={styles.socialBarLabel}>
-                            {item.likes}
-                          </Text>
-                        </View>
-                      </View>
+                      
                       <View style={styles.socialBarSection}>
                         <TouchableOpacity style={styles.socialBarButton}>
                           <Image
@@ -263,6 +251,12 @@ export default class Blog extends Component {
                           />
                           <Text style={styles.socialBarLabel}>Te Gusta</Text>
                         </TouchableOpacity>
+                      </View>
+                      <View style={styles.socialBarSection}>
+                        <View style={styles.socialBarButton}>
+                          <Image style={styles.icon} source={{ uri: 'https://img.icons8.com/ios-glyphs/75/2ecc71/comments.png' }} />
+                          <Text style={styles.socialBarLabel}>{item.likes}</Text>
+                        </View>
                       </View>
                     </View>
                   </View>
@@ -295,19 +289,8 @@ export default class Blog extends Component {
                   </View>
                   <View style={styles.cardFooter}>
                     <View style={styles.socialBarContainer}>
-                      <View style={styles.socialBarSection}>
-                        <View style={styles.socialBarButton}>
-                          <Image
-                            style={styles.icon}
-                            source={{
-                              uri: "https://img.icons8.com/ios-glyphs/75/2ecc71/comments.png",
-                            }}
-                          />
-                          <Text style={styles.socialBarLabel}>
-                            {item.comentarios}
-                          </Text>
-                        </View>
-                      </View>
+
+                      
                       <View style={styles.socialBarSection}>
                         <TouchableOpacity style={styles.socialBarButton}>
                           <Image
@@ -320,6 +303,12 @@ export default class Blog extends Component {
                             {item.likes}
                           </Text>
                         </TouchableOpacity>
+                      </View>
+                      <View style={styles.socialBarSection}>
+                        <View style={styles.socialBarButton}>
+                          <Image style={styles.icon} source={{ uri: 'https://img.icons8.com/ios-glyphs/75/2ecc71/comments.png' }} />
+                          <Text style={styles.socialBarLabel}>{item.comentarios}</Text>
+                        </View>
                       </View>
                     </View>
                   </View>

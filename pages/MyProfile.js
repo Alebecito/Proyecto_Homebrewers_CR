@@ -34,7 +34,7 @@ export default class ProfileView extends Component {
   loadId = async () => {
     try {
       const id = await AsyncStorage.getItem('UsuarioLogeado');
-      console.log(id);
+    
     } catch (error) {
       console.log(error);
     }
@@ -42,7 +42,7 @@ export default class ProfileView extends Component {
 
   async componentDidMount() {
     await this.loadId();
-    console.log("hola");
+  
   }
   render() {
     return (
