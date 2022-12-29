@@ -75,7 +75,11 @@ export default class ProductDetail extends Component {
           <View style={styles.addToCarContainer}>
             <TouchableOpacity
               style={styles.shareButton}
-              onPress={() => this.props.navigation.navigate("EditItem", {data: this.state.data})}
+              onPress={() =>
+                this.props.navigation.navigate("EditItem", {
+                  data: this.state.data,
+                })
+              }
             >
               <Text style={styles.shareButtonText}>Editar producto</Text>
             </TouchableOpacity>

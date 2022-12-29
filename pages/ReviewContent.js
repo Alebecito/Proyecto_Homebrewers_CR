@@ -11,7 +11,6 @@ import {
   TextInput,
 } from "react-native";
 
-import Stars from "react-native-stars";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
 export default class PostView extends Component {
@@ -21,7 +20,6 @@ export default class PostView extends Component {
     this.state = {
       modalVisible: false,
       data: [],
-      userData: [],
     };
   }
 
@@ -43,7 +41,6 @@ export default class PostView extends Component {
 
   async componentDidMount() {
     this.setState({ data: this.props.route.params.data });
-    this.setState({ userData: this.props.route.params.userData });
   }
 
   render() {
@@ -56,21 +53,17 @@ export default class PostView extends Component {
             <Text style={styles.postDescription}>{this.state.data.cuerpo}</Text>
 
             <View style={styles.starContainer}>
-              <View style={{ alignItems: "center" }}>
-                <Stars
-                  disabled={true}
-                  default={this.state.data.puntuacion}
-                  count={5}
-                  starSize={50}
-                  fullStar={<Icon name={"star"} style={[styles.myStarStyle]} />}
-                  emptyStar={
-                    <Icon
-                      name={"star-outline"}
-                      style={[styles.myStarStyle, styles.myEmptyStarStyle]}
-                    />
-                  }
-                />
-              </View>
+              {[...new Array(5)].map((_, i) => {
+                return i < this.state.data.puntuacion ? (
+                  <Icon name={"star"} size={30} style={[styles.myStarStyle]} />
+                ) : (
+                  <Icon
+                    name={"star-outline"}
+                    size={30}
+                    style={[styles.myStarStyle, styles.myEmptyStarStyle]}
+                  />
+                );
+              })}
             </View>
             <Text style={styles.date}>
               Fecha: {this.parseDate(this.state.data.fecha)}
@@ -83,11 +76,11 @@ export default class PostView extends Component {
               <Image
                 style={styles.avatar}
                 source={{
-                  uri: `${this.state.userData.fotoDePerfil}`,
+                  uri: `${this.state.data.fotoDePerfil}`,
                 }}
               />
 
-              <Text style={styles.name}>{this.state.userData.nombre}</Text>
+              <Text style={styles.name}>{this.state.data.nombre}</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={{

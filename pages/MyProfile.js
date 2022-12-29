@@ -171,7 +171,10 @@ export default class ProfileView extends Component {
                 <TouchableOpacity
                   style={styles2.card}
                   onPress={() =>
-                    this.props.navigation.navigate("MyPublicationContent", {postData: item, userData: this.state.userData})
+                    this.props.navigation.navigate("MyPublicationContent", {
+                      postData: item,
+                      userData: this.state.userData,
+                    })
                   }
                 >
                   <View style={styles2.cardHeader}>
@@ -257,7 +260,10 @@ export default class ProfileView extends Component {
                 <TouchableOpacity
                   style={styles2.card}
                   onPress={() =>
-                    this.props.navigation.navigate("ReviewContent", {data: item, userData: this.state.userData})
+                    this.props.navigation.navigate("ReviewContent", {
+                      data: item,
+                      userData: this.state.userData,
+                    })
                   }
                 >
                   <View style={styles2.cardHeader}>

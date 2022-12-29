@@ -132,7 +132,9 @@ export default class PostView extends Component {
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.shareButton}
-            onPress={() => navigationC.navigate("EditPublication")}
+            onPress={() =>
+              navigationC.navigate("EditPublication", { post: this.state.post })
+            }
           >
             <Text style={styles.shareButtonText}>Editar Publicación</Text>
           </TouchableOpacity>
