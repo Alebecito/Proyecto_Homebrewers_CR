@@ -160,7 +160,11 @@ export default class Album extends Component {
             return (
               <TouchableOpacity
                 style={styles.card}
-                onPress={() => this.props.navigation.navigate("InventoryItem", {id: item.productoGUID})}
+                onPress={() =>
+                  this.props.navigation.navigate("InventoryItem", {
+                    id: item.productoGUID,
+                  })
+                }
               >
                 <View style={styles.imageContainer}>
                   <Image

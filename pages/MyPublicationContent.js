@@ -1,27 +1,60 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 import {
   StyleSheet,
   Text,
   View,
   Image,
   TouchableOpacity,
-  ScrollView, FlatList, TextInput
-} from 'react-native';
+  ScrollView,
+  FlatList,
+  TextInput,
+} from "react-native";
 
 export default class PostView extends Component {
   constructor(props) {
     super(props);
-    this.state2 = {
-      data: [
-        { id: 1, image: "https://bootdey.com/img/Content/avatar/avatar1.png", name: "Frank Odalthh", comment: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor." },
-        { id: 2, image: "https://bootdey.com/img/Content/avatar/avatar6.png", name: "John DoeLink", comment: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor." },
-        { id: 3, image: "https://bootdey.com/img/Content/avatar/avatar7.png", name: "March SoulLaComa", comment: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor." },
-        { id: 4, image: "https://bootdey.com/img/Content/avatar/avatar2.png", name: "Finn DoRemiFaso", comment: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor." },
-        { id: 5, image: "https://bootdey.com/img/Content/avatar/avatar3.png", name: "Maria More More", comment: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor." },
-        { id: 6, image: "https://bootdey.com/img/Content/avatar/avatar4.png", name: "Clark June Boom!", comment: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor." },
-        { id: 7, image: "https://bootdey.com/img/Content/avatar/avatar5.png", name: "The googler", comment: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor." },
-      ]
-    }
+    this.state = {
+      post: [],
+      userData: [],
+      comentarios: [],
+    };
+  }
+
+  parseDate = (date) => {
+    const d = new Date(date);
+    const day = d.getDate();
+    const month = d.getMonth() + 1;
+    const year = d.getFullYear();
+    return `${day}/${month}/${year}`;
+  };
+
+  async getComments() {
+    await fetch(
+      `http://10.0.2.2:5000/comentarios/getAllCommentsFromPublicationNew/${this.state.post.publicacionNoticiaGUID}`
+    )
+      .then((response) => response.json())
+      .then((responseJson) => {
+        const result = responseJson[0].map((item, index) => ({
+          ...item,
+          id: index + 1,
+        }));
+        this.setState({ comentarios: result });
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }
+
+  setStateAsync(state) {
+    return new Promise((resolve) => {
+      this.setState(state, resolve);
+    });
+  }
+
+  async componentDidMount() {
+    await this.setStateAsync({ post: this.props.route.params.postData });
+    await this.setStateAsync({ userData: this.props.route.params.userData });
+    await this.getComments();
   }
 
   navigateToOtherProfile() {
@@ -29,121 +62,131 @@ export default class PostView extends Component {
   }
 
   footerComponent() {
-    return(
-    <View style={styles.container}>
+    return (
+      <View style={styles.container}>
         <View style={styles.postContent}>
-        <TextInput editable maxLength={255} style={{
-            margin: 15,
-            height: 120,
-            borderColor: '#000000',
-            borderWidth: 1, textAlignVertical: 'top'
-          }} placeholder="Agrega un comentario! (255 caracteres)" multiline={true}
-            numberOfLines={4} />
+          <TextInput
+            editable
+            maxLength={255}
+            style={{
+              margin: 15,
+              height: 120,
+              borderColor: "#000000",
+              borderWidth: 1,
+              textAlignVertical: "top",
+            }}
+            placeholder="Agrega un comentario! (255 caracteres)"
+            multiline={true}
+            numberOfLines={4}
+          />
 
-<TouchableOpacity style={styles.shareButton}>
+          <TouchableOpacity style={styles.shareButton}>
             <Text style={styles.shareButtonText}>Comentar</Text>
           </TouchableOpacity>
         </View>
-
-
-    </View>
-    )
+      </View>
+    );
   }
 
   headerComponent(navigationC) {
     return (
       <View style={styles.container}>
-
         <View style={styles.header}>
-          <Image style={styles.productImg} source={{ uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQnk8TdboBlcYde9vFO1xpBR2_RxJ578Zhey4LcEsxw5UgkpqFEABDChloQ1tiItk-cTgI&usqp=CAU" }} />
+          <Image
+            style={styles.productImg}
+            source={{
+              uri: `${this.state.post.fotoPublicacionNoticia}`,
+            }}
+          />
         </View>
 
         <View style={styles.postContent}>
-          <Text style={styles.postTitle}>
-            Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
-          </Text>
+          <Text style={styles.postTitle}>{this.state.post.titulo}</Text>
 
-          <Text style={styles.postDescription}>
-            Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.
-            Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.
-            Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim.
-          </Text>
+          <Text style={styles.postDescription}>{this.state.post.cuerpo}</Text>
 
           <Text style={styles.tags}>
-            Precio expuesto: ₡ 200
+            Precio expuesto: ₡ {this.state.post.precioExpuesto}
           </Text>
 
           <Text style={styles.date}>
-            Fecha de caducidad de la publicación: 2017-11-27
+            Fecha de caducidad de la publicación:{" "}
+            {this.parseDate(this.state.post.fecha)}
           </Text>
 
-          <TouchableOpacity style={styles.profile} onPress={() => navigationC.navigate("MyProfile")}>
-            <Image style={styles.avatar}
-              source={{ uri: 'https://bootdey.com/img/Content/avatar/avatar1.png' }} />
+          <TouchableOpacity
+            style={styles.profile}
+            onPress={() => navigationC.navigate("MyProfile")}
+          >
+            <Image
+              style={styles.avatar}
+              source={{
+                uri: `${this.state.userData.fotoDePerfil}`,
+              }}
+            />
 
             <Text style={styles.name}>
-            Johan Doe {"\n"}20 Me gusta 
+              {this.state.userData.nombre} {"\n"}
+              {this.state.post.cantidadDeLikes} Me gusta
             </Text>
-            
-            
-              
-     
           </TouchableOpacity>
-          <TouchableOpacity style={styles.shareButton} onPress={() => navigationC.navigate("EditPublication")}>
+          <TouchableOpacity
+            style={styles.shareButton}
+            onPress={() => navigationC.navigate("EditPublication")}
+          >
             <Text style={styles.shareButtonText}>Editar Publicación</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.shareButton}>
             <Text style={styles.shareButtonText}>Eliminar Publicación</Text>
           </TouchableOpacity>
-                
-         
-          
-          
         </View>
         <Text style={{ textAlign: "center" }}>Comentarios</Text>
       </View>
-    )
+    );
   }
 
   render() {
     return (
-
-      <View >
-      <FlatList
-        style={styles2.root}
-        data={this.state2.data}
-        ListHeaderComponent={this.headerComponent(this.props.navigation)}
-       
-        extraData={this.state2}
-        ItemSeparatorComponent={() => {
-          return (
-            <View style={styles2.separator} />
-          )
-        }}
-        keyExtractor={(item) => {
-          return item.id;
-        }}
-        renderItem={(item) => {
-          const Notification = item.item;
-          return (
-            <View style={styles2.container}>
-              <TouchableOpacity onPress={() => this.props.navigation.navigate("OtherProfile")}>
-                <Image style={styles2.image} source={{ uri: Notification.image }} />
-              </TouchableOpacity>
-              <View style={styles2.content}>
-                <View style={styles2.contentHeader}>
-                  <Text style={styles2.name}>{Notification.name}</Text>
-                  <Text style={styles2.time}>
-                    9:58 am
+      <View>
+        <FlatList
+          style={styles2.root}
+          data={this.state.comentarios}
+          ListHeaderComponent={this.headerComponent(this.props.navigation)}
+          extraData={this.state}
+          ItemSeparatorComponent={() => {
+            return <View style={styles2.separator} />;
+          }}
+          keyExtractor={(item) => {
+            return item.id;
+          }}
+          renderItem={(item) => {
+            const Notification = item.item;
+            return (
+              <View style={styles2.container}>
+                <TouchableOpacity
+                  onPress={() => this.props.navigation.navigate("OtherProfile")}
+                >
+                  <Image
+                    style={styles2.image}
+                    source={{ uri: Notification.fotoDePerfil }}
+                  />
+                </TouchableOpacity>
+                <View style={styles2.content}>
+                  <View style={styles2.contentHeader}>
+                    <Text style={styles2.name}>{Notification.nombre}</Text>
+                    <Text style={styles2.time}>
+                      {this.parseDate(Notification.fecha)}
+                    </Text>
+                  </View>
+                  <Text rkType="primary3 mediumLine">
+                    {Notification.contenido}
                   </Text>
                 </View>
-                <Text rkType='primary3 mediumLine'>{Notification.comment}</Text>
               </View>
-            </View>
-          );
-        }} />
-        </View>
-
+            );
+          }}
+        />
+      </View>
     );
   }
 }
@@ -151,13 +194,11 @@ export default class PostView extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-
   },
   header: {
     padding: 30,
-    alignItems: 'center',
+    alignItems: "center",
     backgroundColor: "#FFFFFF",
-   
   },
   headerTitle: {
     fontSize: 30,
@@ -167,7 +208,7 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 22,
     color: "#FFFFFF",
-    fontWeight: '600',
+    fontWeight: "600",
   },
   postContent: {
     flex: 1,
@@ -175,18 +216,18 @@ const styles = StyleSheet.create({
   },
   postTitle: {
     fontSize: 26,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   postDescription: {
     fontSize: 16,
     marginTop: 10,
   },
   tags: {
-    color: '#454545',
+    color: "#454545",
     marginTop: 10,
   },
   date: {
-    color: '#696969',
+    color: "#696969",
     marginTop: 10,
   },
   avatar: {
@@ -197,67 +238,66 @@ const styles = StyleSheet.create({
     borderColor: "#454545",
   },
   profile: {
-    flexDirection: 'row',
-    marginTop: 20
+    flexDirection: "row",
+    marginTop: 20,
   },
   name: {
     fontSize: 22,
     color: "#454545",
-    fontWeight: '600',
-    alignSelf: 'center',
-    marginLeft: 10
+    fontWeight: "600",
+    alignSelf: "center",
+    marginLeft: 10,
   },
   shareButton: {
     marginTop: 10,
     height: 45,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
     borderRadius: 30,
     backgroundColor: "#454545",
   },
   productImg: {
     width: 200,
     height: 200,
-    
   },
   shareButtonText: {
     color: "#FFFFFF",
     fontSize: 20,
-  }
+  },
 });
 
 const styles2 = StyleSheet.create({
   root: {
     backgroundColor: "#ffffff",
     marginTop: 10,
-    flexGrow: 0
+    flexGrow: 0,
   },
   container: {
     paddingLeft: 19,
     paddingRight: 16,
     paddingVertical: 12,
-    flexDirection: 'row',
-    alignItems: 'flex-start'
+    flexDirection: "row",
+    alignItems: "flex-start",
   },
   content: {
     marginLeft: 16,
     flex: 1,
   },
   contentHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 6
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 6,
   },
   separator: {
     height: 1,
-    backgroundColor: "#CCCCCC"
+    backgroundColor: "#CCCCCC",
   },
   image: {
     width: 45,
     height: 45,
     borderRadius: 20,
-    marginLeft: 20
+    marginLeft: 20,
   },
   time: {
     fontSize: 11,
@@ -267,4 +307,4 @@ const styles2 = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
   },
-}); 
+});
