@@ -71,7 +71,7 @@ export default class PostView extends Component {
 
             <TouchableOpacity
               style={styles.profile}
-              onPress={() => this.props.navigation.navigate("OtherProfile")}
+              onPress={() => this.props.navigation.navigate("OtherProfile",{idOtroUsuario:this.state.data.usuarioGUID})}
             >
               <Image
                 style={styles.avatar}

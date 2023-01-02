@@ -121,7 +121,7 @@ export default class ContactsView extends Component {
           }}
           renderItem={({ item }) => {
             return (
-              <TouchableOpacity style={styles.notificationBox} onPress={() => { this.props.navigation.navigate("OtherProfile") }}>
+              <TouchableOpacity style={styles.notificationBox} onPress={() => { this.props.navigation.navigate("OtherProfile",{idOtroUsuario:item.id}) }}>
                 <Image style={styles.image} source={{ uri: item.icon }} />
                 <Text style={styles.name}>{item.description}</Text>
 

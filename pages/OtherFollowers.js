@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 import {
   StyleSheet,
   Text,
@@ -7,89 +7,161 @@ import {
   Image,
   Alert,
   ScrollView,
-  FlatList,
-} from 'react-native';
+  FlatList, AsyncStorage
+} from "react-native";
 
 export default class Users extends Component {
-
   constructor(props) {
     super(props);
+   
+
     this.state = {
+      idOtroUsuario: '',
+      relacionAuxiliar: false,
+      UsuarioLogeado: "",
       data: [
-        {id:1, name: "Mark Doe",   position:"CEO",               image:"https://bootdey.com/img/Content/avatar/avatar7.png", relacion: "Seguir"},
-        {id:1, name: "John Doe",   position:"CTO",               image:"https://bootdey.com/img/Content/avatar/avatar1.png", relacion: "Dejar de Seguir"},
-        {id:2, name: "Clark Man",  position:"Creative designer", image:"https://bootdey.com/img/Content/avatar/avatar6.png", relacion: "Seguir"} ,
-        {id:3, name: "Jaden Boor", position:"Front-end dev",     image:"https://bootdey.com/img/Content/avatar/avatar5.png", relacion: "Seguir"} ,
-        {id:4, name: "Srick Tree", position:"Backend-end dev",   image:"https://bootdey.com/img/Content/avatar/avatar4.png", relacion: "Seguir"} ,
-        {id:5, name: "John Doe",   position:"Creative designer", image:"https://bootdey.com/img/Content/avatar/avatar3.png", relacion: "Seguir"} ,
-        {id:6, name: "John Doe",   position:"Manager",           image:"https://bootdey.com/img/Content/avatar/avatar2.png", relacion: "Dejar de Seguir"} ,
-        {id:8, name: "John Doe",   position:"IOS dev",           image:"https://bootdey.com/img/Content/avatar/avatar1.png", relacion: "Seguir"} ,
-        {id:9, name: "John Doe",   position:"Web dev",           image:"https://bootdey.com/img/Content/avatar/avatar4.png", relacion: "Seguir"} ,
-        {id:9, name: "John Doe",   position:"Analyst",           image:"https://bootdey.com/img/Content/avatar/avatar7.png", relacion: "Seguir"} ,
-      ]
+      ],
     };
   }
-
+  
   clickEventListenerProfile(item) {
    
-    
-    this.props.navigation.navigate("OtherProfile")
+    this.props.navigation.navigate("OtherProfile",{idOtroUsuario:item.id});
   }
 
   clickEventListenerFollow(item) {
-    Alert.alert(item.relacion)
+    Alert.alert(item.relacion);
   }
 
+
+  checkIfFollows = async (id) => {
+    await fetch(
+      `http://10.0.2.2:5000/relaciones/CheckIfUserFollowsAnother/${this.state.idOtroUsuario}/${id}`,
+      { method: "GET" }
+    )
+      .then((response) => response.json())
+      .then((responseJson) => {
+        this.setState({
+          relacionAuxiliar: responseJson[0].length > 0 ? true : false,
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  loadUsers = async () => {
+    await fetch(`http://10.0.2.2:5000/relaciones/getFollowersFromUser/${this.state.idOtroUsuario}`, 
+    {method: 'GET'}).then((response) => response.json()).then(async(responseJson) => {
+      var temporalData = [];
+      for (var i = 0; i < responseJson[0].length; i++) {
+        await this.checkIfFollows(responseJson[0][i].usuarioGUID);
+        temporalData.push({
+          id: responseJson[0][i].usuarioGUID,
+          name: responseJson[0][i].nombre,
+          position: responseJson[0][i].descripcion,
+          image: responseJson[0][i].fotoDePerfil,
+          relacion: this.state.relacionAuxiliar===true?"Dejar de Seguir":"Seguir",
+        });
+
+      }
+
+      this.setState({ data: temporalData });
+
+
+
+    }).catch((error) => {
+      console.error(error);
+    });
+  };
+
+  loadId = async () => {
+    try {
+      const id = await AsyncStorage.getItem("UsuarioLogeado");
+      this.setState({ UsuarioLogeado: id });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  async componentDidMount() {
+    this.setState({ idOtroUsuario: this.props.route.params.idOtroUsuario });
+    await this.loadId();
+    await this.loadUsers();
+  }
 
   render() {
     return (
       <View style={styles.container}>
-        <FlatList style={styles.list}
+        <FlatList
+          style={styles.list}
           contentContainerStyle={styles.listContainer}
           data={this.state.data}
           horizontal={false}
           numColumns={2}
-          keyExtractor= {(item) => {
+          keyExtractor={(item) => {
             return item.id;
           }}
-          renderItem={({item}) => {
+          renderItem={({ item }) => {
             return (
-              <TouchableOpacity style={styles.card} onPress={() => {this.clickEventListenerProfile(item)}}>
-                <View style={styles.cardHeader}>
-                </View>
-                <Image style={styles.userImage} source={{uri:item.image}}/>
+              <TouchableOpacity
+                style={styles.card}
+                onPress={() => {
+                  this.clickEventListenerProfile(item);
+                }}
+              >
+                <View style={styles.cardHeader}></View>
+                <Image style={styles.userImage} source={{ uri: item.image }} />
                 <View style={styles.cardFooter}>
-                  <View style={{alignItems:"center", justifyContent:"center"}}>
+                  <View
+                    style={{ alignItems: "center", justifyContent: "center" }}
+                  >
                     <Text style={styles.name}>{item.name}</Text>
                     <Text style={styles.position}>{item.position}</Text>
-                    <TouchableOpacity style={item.relacion==="Seguir"? styles.followButton:styles.UnfollowButton} onPress={()=> this.clickEventListenerFollow(item)}>
-                      <Text style={item.relacion==="Seguir"? styles.followButtonText:styles.UnfollowButtonText}>{item.relacion}</Text>
+                    <TouchableOpacity
+                      style={
+                        item.relacion === "Seguir"
+                          ? styles.followButton
+                          : styles.UnfollowButton
+                      }
+                      onPress={() => this.clickEventListenerFollow(item)}
+                    >
+                      <Text
+                        style={
+                          item.relacion === "Seguir"
+                            ? styles.followButtonText
+                            : styles.UnfollowButtonText
+                        }
+                      >
+                        {item.relacion}
+                      </Text>
                     </TouchableOpacity>
                   </View>
                 </View>
               </TouchableOpacity>
-            )
-          }}/>
+            );
+          }}
+        />
       </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  container:{
-    flex:1,
-    marginTop:20,
+  container: {
+    flex: 1,
+    marginTop: 20,
   },
   list: {
     paddingHorizontal: 5,
-    backgroundColor:"#E6E6E6",
+    backgroundColor: "#E6E6E6",
   },
-  listContainer:{
-   alignItems:'center'
+  listContainer: {
+    alignItems: "center",
   },
   /******** card **************/
-  card:{
-    shadowColor: '#00000021',
+  card: {
+    shadowColor: "#00000021",
     shadowOffset: {
       width: 0,
       height: 6,
@@ -99,8 +171,8 @@ const styles = StyleSheet.create({
     elevation: 12,
 
     marginVertical: 5,
-    backgroundColor:"white",
-    flexBasis: '46%',
+    backgroundColor: "white",
+    flexBasis: "46%",
     marginHorizontal: 5,
   },
   cardFooter: {
@@ -108,77 +180,77 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     borderTopLeftRadius: 1,
     borderTopRightRadius: 1,
-    flexDirection: 'row',
-    alignItems:"center", 
-    justifyContent:"center"
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
   },
   cardContent: {
     paddingVertical: 12.5,
     paddingHorizontal: 16,
   },
-  cardHeader:{
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+  cardHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
     paddingTop: 12.5,
     paddingBottom: 25,
     paddingHorizontal: 16,
     borderBottomLeftRadius: 1,
     borderBottomRightRadius: 1,
   },
-  userImage:{
+  userImage: {
     height: 120,
     width: 120,
-    borderRadius:60,
-    alignSelf:'center',
-    borderColor:"#454545",
-    borderWidth:3,
+    borderRadius: 60,
+    alignSelf: "center",
+    borderColor: "#454545",
+    borderWidth: 3,
   },
-  name:{
-    fontSize:18,
-    flex:1,
-    alignSelf:'center',
-    color:"#454545",
-    fontWeight:'bold'
+  name: {
+    fontSize: 18,
+    flex: 1,
+    alignSelf: "center",
+    color: "#454545",
+    fontWeight: "bold",
   },
-  position:{
-    fontSize:14,
-    flex:1,
-    alignSelf:'center',
-    color:"#454545"
+  position: {
+    fontSize: 14,
+    flex: 1,
+    alignSelf: "center",
+    color: "#454545",
   },
   followButton: {
-    marginTop:10,
-    height:35,
-    width:130,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius:30,
+    marginTop: 10,
+    height: 35,
+    width: 130,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 30,
     backgroundColor: "#454545",
   },
 
-  UnfollowButton:{
-    marginTop:10,
-    height:35,
-    width:130,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius:30,
+  UnfollowButton: {
+    marginTop: 10,
+    height: 35,
+    width: 130,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 30,
     backgroundColor: "#e4e8f0",
   },
-  followButtonText:{
+  followButtonText: {
     color: "#FFFFFF",
-    fontSize:17,
-    textAlign: 'center',
+    fontSize: 17,
+    textAlign: "center",
   },
-  unfollowButtonText:{
+  unfollowButtonText: {
     color: "#5b6069",
-    fontSize:17,
-    textAlign: 'center',
+    fontSize: 17,
+    textAlign: "center",
   },
-  icon:{
+  icon: {
     height: 20,
-    width: 20, 
-  }
-});    
+    width: 20,
+  },
+});

@@ -116,6 +116,7 @@ export default class PostView extends Component {
           name: responseJson[0][i].nombre,
           comment: responseJson[0][i].contenido,
           time: this.formatDate(responseJson[0][i].fecha),
+          usuarioGUID: responseJson[0][i].deUsuarioGUID,
 
         });
       }
@@ -265,7 +266,7 @@ export default class PostView extends Component {
             const Notification = item.item;
             return (
               <View style={styles2.container}>
-                <TouchableOpacity onPress={() => this.props.navigation.navigate("OtherProfile")}>
+                <TouchableOpacity onPress={() => this.props.navigation.navigate("OtherProfile",{idOtroUsuario:Notification.usuarioGUID})}>
                   <Image style={styles2.image} source={{ uri: Notification.image }} />
                 </TouchableOpacity>
                 <View style={styles2.content}>

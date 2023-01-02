@@ -154,6 +154,7 @@ export default class PostView extends Component {
           style={styles2.root}
           data={this.state.comentarios}
           ListHeaderComponent={this.headerComponent(this.props.navigation)}
+          ListFooterComponent={this.footerComponent()}
           extraData={this.state}
           ItemSeparatorComponent={() => {
             return <View style={styles2.separator} />;
@@ -166,7 +167,7 @@ export default class PostView extends Component {
             return (
               <View style={styles2.container}>
                 <TouchableOpacity
-                  onPress={() => this.props.navigation.navigate("OtherProfile")}
+                  onPress={() => this.props.navigation.navigate("OtherProfile",{idOtroUsuario:Notification.usuarioGUID})}
                 >
                   <Image
                     style={styles2.image}

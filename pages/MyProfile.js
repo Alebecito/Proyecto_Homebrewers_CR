@@ -220,7 +220,7 @@ export default class ProfileView extends Component {
                         </View>
                       </View>
                       <View style={styles2.socialBarSection}>
-                        <TouchableOpacity
+                        <View
                           style={styles2.socialBarButton}
                           onPress={() => Alert.alert("Me gusta")}
                         >
@@ -233,7 +233,7 @@ export default class ProfileView extends Component {
                           <Text style={styles2.socialBarLabel}>
                             {item.cantidadDeLikes}
                           </Text>
-                        </TouchableOpacity>
+                        </View>
                       </View>
                     </View>
                   </View>
@@ -262,7 +262,7 @@ export default class ProfileView extends Component {
                   onPress={() =>
                     this.props.navigation.navigate("ReviewContent", {
                       data: item,
-                      userData: this.state.userData,
+                     
                     })
                   }
                 >

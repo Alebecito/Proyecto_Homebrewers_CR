@@ -208,7 +208,7 @@ export default class PostView extends Component {
             Fecha de caducidad de la publicación: {this.state.dataCargada[0].time}
           </Text>
 
-          <TouchableOpacity style={styles.profile} onPress={() => navigationC.navigate("OtherProfile")}>
+          <TouchableOpacity style={styles.profile} onPress={() => navigationC.navigate("OtherProfile",{idOtroUsuario:this.state.dataCargada[0].id})}>
             <Image style={styles.avatar}
               source={{ uri: this.state.dataCargada[0].fotoPerfil }} />
 
@@ -302,7 +302,7 @@ export default class PostView extends Component {
             const Notification = item.item;
             return (
               <View style={styles2.container}>
-                <TouchableOpacity onPress={() => this.props.navigation.navigate("OtherProfile")}>
+                <TouchableOpacity onPress={() => this.props.navigation.navigate("OtherProfile",{idOtroUsuario:Notification.id})}>
                   <Image style={styles2.image} source={{ uri: Notification.image }} />
                 </TouchableOpacity>
                 <View style={styles2.content}>
