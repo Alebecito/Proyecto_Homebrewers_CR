@@ -17,11 +17,15 @@ export default class PostView extends Component {
       valorDeBusqueda: "",
       UsuarioLogeado: "",
       relacionAuxiliar: false,
+      bloqueadoAuxiliar: false,
+      bloqueadoAuxiliarMe: false,
       isChecked: false,
       dataCargada: [{}],
       data: []
     }
   }
+
+
 
   loadId = async () => {
     try {

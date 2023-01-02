@@ -7,86 +7,57 @@ import {
   Image,
   Alert,
   ScrollView,
-  FlatList,
+  FlatList, AsyncStorage
 } from "react-native";
 
 export default class Users extends Component {
   constructor(props) {
     super(props);
     this.state = {
+     
+      UsuarioLogeado: "",
       data: [
-        {
-          id: 1,
-          name: "Mark Doe",
-          position: "CEO",
-          image: "https://bootdey.com/img/Content/avatar/avatar7.png",
-          relacion: "Dejar de Seguir",
-        },
-        {
-          id: 1,
-          name: "John Doe",
-          position: "CTO",
-          image: "https://bootdey.com/img/Content/avatar/avatar1.png",
-          relacion: "Dejar de Seguir",
-        },
-        {
-          id: 2,
-          name: "Clark Man",
-          position: "Creative designer",
-          image: "https://bootdey.com/img/Content/avatar/avatar6.png",
-          relacion: "Dejar de Seguir",
-        },
-        {
-          id: 3,
-          name: "Jaden Boor",
-          position: "Front-end dev",
-          image: "https://bootdey.com/img/Content/avatar/avatar5.png",
-          relacion: "Dejar de Seguir",
-        },
-        {
-          id: 4,
-          name: "Srick Tree",
-          position: "Backend-end dev",
-          image: "https://bootdey.com/img/Content/avatar/avatar4.png",
-          relacion: "Dejar de Seguir",
-        },
-        {
-          id: 5,
-          name: "John Doe",
-          position: "Creative designer",
-          image: "https://bootdey.com/img/Content/avatar/avatar3.png",
-          relacion: "Dejar de Seguir",
-        },
-        {
-          id: 6,
-          name: "John Doe",
-          position: "Manager",
-          image: "https://bootdey.com/img/Content/avatar/avatar2.png",
-          relacion: "Dejar de Seguir",
-        },
-        {
-          id: 8,
-          name: "John Doe",
-          position: "IOS dev",
-          image: "https://bootdey.com/img/Content/avatar/avatar1.png",
-          relacion: "Dejar de Seguir",
-        },
-        {
-          id: 9,
-          name: "John Doe",
-          position: "Web dev",
-          image: "https://bootdey.com/img/Content/avatar/avatar4.png",
-          relacion: "Dejar de Seguir",
-        },
-        {
-          id: 9,
-          name: "John Doe",
-          position: "Analyst",
-          image: "https://bootdey.com/img/Content/avatar/avatar7.png",
-          relacion: "Dejar de Seguir",
-        },
+        
       ],
     };
+  }
+
+  loadUsers = async () => {
+    await fetch(`http://10.0.2.2:5000/relaciones/getFollowingFromUser/${this.state.UsuarioLogeado}`, 
+    {method: 'GET'}).then((response) => response.json()).then((responseJson) => {
+      var temporalData = [];
+      for (var i = 0; i < responseJson[0].length; i++) {
+        temporalData.push({
+          id: responseJson[0][i].usuarioGUID,
+          name: responseJson[0][i].nombre,
+          position: responseJson[0][i].descripcion,
+          image: responseJson[0][i].fotoDePerfil,
+          relacion: "Dejar de Seguir",
+        });
+
+      }
+
+      this.setState({ data: temporalData });
+
+
+
+    }).catch((error) => {
+      console.error(error);
+    });
+  };
+
+  loadId = async () => {
+    try {
+      const id = await AsyncStorage.getItem("UsuarioLogeado");
+      this.setState({ UsuarioLogeado: id });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  async componentDidMount() {
+    await this.loadId();
+    await this.loadUsers();
+
   }
 
   clickEventListenerProfile(item) {
@@ -96,6 +67,7 @@ export default class Users extends Component {
   clickEventListenerFollow(item) {
     Alert.alert(item.relacion);
   }
+ 
 
   render() {
     return (

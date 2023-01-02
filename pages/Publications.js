@@ -23,6 +23,7 @@ export default class Store extends Component {
       UsuarioLogeado: '',
       relacionAuxiliar: false,
       bloqueadoAuxiliar: false,
+      bloqueadoAuxiliarMe: false,
       isChecked: false,
       dataCargada: [],
 
@@ -44,6 +45,21 @@ export default class Store extends Component {
         );
 
   }
+
+  checkIfBlockedMe = async (id) => {
+      
+    await fetch(`http://10.0.2.2:5000/relaciones/CheckIfUserBlocked/${id}/${this.state.UsuarioLogeado}`,
+      { method: 'GET', }).then((response) => response.json()).then((responseJson) => {
+        
+        this.setState({ bloqueadoAuxiliarMe: responseJson[0].length>0?true:false });
+
+      }
+      ).catch((error) => {
+        console.log(error)
+      }
+      );
+
+}
 
   checkIfLike = async (id) => {
 
@@ -90,7 +106,8 @@ export default class Store extends Component {
       var temporalData = [];
         for (var i = 0; i < responseJson.length; i++) {
           await this.checkIfBlocked(responseJson[i].usuarioGUID);
-          if(this.state.bloqueadoAuxiliar!=true){
+          await this.checkIfBlockedMe(responseJson[i].usuarioGUID);
+          if(this.state.bloqueadoAuxiliar!=true && this.state.bloqueadoAuxiliarMe!=true){
             await this.checkIfLike(responseJson[i].publicacionNoticiaGUID);
             temporalData.push({ id: responseJson[i].publicacionNoticiaGUID, title: responseJson[i].titulo, price: responseJson[i].precioExpuesto, image: responseJson[i].fotoPublicacionNoticia, teGusta: this.state.relacionAuxiliar, caducidad: this.formatDate(responseJson[i].fecha) , likes: responseJson[i].cantidadDeLikes, comentarios: responseJson[i].cantidadDeComentarios });
 

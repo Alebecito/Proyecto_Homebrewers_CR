@@ -20,10 +20,26 @@ export default class ContactsView extends Component {
     this.state = {
       valorDeBusqueda: '',
       UsuarioLogeado: '',
+      bloqueadoAuxiliar: false,
       dataCargada: [],
       data: [],
     };
   }
+
+  checkIfBlocked = async (id) => {
+      
+    await fetch(`http://10.0.2.2:5000/relaciones/CheckIfUserBlocked/${id}/${this.state.UsuarioLogeado}`,
+      { method: 'GET', }).then((response) => response.json()).then((responseJson) => {
+        
+        this.setState({ bloqueadoAuxiliar: responseJson[0].length>0?true:false });
+
+      }
+      ).catch((error) => {
+        console.log(error)
+      }
+      );
+
+}
 
 
   async realizarBusqueda(input) {
@@ -57,13 +73,16 @@ export default class ContactsView extends Component {
 
   loadUsers = async () => {
     await fetch('http://10.0.2.2:5000/usuario/getAllEnabledUsersInfo/',
-      { method: 'GET', }).then((response) => response.json()).then((responseJson) => {
+      { method: 'GET', }).then((response) => response.json()).then(async(responseJson) => {
         var temporalData = [];
         for (var i = 0; i < responseJson.length; i++) {
+          await this.checkIfBlocked(responseJson[i].usuarioGUID);
+          if(this.state.bloqueadoAuxiliar!=true){
           if (responseJson[i].usuarioGUID != this.state.UsuarioLogeado) {
             temporalData.push({ id: responseJson[i].usuarioGUID, icon: responseJson[i].fotoDePerfil, description: responseJson[i].nombre });
           }
         }
+      }
         this.setState({ dataCargada: temporalData });
       });
   }

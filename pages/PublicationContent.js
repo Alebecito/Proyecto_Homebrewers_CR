@@ -144,7 +144,7 @@ export default class PostView extends Component {
     await this.loadId();
     await this.loadPublications();
     await this.loadCommentaries();
-   console.log(this.state.dataCargada);
+   
    
   }
 
