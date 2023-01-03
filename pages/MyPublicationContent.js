@@ -167,7 +167,11 @@ export default class PostView extends Component {
             return (
               <View style={styles2.container}>
                 <TouchableOpacity
-                  onPress={() => this.props.navigation.navigate("OtherProfile",{idOtroUsuario:Notification.usuarioGUID})}
+                  onPress={() =>
+                    this.props.navigation.navigate("OtherProfile", {
+                      idOtroUsuario: Notification.usuarioGUID,
+                    })
+                  }
                 >
                   <Image
                     style={styles2.image}

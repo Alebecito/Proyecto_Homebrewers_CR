@@ -1,43 +1,54 @@
-
-import React, { Component } from 'react';
+import React, { Component } from "react";
 import {
   StyleSheet,
   Text,
   View,
   Image,
-  TouchableOpacity, FlatList, ScrollView, Alert, ImageBackground, Dimensions, Modal, TextInput, AsyncStorage
-} from 'react-native';
+  TouchableOpacity,
+  FlatList,
+  ScrollView,
+  Alert,
+  ImageBackground,
+  Dimensions,
+  Modal,
+  TextInput,
+  AsyncStorage,
+} from "react-native";
 
 export default class ProfileView extends Component {
   constructor(props) {
     super(props);
-    
+
     this.state = {
-      usuarioSeguido:false,
-      usuarioBloqueado:"Bloquear usuario",
+      usuarioSeguido: false,
+      usuarioBloqueado: "Bloquear usuario",
       userData: [],
-      idOtroUsuario: '',
-      usuarioLogeado: '',
+      idOtroUsuario: "",
+      usuarioLogeado: "",
       modalVisible: false,
       posts: [],
-      reviews: []
+      reviews: [],
     };
   }
 
   checkIfBlocked = async (id) => {
-      
-    await fetch(`http://10.0.2.2:5000/relaciones/CheckIfUserBlocked/${id}/${this.state.idOtroUsuario}`,
-      { method: 'GET', }).then((response) => response.json()).then((responseJson) => {
-        
-        this.setState({ usuarioBloqueado: responseJson[0].length>0?"Desbloquear usuario":"Bloquear usuario" });
-
-      }
-      ).catch((error) => {
-        console.log(error)
-      }
-      );
-
-}
+    await fetch(
+      `http://10.0.2.2:5000/relaciones/CheckIfUserBlocked/${id}/${this.state.idOtroUsuario}`,
+      { method: "GET" }
+    )
+      .then((response) => response.json())
+      .then((responseJson) => {
+        this.setState({
+          usuarioBloqueado:
+            responseJson[0].length > 0
+              ? "Desbloquear usuario"
+              : "Bloquear usuario",
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
   parseDate = (date) => {
     const d = new Date(date);
@@ -48,7 +59,6 @@ export default class ProfileView extends Component {
   };
 
   checkIfFollows = async (id) => {
-    
     await fetch(
       `http://10.0.2.2:5000/relaciones/CheckIfUserFollowsAnother/${id}/${this.state.idOtroUsuario}`,
       { method: "GET" }
@@ -65,7 +75,9 @@ export default class ProfileView extends Component {
   };
 
   loadUserData = async () => {
-    await fetch(`http://10.0.2.2:5000/usuario/getSpecificUser/${this.state.idOtroUsuario}`)
+    await fetch(
+      `http://10.0.2.2:5000/usuario/getSpecificUser/${this.state.idOtroUsuario}`
+    )
       .then((response) => response.json())
       .then((json) => {
         this.setState({ userData: json[0] });
@@ -83,7 +95,6 @@ export default class ProfileView extends Component {
       console.log(error);
     }
   };
-
 
   loadPosts = async () => {
     await fetch(
@@ -121,159 +132,188 @@ export default class ProfileView extends Component {
 
   async componentDidMount() {
     this.setState({ idOtroUsuario: this.props.route.params.idOtroUsuario });
-    await this.loadId(); 
+    await this.loadId();
     await this.loadUserData();
     await this.checkIfFollows(this.state.usuarioLogeado);
     await this.checkIfBlocked(this.state.usuarioLogeado);
 
     await this.loadPosts();
     await this.loadReviews();
-
   }
 
-  clickGoToReview(item){
-    let direccion="";
-    if(this.state.usuarioLogeado===item.deGUID){
-      direccion="MyReviewContent";
-    }else{
-      direccion="ReviewContent";
+  clickGoToReview(item) {
+    let direccion = "";
+    if (this.state.usuarioLogeado === item.deGUID) {
+      direccion = "MyReviewContent";
+    } else {
+      direccion = "ReviewContent";
     }
     this.props.navigation.navigate(direccion, {
-      data: item, 
+      data: item,
     });
   }
 
   clickEventListener = () => {
     this.setModalVisible(true);
-  }
+  };
 
   setModalVisible(visible) {
     this.setState({ modalVisible: visible });
   }
 
   CheckIfUserFollowed = () => {
-    if(this.state.usuarioSeguido){
+    if (this.state.usuarioSeguido) {
       return (
         <TouchableOpacity style={styles.detailContent} onPress={() => {}}>
-          <Text style={styles.title}>{"\r\r\r"}Dejar{"\n"}de Seguir</Text>
+          <Text style={styles.title}>
+            {"\r\r\r"}Dejar{"\n"}de Seguir
+          </Text>
         </TouchableOpacity>
-      )
-    }else{
+      );
+    } else {
       return (
         <TouchableOpacity style={styles.detailContent} onPress={() => {}}>
           <Text style={styles.title}>Seguir</Text>
         </TouchableOpacity>
-      )
+      );
     }
-   
   };
   render() {
     return (
       <ScrollView>
         <View style={styles.container}>
-
-          <ImageBackground source={{ uri: this.state.userData.fotoPortada }} resizeMode="cover" style={styles.header}>
+          <ImageBackground
+            source={{ uri: this.state.userData.fotoPortada }}
+            resizeMode="cover"
+            style={styles.header}
+          >
             <View style={styles.headerContent}>
-              <Image style={styles.avatar} source={{ uri: this.state.userData.fotoDePerfil }} />
-              <Text style={styles.name}>
-                {this.state.userData.nombre}
-              </Text>
-              <Text style={styles.name}>
-                {this.state.userData.descripcion}
-              </Text>
-              <Text style={styles.name}>
-                {this.state.userData.correo}
-              </Text>
-
+              <Image
+                style={styles.avatar}
+                source={{ uri: this.state.userData.fotoDePerfil }}
+              />
+              <Text style={styles.name}>{this.state.userData.nombre}</Text>
+              <Text style={styles.name}>{this.state.userData.descripcion}</Text>
+              <Text style={styles.name}>{this.state.userData.correo}</Text>
             </View>
           </ImageBackground>
 
           <View style={styles.profileDetail}>
-
-            <TouchableOpacity style={styles.detailContent} onPress={() => {
-              { this.props.navigation.navigate("OtherFollowers",{idOtroUsuario:this.state.idOtroUsuario}) }
-            }}>
+            <TouchableOpacity
+              style={styles.detailContent}
+              onPress={() => {
+                {
+                  this.props.navigation.navigate("OtherFollowers", {
+                    idOtroUsuario: this.state.idOtroUsuario,
+                  });
+                }
+              }}
+            >
               <Text style={styles.title}>Seguidores</Text>
               <Text style={styles.count}>{this.state.userData.seguidores}</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.detailContent} onPress={() => {
-              { this.props.navigation.navigate("OtherFollowing",{idOtroUsuario:this.state.idOtroUsuario}) }
-            }}>
+            <TouchableOpacity
+              style={styles.detailContent}
+              onPress={() => {
+                {
+                  this.props.navigation.navigate("OtherFollowing", {
+                    idOtroUsuario: this.state.idOtroUsuario,
+                  });
+                }
+              }}
+            >
               <Text style={styles.title}>Seguidos</Text>
               <Text style={styles.count}>{this.state.userData.seguidos}</Text>
             </TouchableOpacity>
             {this.CheckIfUserFollowed()}
           </View>
 
-
           <View style={styles.body}>
-
             <View style={styles.bodyContent}>
-              <TouchableOpacity style={{
-                width: 120,
-                marginTop: 10,
-                height: 20,
-                flexDirection: 'row',
-                justifyContent: 'center',
-                alignItems: 'center',
-                borderRadius: 30,
-                backgroundColor: "red",
-              }} onPress={() => { this.clickEventListener() }}>
-                <Text style={{
-                  color: "#FFFFFF",
-                  fontSize: 10,
-                }}>Reportar Usuario</Text>
+              <TouchableOpacity
+                style={{
+                  width: 120,
+                  marginTop: 10,
+                  height: 20,
+                  flexDirection: "row",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  borderRadius: 30,
+                  backgroundColor: "red",
+                }}
+                onPress={() => {
+                  this.clickEventListener();
+                }}
+              >
+                <Text
+                  style={{
+                    color: "#FFFFFF",
+                    fontSize: 10,
+                  }}
+                >
+                  Reportar Usuario
+                </Text>
               </TouchableOpacity>
-              <TouchableOpacity style={{
-                width: 120,
-                marginTop: 10,
-                height: 20,
-                flexDirection: 'row',
-                justifyContent: 'center',
-                alignItems: 'center',
-                borderRadius: 30,
-                backgroundColor: "red",
-              }} onPress={() => Alert.alert("Bloquear Usuario")}>
-                <Text style={{
-                  color: "#FFFFFF",
-                  fontSize: 10,
-                }}>{this.state.usuarioBloqueado}</Text>
+              <TouchableOpacity
+                style={{
+                  width: 120,
+                  marginTop: 10,
+                  height: 20,
+                  flexDirection: "row",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  borderRadius: 30,
+                  backgroundColor: "red",
+                }}
+                onPress={() => Alert.alert("Bloquear Usuario")}
+              >
+                <Text
+                  style={{
+                    color: "#FFFFFF",
+                    fontSize: 10,
+                  }}
+                >
+                  {this.state.usuarioBloqueado}
+                </Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.buttonContainer} onPress={() => this.props.navigation.navigate("Chat")}>
+              <TouchableOpacity
+                style={styles.buttonContainer}
+                onPress={() => this.props.navigation.navigate("Chat")}
+              >
                 <Text style={{ color: "white" }}>Enviar Mensaje</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.buttonContainer} onPress={() => this.props.navigation.navigate("AddReview")}>
+              <TouchableOpacity
+                style={styles.buttonContainer}
+                onPress={() => this.props.navigation.navigate("AddReview")}
+              >
                 <Text style={{ color: "white" }}>Añadir reseña</Text>
               </TouchableOpacity>
-
-
-
-
             </View>
-
-
           </View>
           <Text style={{ textAlign: "center" }}>Publicaciones Activas</Text>
-          <FlatList style={styles2.list}
+          <FlatList
+            style={styles2.list}
             contentContainerStyle={styles2.listContainer}
             data={this.state.posts}
             horizontal={true}
-
-
             keyExtractor={(item) => {
               return item.id;
             }}
             ItemSeparatorComponent={() => {
-              return (
-                <View style={styles2.separator} />
-              )
+              return <View style={styles2.separator} />;
             }}
             renderItem={(post) => {
               const item = post.item;
 
               return (
-                <TouchableOpacity style={styles2.card} onPress={() => this.props.navigation.navigate("PublicationContent", { id: item.publicacionNoticiaGUID })}>
-
+                <TouchableOpacity
+                  style={styles2.card}
+                  onPress={() =>
+                    this.props.navigation.navigate("PublicationContent", {
+                      id: item.publicacionNoticiaGUID,
+                    })
+                  }
+                >
                   <View style={styles2.cardHeader}>
                     <View>
                       <Text style={styles2.title}>{item.titulo}</Text>
@@ -281,54 +321,85 @@ export default class ProfileView extends Component {
                     </View>
                   </View>
 
-                  <Image style={styles2.cardImage} source={{ uri: item.image }} />
+                  <Image
+                    style={styles2.cardImage}
+                    source={{ uri: item.image }}
+                  />
                   <View style={styles2.timeContainer}>
-                    <Image style={styles2.iconData} source={{ uri: 'https://img.icons8.com/color/96/3498db/calendar.png' }} />
-                    <Text style={styles2.time}>Fecha de Caducidad: {this.parseDate(item.fecha)}</Text>
+                    <Image
+                      style={styles2.iconData}
+                      source={{
+                        uri: "https://img.icons8.com/color/96/3498db/calendar.png",
+                      }}
+                    />
+                    <Text style={styles2.time}>
+                      Fecha de Caducidad: {this.parseDate(item.fecha)}
+                    </Text>
                   </View>
                   <View style={styles2.cardFooter}>
                     <View style={styles2.socialBarContainer}>
                       <View style={styles2.socialBarSection}>
-                        <View style={styles2.socialBarButton} onPress={() => Alert.alert("Me gusta")}>
-                          <Image style={styles2.icon} source={{ uri: 'https://img.icons8.com/ios-glyphs/75/2ecc71/comments.png' }} />
-                          <Text style={[styles2.socialBarLabel, styles2.buyNow]}>{item.cantidadDeComentarios}</Text>
+                        <View
+                          style={styles2.socialBarButton}
+                          onPress={() => Alert.alert("Me gusta")}
+                        >
+                          <Image
+                            style={styles2.icon}
+                            source={{
+                              uri: "https://img.icons8.com/ios-glyphs/75/2ecc71/comments.png",
+                            }}
+                          />
+                          <Text
+                            style={[styles2.socialBarLabel, styles2.buyNow]}
+                          >
+                            {item.cantidadDeComentarios}
+                          </Text>
                         </View>
                       </View>
                       <View style={styles2.socialBarSection}>
-                        <View style={styles2.socialBarButton} >
-                          <Image style={styles2.icon} source={{ uri: 'https://img.icons8.com/stickers/512/good-quality.png' }} />
-                          <Text style={styles2.socialBarLabel}>{item.cantidadDeLikes}</Text>
+                        <View style={styles2.socialBarButton}>
+                          <Image
+                            style={styles2.icon}
+                            source={{
+                              uri: "https://img.icons8.com/stickers/512/good-quality.png",
+                            }}
+                          />
+                          <Text style={styles2.socialBarLabel}>
+                            {item.cantidadDeLikes}
+                          </Text>
                         </View>
                       </View>
                     </View>
                   </View>
                 </TouchableOpacity>
-              )
-
-
-            }} />
+              );
+            }}
+          />
           <Text style={{ textAlign: "center" }}>Reseñas</Text>
-          <FlatList style={styles2.list}
+          <FlatList
+            style={styles2.list}
             contentContainerStyle={styles2.listContainer}
             data={this.state.reviews}
             horizontal={true}
-
-
             keyExtractor={(item) => {
               return item.id;
             }}
             ItemSeparatorComponent={() => {
-              return (
-                <View style={styles2.separator} />
-              )
+              return <View style={styles2.separator} />;
             }}
             renderItem={(post) => {
               const item = post.item;
 
-
               return (
-                <TouchableOpacity style={styles2.card} onPress={() => {this.clickGoToReview(item)}}>
-
+                <TouchableOpacity
+                  style={styles2.card}
+                  onPress={() => {
+                    this.props.navigation.navigate("MyReviewContent", {
+                      usuarioLogueado: this.state.usuarioLogeado,
+                      item: item,
+                    });
+                  }}
+                >
                   <View style={styles2.cardHeader}>
                     <View>
                       <Text style={styles2.title}>{item.titulo}</Text>
@@ -336,70 +407,117 @@ export default class ProfileView extends Component {
                     </View>
                   </View>
 
-                  <Image style={styles2.cardImage} source={{ uri: item.image }} />
+                  <Image
+                    style={styles2.cardImage}
+                    source={{ uri: item.image }}
+                  />
                   <View style={styles2.timeContainer}>
-                    <Image style={styles2.iconData} source={{ uri: 'https://img.icons8.com/color/96/3498db/calendar.png' }} />
-                    <Text style={styles2.time}>Fecha: {this.parseDate(item.fecha)}</Text>
+                    <Image
+                      style={styles2.iconData}
+                      source={{
+                        uri: "https://img.icons8.com/color/96/3498db/calendar.png",
+                      }}
+                    />
+                    <Text style={styles2.time}>
+                      Fecha: {this.parseDate(item.fecha)}
+                    </Text>
                   </View>
                   <View style={styles2.cardFooter}>
                     <View style={styles2.socialBarContainer}>
                       <View style={styles2.socialBarSection}>
-                        <View style={styles2.socialBarButton} onPress={() => Alert.alert("Me gusta")}>
-                          <Text style={[styles2.socialBarLabel, styles2.buyNow]}>Reseña: {item.puntuacion}/5</Text>
+                        <View
+                          style={styles2.socialBarButton}
+                          onPress={() => Alert.alert("Me gusta")}
+                        >
+                          <Text
+                            style={[styles2.socialBarLabel, styles2.buyNow]}
+                          >
+                            Reseña: {item.puntuacion}/5
+                          </Text>
                         </View>
                       </View>
-
                     </View>
                   </View>
                 </TouchableOpacity>
-              )
-
-
-            }} />
+              );
+            }}
+          />
           <Modal
-            animationType={'fade'}
+            animationType={"fade"}
             transparent={true}
             onRequestClose={() => this.setModalVisible(false)}
-            visible={this.state.modalVisible}>
-
+            visible={this.state.modalVisible}
+          >
             <View style={stylesReport.popupOverlay}>
               <View style={stylesReport.popup}>
                 <View style={stylesReport.popupContent}>
                   <ScrollView contentContainerStyle={stylesReport.modalInfo}>
-                    <Image style={stylesReport.image} source={{ uri: "https://img.icons8.com/stickers/512/system-report.png" }} />
+                    <Image
+                      style={stylesReport.image}
+                      source={{
+                        uri: "https://img.icons8.com/stickers/512/system-report.png",
+                      }}
+                    />
                     <Text style={stylesReport.name}>Realizar un Reporte</Text>
-                    <Text style={stylesReport.about}>Descripción del reporte</Text>
+                    <Text style={stylesReport.about}>
+                      Descripción del reporte
+                    </Text>
                   </ScrollView>
-                  <TextInput editable maxLength={255} style={{
-                    margin: 15,
+                  <TextInput
+                    editable
+                    maxLength={255}
+                    style={{
+                      margin: 15,
 
-                    height: 80,
-                    borderColor: '#000000',
-                    borderWidth: 1, textAlignVertical: 'top'
-                  }} placeholder="Describe el motivo del reporte (255 caracteres)" multiline={true}
-                    numberOfLines={4} />
+                      height: 80,
+                      borderColor: "#000000",
+                      borderWidth: 1,
+                      textAlignVertical: "top",
+                    }}
+                    placeholder="Describe el motivo del reporte (255 caracteres)"
+                    multiline={true}
+                    numberOfLines={4}
+                  />
                 </View>
                 <View style={stylesReport.popupButtons}>
-                  <TouchableOpacity onPress={() => { this.setModalVisible(false) }} style={[stylesReport.btnClose, { marginRight: 10 }]}>
-                    <Text style={{ textAlign: "center", fontSize: 20, color: "white" }}>Cancelar</Text>
+                  <TouchableOpacity
+                    onPress={() => {
+                      this.setModalVisible(false);
+                    }}
+                    style={[stylesReport.btnClose, { marginRight: 10 }]}
+                  >
+                    <Text
+                      style={{
+                        textAlign: "center",
+                        fontSize: 20,
+                        color: "white",
+                      }}
+                    >
+                      Cancelar
+                    </Text>
                   </TouchableOpacity>
-                  <TouchableOpacity onPress={() => { this.setModalVisible(false) }} style={[stylesReport.btnClose, { marginLeft: 10 }]}>
-                    <Text style={{ textAlign: "center", fontSize: 20, color: "white" }}>Enviar</Text>
+                  <TouchableOpacity
+                    onPress={() => {
+                      this.setModalVisible(false);
+                    }}
+                    style={[stylesReport.btnClose, { marginLeft: 10 }]}
+                  >
+                    <Text
+                      style={{
+                        textAlign: "center",
+                        fontSize: 20,
+                        color: "white",
+                      }}
+                    >
+                      Enviar
+                    </Text>
                   </TouchableOpacity>
                 </View>
-
               </View>
             </View>
           </Modal>
-
         </View>
-
-
       </ScrollView>
-
-
-
-
     );
   }
 }
@@ -411,8 +529,7 @@ const styles = StyleSheet.create({
   },
   headerContent: {
     padding: 30,
-    alignItems: 'center',
-
+    alignItems: "center",
   },
   avatar: {
     width: 130,
@@ -425,33 +542,33 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 22,
     color: "#FFFFFF",
-    fontWeight: '600',
-    backgroundColor: 'rgba(52, 52, 52, 0.8)'
+    fontWeight: "600",
+    backgroundColor: "rgba(52, 52, 52, 0.8)",
   },
   profileDetail: {
-    alignSelf: 'center',
+    alignSelf: "center",
     marginTop: 275,
-    alignItems: 'center',
-    flexDirection: 'row',
-    position: 'absolute',
-    backgroundColor: "#ffffff"
+    alignItems: "center",
+    flexDirection: "row",
+    position: "absolute",
+    backgroundColor: "#ffffff",
   },
   detailContent: {
     margin: 10,
-    alignItems: 'center'
+    alignItems: "center",
   },
   title: {
     fontSize: 20,
-    color: "#454545"
+    color: "#454545",
   },
   count: {
     fontSize: 18,
   },
   bodyContent: {
     flex: 1,
-    alignItems: 'center',
+    alignItems: "center",
     padding: 30,
-    marginTop: 20
+    marginTop: 20,
   },
   textInfo: {
     fontSize: 18,
@@ -461,9 +578,9 @@ const styles = StyleSheet.create({
   buttonContainer: {
     marginTop: 10,
     height: 45,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
     marginBottom: 20,
     width: 250,
     borderRadius: 30,
@@ -473,7 +590,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: "#454545",
     marginTop: 10,
-    textAlign: 'center'
+    textAlign: "center",
   },
 });
 
@@ -485,42 +602,41 @@ const styles2 = StyleSheet.create({
   list: {
     paddingHorizontal: 5,
     backgroundColor: "#E6E6E6",
-    height: 150
+    height: 150,
   },
   listContainer: {
-    alignItems: 'center'
+    alignItems: "center",
   },
   separator: {
     marginTop: 10,
   },
   /******** card **************/
   card: {
-    shadowColor: '#00000021',
+    shadowColor: "#00000021",
     shadowOffset: {
-      width: 2
+      width: 2,
     },
     shadowOpacity: 0.5,
     shadowRadius: 4,
     marginVertical: 8,
     backgroundColor: "white",
-    flexBasis: '47%',
+    flexBasis: "47%",
     marginHorizontal: 5,
   },
   cardHeader: {
-
     paddingHorizontal: 16,
     borderTopLeftRadius: 1,
     borderTopRightRadius: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
   cardContent: {
     paddingVertical: 12.5,
     paddingHorizontal: 16,
   },
   cardFooter: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     paddingTop: 12.5,
     paddingBottom: 25,
     paddingHorizontal: 16,
@@ -536,28 +652,27 @@ const styles2 = StyleSheet.create({
   title: {
     fontSize: 16,
     color: "#454545",
-    marginTop: 5
+    marginTop: 5,
   },
   price: {
     fontSize: 16,
     color: "#454545",
-    marginTop: 5
+    marginTop: 5,
   },
   buyNow: {
     color: "#454545",
   },
   formContent: {
-    flexDirection: 'row',
-
+    flexDirection: "row",
   },
   inputContainer: {
-    borderBottomColor: '#F5FCFF',
-    backgroundColor: '#FFFFFF',
+    borderBottomColor: "#F5FCFF",
+    backgroundColor: "#FFFFFF",
     borderRadius: 30,
     borderBottomWidth: 1,
     height: 45,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     flex: 1,
     margin: 10,
   },
@@ -567,72 +682,72 @@ const styles2 = StyleSheet.create({
   },
   /******** social bar ******************/
   socialBarContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexDirection: 'row',
-    flex: 1
+    justifyContent: "center",
+    alignItems: "center",
+    flexDirection: "row",
+    flex: 1,
   },
   socialBarSection: {
-    justifyContent: 'center',
-    flexDirection: 'row',
+    justifyContent: "center",
+    flexDirection: "row",
     flex: 1,
   },
   socialBarlabel: {
     marginLeft: 8,
-    alignSelf: 'flex-end',
-    justifyContent: 'center',
+    alignSelf: "flex-end",
+    justifyContent: "center",
   },
   timeContainer: {
-    flexDirection: 'row'
+    flexDirection: "row",
   },
   iconData: {
     width: 15,
     height: 15,
     marginTop: 5,
-    marginRight: 5
+    marginRight: 5,
   },
   time: {
     fontSize: 13,
     color: "#454545",
-    marginTop: 5
+    marginTop: 5,
   },
   socialBarButton: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-  }
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+  },
 });
 
 const stylesReport = StyleSheet.create({
   container: {
     flex: 1,
     marginTop: 20,
-    backgroundColor: "#eeeeee"
+    backgroundColor: "#eeeeee",
   },
   header: {
     backgroundColor: "#00CED1",
-    height: 200
+    height: 200,
   },
   headerContent: {
     padding: 30,
-    alignItems: 'center',
+    alignItems: "center",
     flex: 1,
   },
   detailContent: {
     top: 80,
     height: 500,
-    width: Dimensions.get('screen').width - 90,
+    width: Dimensions.get("screen").width - 90,
     marginHorizontal: 30,
-    flexDirection: 'row',
-    position: 'absolute',
-    backgroundColor: "#ffffff"
+    flexDirection: "row",
+    position: "absolute",
+    backgroundColor: "#ffffff",
   },
   userList: {
     flex: 1,
   },
   cardContent: {
     marginLeft: 20,
-    marginTop: 10
+    marginTop: 10,
   },
   image: {
     width: 90,
@@ -640,10 +755,8 @@ const stylesReport = StyleSheet.create({
     borderRadius: 45,
   },
 
-
-
   card: {
-    shadowColor: '#00000021',
+    shadowColor: "#00000021",
     shadowOffset: {
       width: 0,
       height: 6,
@@ -655,35 +768,35 @@ const stylesReport = StyleSheet.create({
     marginVertical: 10,
     marginHorizontal: 20,
     backgroundColor: "white",
-    flexBasis: '46%',
+    flexBasis: "46%",
     padding: 10,
-    flexDirection: 'row'
+    flexDirection: "row",
   },
 
   name: {
     fontSize: 18,
     flex: 1,
-    alignSelf: 'center',
+    alignSelf: "center",
     color: "#454545",
-    fontWeight: 'bold'
+    fontWeight: "bold",
   },
   position: {
     fontSize: 14,
     flex: 1,
-    alignSelf: 'center',
-    color: "#454545"
+    alignSelf: "center",
+    color: "#454545",
   },
   about: {
-    marginHorizontal: 10
+    marginHorizontal: 10,
   },
 
   followButton: {
     marginTop: 10,
     height: 35,
     width: 100,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
     borderRadius: 30,
     backgroundColor: "#00BFFF",
   },
@@ -693,7 +806,7 @@ const stylesReport = StyleSheet.create({
   },
   /************ modals ************/
   popup: {
-    backgroundColor: 'white',
+    backgroundColor: "white",
     marginTop: 80,
     marginHorizontal: 20,
     borderRadius: 7,
@@ -701,7 +814,7 @@ const stylesReport = StyleSheet.create({
   popupOverlay: {
     backgroundColor: "#00000057",
     flex: 1,
-    marginTop: 30
+    marginTop: 30,
   },
   popupContent: {
     //alignItems: 'center',
@@ -709,26 +822,26 @@ const stylesReport = StyleSheet.create({
     height: 250,
   },
   popupHeader: {
-    marginBottom: 45
+    marginBottom: 45,
   },
   popupButtons: {
     marginTop: 15,
-    flexDirection: 'row',
+    flexDirection: "row",
     borderTopWidth: 1,
     borderColor: "#eee",
-    justifyContent: 'center'
+    justifyContent: "center",
   },
   popupButton: {
     flex: 1,
-    marginVertical: 16
+    marginVertical: 16,
   },
   btnClose: {
     height: 35,
-    backgroundColor: '#454545',
-    width: 100
+    backgroundColor: "#454545",
+    width: 100,
   },
   modalInfo: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  }
+    alignItems: "center",
+    justifyContent: "center",
+  },
 });

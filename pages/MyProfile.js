@@ -262,7 +262,6 @@ export default class ProfileView extends Component {
                   onPress={() =>
                     this.props.navigation.navigate("ReviewContent", {
                       data: item,
-                     
                     })
                   }
                 >
