@@ -12,18 +12,17 @@ import {
   Dimensions,
   Modal,
   TextInput,
-  AsyncStorage,NavigationContainer
+  AsyncStorage,
+  NavigationContainer,
 } from "react-native";
 
 export default class ProfileView extends Component {
   constructor(props) {
-    
-
     super(props);
 
     this.state = {
       refrescar: true,
-      bloqueadoAuxiliarMe:false,
+      bloqueadoAuxiliarMe: false,
       usuarioSeguido: false,
       usuarioBloqueado: "Bloquear usuario",
       userData: [],
@@ -35,21 +34,21 @@ export default class ProfileView extends Component {
     };
   }
 
-
   checkIfBlockedMe = async (id) => {
- 
-    await fetch(`http://10.0.2.2:5000/relaciones/CheckIfUserBlocked/${this.state.idOtroUsuario}/${id}`,
-      { method: 'GET', }).then((response) => response.json()).then((responseJson) => {
-        
-        this.setState({ bloqueadoAuxiliarMe: responseJson[0].length>0?true:false });
-
-      }
-      ).catch((error) => {
-        console.log(error)
-      }
-      );
-
-}
+    await fetch(
+      `http://10.0.2.2:5000/relaciones/CheckIfUserBlocked/${this.state.idOtroUsuario}/${id}`,
+      { method: "GET" }
+    )
+      .then((response) => response.json())
+      .then((responseJson) => {
+        this.setState({
+          bloqueadoAuxiliarMe: responseJson[0].length > 0 ? true : false,
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
   checkIfBlocked = async (id) => {
     await fetch(
@@ -150,15 +149,12 @@ export default class ProfileView extends Component {
       });
   };
 
-   
-
   async componentDidMount() {
-    
     this.setState({ idOtroUsuario: this.props.route.params.idOtroUsuario });
     await this.loadId();
     await this.loadUserData();
     await this.checkIfBlockedMe(this.state.usuarioLogeado);
-    if(this.state.bloqueadoAuxiliarMe){
+    if (this.state.bloqueadoAuxiliarMe) {
       Alert.alert("Error", "El Perfil de este usuario no está disponible");
       this.props.navigation.goBack();
       return;
@@ -167,8 +163,6 @@ export default class ProfileView extends Component {
     await this.checkIfBlocked(this.state.usuarioLogeado);
     await this.loadPosts();
     await this.loadReviews();
-
-    
   }
 
   clickGoToReview(item) {
@@ -209,8 +203,6 @@ export default class ProfileView extends Component {
     }
   };
   render() {
-    
-      
     return (
       <ScrollView>
         <View style={styles.container}>
@@ -316,7 +308,7 @@ export default class ProfileView extends Component {
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.buttonContainer}
-                onPress={() => this.props.navigation.navigate("AddReview")}
+                onPress={() => this.props.navigation.navigate("AddReview", {idOtroUsuario: this.state.idOtroUsuario})}
               >
                 <Text style={{ color: "white" }}>Añadir reseña</Text>
               </TouchableOpacity>

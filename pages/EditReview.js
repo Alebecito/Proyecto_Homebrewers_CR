@@ -19,7 +19,6 @@ export default class SignUp extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      isChecked: false,
       title: this.props.route.params.review.titulo,
       description: this.props.route.params.review.cuerpo,
       rating: this.props.route.params.review.puntuacion,
@@ -36,8 +35,6 @@ export default class SignUp extends Component {
   onClickListener = (viewId) => {
     Alert.alert("Alert", "Button pressed " + viewId);
   };
-
-  handleChange = (e) => this.setState({ isChecked: e });
 
   async componentDidMount() {
     await this.setStateAsync({ review: this.props.route.params.review });
@@ -74,7 +71,7 @@ export default class SignUp extends Component {
       <ScrollView>
         <View style={styles.container}>
           <Text style={{ color: "black", textAlign: "center", margin: 20 }}>
-            Titulo de la reseña
+            Título de la reseña
           </Text>
           <View style={styles.inputContainer}>
             <Image
