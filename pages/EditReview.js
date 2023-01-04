@@ -12,17 +12,18 @@ import {
   ScrollView,
 } from "react-native";
 
-import Checkbox from "expo-checkbox";
+import moment from "moment";
+
 import { Picker } from "@react-native-picker/picker";
 export default class SignUp extends Component {
   constructor(props) {
     super(props);
     this.state = {
       isChecked: false,
-      fullName: "",
-      email: "",
-      password: "",
-      report: [],
+      title: this.props.route.params.review.titulo,
+      description: this.props.route.params.review.cuerpo,
+      rating: this.props.route.params.review.puntuacion,
+      review: [],
     };
   }
 
@@ -39,8 +40,27 @@ export default class SignUp extends Component {
   handleChange = (e) => this.setState({ isChecked: e });
 
   async componentDidMount() {
-    await this.setStateAsync({ report: this.props.route.params.report });
+    await this.setStateAsync({ review: this.props.route.params.review });
   }
+
+  updateReview = async () => {
+    const formData = new FormData();
+    const currentDate = new Date();
+    formData.append("titulo", this.state.title);
+    formData.append("cuerpo", this.state.description);
+    formData.append("calificacion", this.state.rating);
+    formData.append("fecha", moment(currentDate).format("YYYY-MM-DD"));
+
+    await fetch(
+      `http://10.0.2.2:5000/resena/updateReview/${this.state.review.reseñaGUID}`,
+      {
+        method: "PUT",
+        body: formData,
+      }
+    );
+    Alert.alert("Reseña editada exitosamente");
+    this.props.navigation.navigate("HomePage");
+  };
 
   render() {
     return (
@@ -58,10 +78,10 @@ export default class SignUp extends Component {
             />
             <TextInput
               style={styles.inputs}
-              placeholder="Descripción Corta de la reseña"
-              defaultValue={this.state.report.titulo}
+              placeholder="Titulo de la reseña"
+              defaultValue={this.state.review.titulo}
               underlineColorAndroid="transparent"
-              onChangeText={(fullName) => this.setState({ fullName })}
+              onChangeText={(title) => this.setState({ title })}
             />
           </View>
 
@@ -81,9 +101,9 @@ export default class SignUp extends Component {
               numberOfLines={4}
               style={styles.inputsBox}
               placeholder="Explica a detalle tu experiencia con el usuario"
-              defaultValue={this.state.report.cuerpo}
+              defaultValue={this.state.review.cuerpo}
               underlineColorAndroid="transparent"
-              onChangeText={(email) => this.setState({ email })}
+              onChangeText={(description) => this.setState({ description })}
             />
           </View>
 
@@ -92,28 +112,25 @@ export default class SignUp extends Component {
           </Text>
           <View style={[styles.inputContainer]}>
             <Picker
-              selectedValue={`${this.state.report.puntuacion}/5`}
+              selectedValue={this.state.rating}
               style={{
                 height: 50,
                 width: 250,
                 justifyContent: "center",
                 alignItems: "center",
               }}
+              onValueChange={(value) => this.setState({ rating: value })}
             >
-              <Picker.Item
-                label={"No seleccionado"}
-                value={"No seleccionado"}
-              />
-              <Picker.Item label={"1/5"} value={"1/5"} />
-              <Picker.Item label={"2/5"} value={"2/5"} />
-              <Picker.Item label={"3/5"} value={"3/5"} />
-              <Picker.Item label={"4/5"} value={"4/5"} />
-              <Picker.Item label={"5/5"} value={"5/5"} />
+              <Picker.Item label={"1/5"} value={1} />
+              <Picker.Item label={"2/5"} value={2} />
+              <Picker.Item label={"3/5"} value={3} />
+              <Picker.Item label={"4/5"} value={4} />
+              <Picker.Item label={"5/5"} value={5} />
             </Picker>
           </View>
           <TouchableOpacity
             style={[styles.buttonContainer, styles.signupButton]}
-            onPress={() => this.props.navigation.navigate("Login")}
+            onPress={() => this.updateReview()}
           >
             <Text style={styles.signUpText}>Actualizar Reseña</Text>
           </TouchableOpacity>

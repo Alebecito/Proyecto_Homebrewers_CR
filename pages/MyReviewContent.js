@@ -113,7 +113,7 @@ export default class PostView extends Component {
                   style={styles.shareButton}
                   onPress={() =>
                     this.props.navigation.navigate("EditReview", {
-                      report: this.state.item,
+                      review: this.state.item,
                     })
                   }
                 >
