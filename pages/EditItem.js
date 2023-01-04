@@ -135,7 +135,7 @@ export default class SignUp extends Component {
 
       formData.append("titulo", this.state.name);
       formData.append("cantidad", this.state.quantity);
-      formData.append("fechaCaducidad", this.state.expirationDate);
+      formData.append("fechaCaducidad", moment(this.state.expirationDate).format("YYYY-MM-DD"));
       formData.append("cuerpo", this.state.description);
 
       await fetch(
