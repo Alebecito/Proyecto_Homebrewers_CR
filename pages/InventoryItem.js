@@ -19,9 +19,23 @@ export default class ProductDetail extends Component {
     };
   }
 
-  clickEventListener() {
-    Alert.alert("Producto Eliminado");
-  }
+  deleteProduct = async () => {
+    const id = this.props.route.params.id;
+    await fetch(`http://10.0.2.2:5000/producto/deleteProduct/${id}`, {
+      method: "DELETE",
+    })
+      .then((response) => response.json())
+      .then((responseJson) => {
+        console.log(responseJson);
+      }
+      )
+      .catch((error) => {
+        console.error(error);
+      }
+      );
+      Alert.alert("Producto eliminado del inventario");
+      this.props.navigation.navigate("HomePage");
+  };
 
   parseDate = (date) => {
     const d = new Date(date);
@@ -85,7 +99,7 @@ export default class ProductDetail extends Component {
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.shareButton}
-              onPress={() => this.clickEventListener()}
+              onPress={() => this.deleteProduct()}
             >
               <Text style={styles.shareButtonText}>
                 Eliminar del inventario

@@ -12,37 +12,143 @@ import {
   ScrollView,
 } from "react-native";
 
-import Checkbox from "expo-checkbox";
 import { Picker } from "@react-native-picker/picker";
+import * as ImagePicker from "expo-image-picker";
+import moment from "moment";
+import { Calendar } from "react-native-calendars";
+
+const _today = moment().format("YYYY-MM-DD");
+
 export default class SignUp extends Component {
+  initialState = {
+    [_today]: { disabled: true },
+  };
+
   constructor(props) {
     super(props);
     this.state = {
-      isChecked: false,
-      fullName: "",
-      email: "",
-      password: "",
+      name: this.props.route.params.data.titulo,
+      quantity: this.props.route.params.data.cantidad,
+      expirationDate: this.props.route.params.data.fechaCaducidad,
+      description: this.props.route.params.data.cuerpo,
+      image: this.props.route.params.data.fotoProducto,
+      sourceImage: "",
+      resultURL: "",
       data: [],
+      _markedDates: this.initialState,
+      imageEdited: false,
     };
   }
 
-  parseDate = (date) => {
-    const d = new Date(date);
-    const day = d.getDate();
-    const month = d.getMonth() + 1;
-    const year = d.getFullYear();
-    return `${day}/${month}/${year}`;
+  get_url_extension(url) {
+    return url.split(/[#?]/)[0].split(".").pop().trim();
+  }
+  _pickImage = async () => {
+    let pickerResult = await ImagePicker.launchImageLibraryAsync({
+      allowsEditing: false,
+      aspect: [4, 3],
+    });
+
+    if (pickerResult.cancelled === true) {
+      return;
+    }
+
+    const uri = pickerResult.uri;
+    const type = "image/" + this.get_url_extension(uri);
+    const name = pickerResult.assetId;
+    const source = { uri, type, name };
+
+    this.setState({ image: pickerResult.uri });
+    this.setState({ sourceImage: source });
+    this.setState({ imageEdited: true });
   };
 
-  async componentDidMount() {
-    this.setState({ data: this.props.route.params.data });
+  uploadImage = async () => {
+    const data = new FormData();
+    data.append("file", this.state.sourceImage);
+    data.append("upload_preset", "UserUploadImages");
+    data.append("cloud_name", "dlzxkdsau");
+    await fetch("https://api.cloudinary.com/v1_1/dlzxkdsau/image/upload", {
+      method: "POST",
+      body: data,
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "multipart/form-data",
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        this.setState({ resultURL: data.url });
+      })
+      .catch((err) => {
+        Alert.alert("Error While Uploading");
+      });
+  };
+
+  setStateAsync(state) {
+    return new Promise((resolve) => {
+      this.setState(state, resolve);
+    });
   }
 
-  onClickListener = (viewId) => {
-    Alert.alert("Alert", "Button pressed " + viewId);
+  async componentDidMount() {
+    await this.setStateAsync({ data: this.props.route.params.data });
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== "granted") {
+      alert("Sorry, we need camera roll permissions to make this work!");
+    }
+  }
+
+  onDaySelect = async (day) => {
+    const _selectedDay = moment(day.dateString).format("YYYY-MM-DD");
+
+    let selected = true;
+    if (this.state._markedDates[_selectedDay]) {
+      selected = !this.state._markedDates[_selectedDay].selected;
+    }
+
+    const updatedMarkedDates = {
+      ...{ [_selectedDay]: { selected } },
+    };
+
+    await this.setStateAsync({ expirationDate: _selectedDay });
+    await this.setStateAsync({ _markedDates: updatedMarkedDates });
   };
 
-  handleChange = (e) => this.setState({ isChecked: e });
+  editProduct = async () => {
+    if (
+      this.state.name == "" ||
+      this.state.quantity == "" ||
+      this.state.expirationDate == "" ||
+      this.state.description == ""
+    ) {
+      Alert.alert("Por favor, llene todos los campos");
+    } else {
+      let formData = new FormData();
+
+      if (this.state.imageEdited) {
+        await this.uploadImage();
+        formData.append("fotoProducto", this.state.resultURL);
+      } else {
+        formData.append("fotoProducto", this.state.data.fotoProducto);
+      }
+
+      formData.append("titulo", this.state.name);
+      formData.append("cantidad", this.state.quantity);
+      formData.append("fechaCaducidad", this.state.expirationDate);
+      formData.append("cuerpo", this.state.description);
+
+      await fetch(
+        `http://10.0.2.2:5000/producto/updateProduct/${this.state.data.productoGUID}`,
+        {
+          method: "PUT",
+          body: formData,
+        }
+      );
+      Alert.alert("Producto editado exitosamente");
+      this.props.navigation.navigate("HomePage");
+    }
+  };
 
   render() {
     var myloop = [];
@@ -70,7 +176,7 @@ export default class SignUp extends Component {
               placeholder="Nombre del Producto"
               defaultValue={this.state.data.titulo}
               underlineColorAndroid="transparent"
-              onChangeText={(fullName) => this.setState({ fullName })}
+              onChangeText={(name) => this.setState({ name })}
             />
           </View>
           <Text style={{ color: "black", textAlign: "center", margin: 20 }}>
@@ -78,13 +184,16 @@ export default class SignUp extends Component {
           </Text>
           <View style={[styles.inputContainer]}>
             <Picker
-              selectedValue={`${this.state.data.cantidad}`}
+              selectedValue={`${this.state.quantity}`}
               style={{
                 height: 50,
                 width: 250,
                 justifyContent: "center",
                 alignItems: "center",
               }}
+              onValueChange={(itemValue) =>
+                this.setState({ quantity: itemValue })
+              }
             >
               {myloop}
             </Picker>
@@ -108,14 +217,13 @@ export default class SignUp extends Component {
           <Text style={{ color: "black", textAlign: "center", margin: 20 }}>
             Fecha de Caducidad
           </Text>
-          <TouchableOpacity
-            style={[styles.buttonContainer, styles.signupButton]}
-            onPress={() => {}}
-          >
-            <Text style={styles.signUpText}>Seleccionar Fecha</Text>
-          </TouchableOpacity>
+          <Calendar
+            minDate={_today}
+            onDayPress={this.onDaySelect}
+            markedDates={this.state._markedDates}
+          />
           <Text style={{ color: "black", textAlign: "center", margin: 20 }}>
-            {this.parseDate(this.state.data.fechaCaducidad)}
+            {moment(this.state.expirationDate).format("YYYY-MM-DD")}
           </Text>
 
           <Text style={{ color: "black", textAlign: "center", margin: 20 }}>
@@ -134,9 +242,9 @@ export default class SignUp extends Component {
               numberOfLines={4}
               style={styles.inputsBox}
               placeholder="Descripción del Producto"
-              defaultValue={this.state.data.cuerpo}
+              defaultValue={this.state.description}
               underlineColorAndroid="transparent"
-              onChangeText={(email) => this.setState({ email })}
+              onChangeText={(description) => this.setState({ description })}
             />
           </View>
 
@@ -149,7 +257,7 @@ export default class SignUp extends Component {
               styles.signupButton,
               { marginTop: 20 },
             ]}
-            onPress={() => {}}
+            onPress={() => this._pickImage()}
           >
             <Text style={styles.signUpText}>Seleccionar imagen</Text>
           </TouchableOpacity>
@@ -160,7 +268,7 @@ export default class SignUp extends Component {
               height: 250,
             }}
             source={{
-              uri: `${this.state.data.fotoProducto}`,
+              uri: `${this.state.image}`,
             }}
           />
 
@@ -170,7 +278,7 @@ export default class SignUp extends Component {
               styles.signupButton,
               { marginTop: 20 },
             ]}
-            onPress={() => this.props.navigation.navigate("HomePage")}
+            onPress={() => this.editProduct()}
           >
             <Text style={styles.signUpText}>Editar Producto</Text>
           </TouchableOpacity>
