@@ -65,14 +65,19 @@ export default class Login extends Component {
       { method: 'GET', }).then((response) => response.json()).then((responseJson) => {
 
         if (responseJson.length > 0) {
-          if (responseJson[0].tipo != "habilitado") {
-
-             this.saveId(responseJson[0].id);
+          
+          if (responseJson[0].estado === "habilitado") {
+          
+            this.saveId(responseJson[0].id);
             this.loadId();
             
             alert("Inicio de Sesión exitoso para el usuario ");
-            this.props.navigation.navigate('HomePage')
-          } else {
+            this.props.navigation.reset({index:0, routes: [{name:"HomePage"}]})
+          } else if(responseJson[0].estado === "noValidado"){
+            alert("Usuario no validado, favor esperar a que el administrador valide su cuenta");
+          }
+          
+          else {
             alert("Usuario deshabilitado, favor de contactar al administrador");
           }
         } else {

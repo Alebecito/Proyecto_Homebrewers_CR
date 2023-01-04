@@ -61,7 +61,10 @@ export default class Users extends Component {
 
   }
 
+  
+
   clickEventListenerProfile(item) {
+    
     this.props.navigation.navigate("OtherProfile",{idOtroUsuario:item.id});
   }
 

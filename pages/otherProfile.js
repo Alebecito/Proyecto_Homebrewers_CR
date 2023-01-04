@@ -12,14 +12,17 @@ import {
   Dimensions,
   Modal,
   TextInput,
-  AsyncStorage,
+  AsyncStorage,NavigationContainer
 } from "react-native";
 
 export default class ProfileView extends Component {
   constructor(props) {
+    
+
     super(props);
 
     this.state = {
+      refrescar: true,
       bloqueadoAuxiliarMe:false,
       usuarioSeguido: false,
       usuarioBloqueado: "Bloquear usuario",
@@ -147,7 +150,10 @@ export default class ProfileView extends Component {
       });
   };
 
+   
+
   async componentDidMount() {
+    
     this.setState({ idOtroUsuario: this.props.route.params.idOtroUsuario });
     await this.loadId();
     await this.loadUserData();
@@ -159,11 +165,10 @@ export default class ProfileView extends Component {
     }
     await this.checkIfFollows(this.state.usuarioLogeado);
     await this.checkIfBlocked(this.state.usuarioLogeado);
-   
-    
-   
     await this.loadPosts();
     await this.loadReviews();
+
+    
   }
 
   clickGoToReview(item) {
@@ -204,6 +209,8 @@ export default class ProfileView extends Component {
     }
   };
   render() {
+    
+      
     return (
       <ScrollView>
         <View style={styles.container}>
