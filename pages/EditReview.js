@@ -57,7 +57,14 @@ export default class SignUp extends Component {
         method: "PUT",
         body: formData,
       }
-    );
+    )
+      .then((response) => response.json())
+      .then((responseJson) => {
+        console.log(responseJson);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
     Alert.alert("Reseña editada exitosamente");
     this.props.navigation.navigate("HomePage");
   };

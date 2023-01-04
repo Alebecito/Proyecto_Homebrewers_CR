@@ -9,6 +9,7 @@ import {
   TextInput,
   Modal,
   Dimensions,
+  Alert,
 } from "react-native";
 
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
@@ -61,6 +62,24 @@ export default class PostView extends Component {
     });
     await this.checkIfOwnReview(this.state.item);
   }
+
+  deleteReview = async () => {
+    await fetch(
+      `http://10.0.2.2:5000/resena/deleteReview/${this.state.item.reseñaGUID}`,
+      {
+        method: "DELETE",
+      }
+    )
+      .then((response) => response.json())
+      .then((responseJson) => {
+        console.log(responseJson);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+    Alert.alert("Reseña eliminada exitosamente");
+    this.props.navigation.navigate("HomePage");
+  };
 
   render() {
     return (
@@ -119,7 +138,10 @@ export default class PostView extends Component {
                 >
                   <Text style={styles.shareButtonText}>Editar</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.shareButton}>
+                <TouchableOpacity
+                  style={styles.shareButton}
+                  onPress={() => this.deleteReview()}
+                >
                   <Text style={styles.shareButtonText}>Eliminar</Text>
                 </TouchableOpacity>
               </View>
