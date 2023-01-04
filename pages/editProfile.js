@@ -4,27 +4,148 @@ import {
   Text,
   View,
   TextInput,
-  Button,
-  TouchableHighlight,
   TouchableOpacity,
   Image,
   Alert,
   ScrollView,
 } from "react-native";
 
-import Checkbox from "expo-checkbox";
+import * as ImagePicker from "expo-image-picker";
+// import moment from "moment";
 
 export default class SignUp extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      isChecked: false,
       fullName: "",
       email: "",
       password: "",
+      description: "",
+      passwordConfirm: "",
       data: [],
+      profileImage: "",
+      coverImage: "",
+      image: null,
+      imgSources: ["", ""],
+      resultURLS: ["", ""],
+      coverEdited: false,
+      profileEdited: false,
     };
   }
+
+  validateEmail = (email) => {
+    var re = /\S+@\S+\.\S+/;
+    return re.test(email);
+  };
+
+  get_url_extension(url) {
+    return url.split(/[#?]/)[0].split(".").pop().trim();
+  }
+
+  _pickImage = async (imgType) => {
+    let pickerResult = await ImagePicker.launchImageLibraryAsync({
+      allowsEditing: false,
+      aspect: [4, 3],
+    });
+
+    if (pickerResult.cancelled === true) {
+      return;
+    }
+
+    const uri = pickerResult.uri;
+    const type = "image/" + this.get_url_extension(uri);
+    const name = pickerResult.assetId;
+    const source = { uri, type, name };
+
+    let imgSources = this.state.imgSources;
+
+    if (imgType === "cover") {
+      this.setState({ coverImage: pickerResult.uri });
+      imgSources[0] = source;
+      this.setState({ imgSources });
+      this.setState({ coverEdited: true });
+    } else {
+      imgSources[1] = source;
+      this.setState({ imgSources });
+      this.setState({ profileImage: pickerResult.uri });
+      this.setState({ profileEdited: true });
+    }
+  };
+
+  uploadImage = async (file, type) => {
+    const data = new FormData();
+    data.append("file", file);
+    data.append("upload_preset", "UserUploadImages");
+    data.append("cloud_name", "dlzxkdsau");
+    await fetch("https://api.cloudinary.com/v1_1/dlzxkdsau/image/upload", {
+      method: "POST",
+      body: data,
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "multipart/form-data",
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        let resultURLS = this.state.resultURLS;
+        if (type === "cover") {
+          resultURLS[0] = data.url;
+          this.setState({ resultURLS });
+        } else {
+          resultURLS[1] = data.url;
+          this.setState({ resultURLS });
+        }
+      })
+      .catch((err) => {
+        Alert.alert("Error While Uploading");
+      });
+  };
+
+  editFunction = async () => {
+    if (
+      this.state.description === "" ||
+      this.state.fullName === "" ||
+      this.state.email === "" ||
+      this.state.password === "" ||
+      this.state.passwordConfirm === ""
+    ) {
+      Alert.alert("Error", "Por favor, llena todos los campos");
+    } else if (this.validateEmail(this.state.email) === false) {
+      Alert.alert("Error", "Por favor, introduce un correo electrónico válido");
+    } else if (this.state.password !== this.state.passwordConfirm) {
+      Alert.alert("Error", "Las contraseñas no coinciden");
+    } else {
+      let formData = new FormData();
+      formData.append("nombre", this.state.fullName);
+      formData.append("correoElectronico", this.state.email);
+      formData.append("descripcionPerfil", this.state.description);
+      formData.append("password", this.state.data.password);
+
+      if (this.state.coverEdited === true) {
+        await this.uploadImage(this.state.imgSources[0], "cover");
+        formData.append("imagenPortada", this.state.resultURLS[0]);
+      } else {
+        formData.append("imagenPortada", this.state.data.fotoPortada);
+      }
+
+      if (this.state.profileEdited === true) {
+        await this.uploadImage(this.state.imgSources[1], "profile");
+        formData.append("imagenPerfil", this.state.resultURLS[1]);
+      } else {
+        formData.append("imagenPerfil", this.state.data.fotoDePerfil);
+      }
+
+      await fetch(
+        `http://10.0.2.2:5000/usuario/editUser/${this.state.data.usuarioGUID}`,
+        {
+          method: "PUT",
+          body: formData,
+        }
+      );
+      Alert.alert("Perfil editado exitosamente");
+      this.props.navigation.navigate("HomePage");
+    }
+  };
 
   onClickListener = (viewId) => {
     Alert.alert("Alert", "Button pressed " + viewId);
@@ -32,8 +153,24 @@ export default class SignUp extends Component {
 
   handleChange = (e) => this.setState({ isChecked: e });
 
+  setStateAsync(state) {
+    return new Promise((resolve) => {
+      this.setState(state, resolve);
+    });
+  }
+
   async componentDidMount() {
-    this.setState({ data: this.props.route.params.data });
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== "granted") {
+      alert("Sorry, we need camera roll permissions to make this work!");
+    }
+    await this.setStateAsync({ data: this.props.route.params.data });
+    await this.setStateAsync({ profileImage: this.state.data.fotoDePerfil });
+    await this.setStateAsync({ coverImage: this.state.data.fotoPortada });
+    await this.setStateAsync({ fullName: this.state.data.nombre });
+    await this.setStateAsync({ email: this.state.data.correo });
+    await this.setStateAsync({ description: this.state.data.descripcion });
+    await this.setStateAsync({ password: this.state.data.password });
   }
 
   render() {
@@ -47,7 +184,7 @@ export default class SignUp extends Component {
           <Image
             style={{ width: 200, height: 200 }}
             source={{
-              uri: `${this.state.data.fotoDePerfil}`,
+              uri: `${this.state.profileImage}`,
             }}
           />
           <TouchableOpacity
@@ -56,7 +193,7 @@ export default class SignUp extends Component {
               styles.signupButton,
               { marginTop: 20 },
             ]}
-            onPress={() => {}}
+            onPress={() => this._pickImage("profile")}
           >
             <Text style={styles.signUpText}>Seleccionar imagen</Text>
           </TouchableOpacity>
@@ -67,7 +204,7 @@ export default class SignUp extends Component {
           <Image
             style={{ width: 350, height: 200 }}
             source={{
-              uri: `${this.state.data.fotoPortada}`,
+              uri: `${this.state.coverImage}`,
             }}
           />
           <TouchableOpacity
@@ -76,7 +213,7 @@ export default class SignUp extends Component {
               styles.signupButton,
               { marginTop: 20 },
             ]}
-            onPress={() => {}}
+            onPress={() => this._pickImage("cover")}
           >
             <Text style={styles.signUpText}>Seleccionar imagen</Text>
           </TouchableOpacity>
@@ -93,7 +230,7 @@ export default class SignUp extends Component {
             <TextInput
               style={styles.inputs}
               placeholder="Nombre Completo"
-              defaultValue={this.state.data.nombre}
+              defaultValue={this.state.fullName}
               underlineColorAndroid="transparent"
               onChangeText={(fullName) => this.setState({ fullName })}
             />
@@ -111,7 +248,7 @@ export default class SignUp extends Component {
             <TextInput
               style={styles.inputs}
               placeholder="Correo Electrónico"
-              defaultValue={this.state.data.correo}
+              defaultValue={this.state.email}
               underlineColorAndroid="transparent"
               onChangeText={(email) => this.setState({ email })}
             />
@@ -132,9 +269,9 @@ export default class SignUp extends Component {
               numberOfLines={4}
               style={styles.inputsBox}
               placeholder="¿Cómo describes tu perfil? (Eg: Cervecero Artesanal)"
-              defaultValue={this.state.data.descripcion}
+              defaultValue={this.state.description}
               underlineColorAndroid="transparent"
-              onChangeText={(email) => this.setState({ email })}
+              onChangeText={(description) => this.setState({ description })}
             />
           </View>
           <Text style={{ color: "black", textAlign: "center", margin: 20 }}>
@@ -169,16 +306,18 @@ export default class SignUp extends Component {
             <TextInput
               style={styles.inputs}
               placeholder="Confirmar contraseña"
-              defaultValue={""}
+              defaultValue={this.state.passwordConfirm}
               secureTextEntry={true}
               underlineColorAndroid="transparent"
-              onChangeText={(password) => this.setState({ password })}
+              onChangeText={(passwordConfirm) =>
+                this.setState({ passwordConfirm })
+              }
             />
           </View>
 
           <TouchableOpacity
             style={[styles.buttonContainer, styles.signupButton]}
-            onPress={() => this.props.navigation.navigate("Login")}
+            onPress={() => this.editFunction()}
           >
             <Text style={styles.signUpText}>Actualizar Perfil</Text>
           </TouchableOpacity>
