@@ -52,7 +52,6 @@ export default function App() {
       
       <Stack.Navigator initialRouteName='Login'>
       <Stack.Screen name="Publications" component={Publications} />
-
        
       <Stack.Screen name="AddNewPublication" component={AddNewPublication} />
       <Stack.Screen name="AddReview" component={AddReview} />
