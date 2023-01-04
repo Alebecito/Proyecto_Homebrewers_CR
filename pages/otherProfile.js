@@ -20,6 +20,7 @@ export default class ProfileView extends Component {
     super(props);
 
     this.state = {
+      bloqueadoAuxiliarMe:false,
       usuarioSeguido: false,
       usuarioBloqueado: "Bloquear usuario",
       userData: [],
@@ -30,6 +31,22 @@ export default class ProfileView extends Component {
       reviews: [],
     };
   }
+
+
+  checkIfBlockedMe = async (id) => {
+ 
+    await fetch(`http://10.0.2.2:5000/relaciones/CheckIfUserBlocked/${this.state.idOtroUsuario}/${id}`,
+      { method: 'GET', }).then((response) => response.json()).then((responseJson) => {
+        
+        this.setState({ bloqueadoAuxiliarMe: responseJson[0].length>0?true:false });
+
+      }
+      ).catch((error) => {
+        console.log(error)
+      }
+      );
+
+}
 
   checkIfBlocked = async (id) => {
     await fetch(
@@ -134,9 +151,17 @@ export default class ProfileView extends Component {
     this.setState({ idOtroUsuario: this.props.route.params.idOtroUsuario });
     await this.loadId();
     await this.loadUserData();
+    await this.checkIfBlockedMe(this.state.usuarioLogeado);
+    if(this.state.bloqueadoAuxiliarMe){
+      Alert.alert("Error", "El Perfil de este usuario no está disponible");
+      this.props.navigation.goBack();
+      return;
+    }
     await this.checkIfFollows(this.state.usuarioLogeado);
     await this.checkIfBlocked(this.state.usuarioLogeado);
-
+   
+    
+   
     await this.loadPosts();
     await this.loadReviews();
   }

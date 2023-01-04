@@ -144,8 +144,12 @@ export default class PostView extends Component {
   setModalVisible(visible) {
     this.setState({ modalVisible: visible });
   }
-  navigateToOtherProfile() {
-    this.props.navigation.navigate("OtherProfile");
+  navigateToOtherProfile(id) {
+    if(id === this.state.UsuarioLogeado){
+      this.props.navigation.navigate("MyProfile");
+    }else{
+      this.props.navigation.navigate("OtherProfile",{idOtroUsuario: id});
+    }
   }
 
   renderIfyoulike() {
@@ -266,7 +270,7 @@ export default class PostView extends Component {
             const Notification = item.item;
             return (
               <View style={styles2.container}>
-                <TouchableOpacity onPress={() => this.props.navigation.navigate("OtherProfile",{idOtroUsuario:Notification.usuarioGUID})}>
+                <TouchableOpacity onPress={() => this.navigateToOtherProfile(Notification.usuarioGUID)}>
                   <Image style={styles2.image} source={{ uri: Notification.image }} />
                 </TouchableOpacity>
                 <View style={styles2.content}>

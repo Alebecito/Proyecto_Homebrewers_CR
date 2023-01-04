@@ -5,7 +5,7 @@ import {
   View,
   Image,
   TouchableOpacity,
-  ScrollView, FlatList, TextInput, Dimensions, Modal, AsyncStorage
+  ScrollView, FlatList, TextInput, Dimensions, Modal, AsyncStorage, Alert
 } from 'react-native';
 
 export default class PostView extends Component {
@@ -71,6 +71,7 @@ export default class PostView extends Component {
             price: responseJson[i].precioExpuesto,
             fotoPerfil: responseJson[i].fotoDePerfil,	
             nombreUsuario: responseJson[i].nombreUsuario,
+            usuarioGUID: responseJson[i].usuarioGUID,
           });
         }
 
@@ -106,6 +107,7 @@ export default class PostView extends Component {
           name: responseJson[0][i].nombre,
           comment: responseJson[0][i].contenido,
           time: this.formatDate(responseJson[0][i].fecha),
+          usuarioGUID: responseJson[0][i].deUsuarioGUID,	
         });
       }
       this.setState({ data: temporalData });
@@ -156,10 +158,19 @@ export default class PostView extends Component {
   setModalVisible(visible) {
     this.setState({ modalVisible: visible });
   }
-  navigateToOtherProfile() {
-    this.props.navigation.navigate("OtherProfile");
+  navigateToOtherProfile(id) {
+ 
+    this.props.navigation.navigate("OtherProfile",{idOtroUsuario: id});
   }
 
+  navigateFromComments(id) {
+    if(id === this.state.UsuarioLogeado){
+      this.props.navigation.navigate("MyProfile");
+    }else{
+      this.props.navigation.navigate("OtherProfile",{idOtroUsuario: id});
+    }
+    
+  }
 
   footerComponent() {
     return (
@@ -208,7 +219,7 @@ export default class PostView extends Component {
             Fecha de caducidad de la publicación: {this.state.dataCargada[0].time}
           </Text>
 
-          <TouchableOpacity style={styles.profile} onPress={() => navigationC.navigate("OtherProfile",{idOtroUsuario:this.state.dataCargada[0].id})}>
+          <TouchableOpacity style={styles.profile} onPress={() => this.navigateToOtherProfile(this.state.dataCargada[0].usuarioGUID)}>
             <Image style={styles.avatar}
               source={{ uri: this.state.dataCargada[0].fotoPerfil }} />
 
@@ -302,7 +313,7 @@ export default class PostView extends Component {
             const Notification = item.item;
             return (
               <View style={styles2.container}>
-                <TouchableOpacity onPress={() => this.props.navigation.navigate("OtherProfile",{idOtroUsuario:Notification.id})}>
+                <TouchableOpacity onPress={() => this.navigateFromComments(Notification.usuarioGUID)}>
                   <Image style={styles2.image} source={{ uri: Notification.image }} />
                 </TouchableOpacity>
                 <View style={styles2.content}>
