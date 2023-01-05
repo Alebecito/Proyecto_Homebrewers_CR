@@ -8,32 +8,168 @@ import {
   TouchableHighlight,
   TouchableOpacity,
   Image,
-  Alert, ScrollView
+  Alert, ScrollView, AsyncStorage,LogBox
 } from 'react-native';
 
 import Checkbox from 'expo-checkbox';
 import { Picker } from '@react-native-picker/picker';
+import moment from "moment";
+const _today = moment().format("YYYY-MM-DD");
+
 export default class SignUp extends Component {
+  initialState = {
+    [_today]: { disabled: true },
+  };
 
   constructor(props) {
     super(props);
     this.state = {
+      UsuarioLogeado: "",
       elementoSeleccionado: "No seleccionado",
-      informacionProducto: ["Nombre Del Producto", "0", "0", "Sin Fecha", "Descripción Del Producto", "https://thumbs.dreamstime.com/b/el-logotipo-linear-negro-de-la-c%C3%A1mara-foto-no-le-gusta-ninguna-imagen-disponible-106031126.jpg"],
       isChecked: false,
       fullName: '',
       email: '',
       password: '',
+      productoActual: [],
+      productos: [],
+      productoGUID: '',
+      cantidad:'',
+      precio:''
+
     }
   }
 
 
+  parseDate = (date) => {
+    const d = new Date(date);
+    const day = d.getDate();
+    const month = d.getMonth() + 1;
+    const year = d.getFullYear();
+    return `${day}/${month}/${year}`;
+  };
 
 
 
-  popularInformacionProducto = () => {
-    this.setState({elementoSeleccionado:"Sandias Grises", informacionProducto:  ["Sandía Gris", "23", "10", "12/07/2022", "Sandías muy jugosas", "https://pixabay.com/get/g905baba9b9b76350266df398110b6e23a5f5b83291495b169f6ef1bfe1d4a8e86f90c265d334d253b542411276cd208b_1280.jpg"]});
+  getUserProducts = async () => {
+    await fetch(
+      `http://10.0.2.2:5000/producto/getAllProductsFromUser/${this.state.UsuarioLogeado}`
+    )
+      .then((response) => response.json())
+      .then((responseJson) => {
+        this.setState({ productos: responseJson });
+        if(responseJson.length > 0){
+          this.setState({ productoGUID: responseJson[0].productoGUID });
+        }
+
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
+
+  loadId = async () => {
+    try {
+      const id = await AsyncStorage.getItem("UsuarioLogeado");
+      this.setState({ UsuarioLogeado: id });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  getSpecificProduct = async () => {
+    await fetch(
+      `http://10.0.2.2:5000/producto/getSpecificProduct/${this.state.productoGUID}`
+    )
+      .then((response) => response.json())
+      .then((responseJson) => {
+        this.setState({ productoActual: responseJson[0] , cantidad: responseJson[0].cantidad.toString()});
+        
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
+
+  popularInformacionProducto = async (value) => {
+    
+    await this.setState({ productoGUID: value });  
+    await this.getSpecificProduct();
   }
+
+
+
+
+
+
+ async componentDidMount() {
+  await this.loadId();
+  await this.getUserProducts();
+  await this.getSpecificProduct();
+
+  if(this.state.productos.length === 0){
+    Alert.alert("Error", "No tienes productos para publicar");
+    this.props.navigation.navigate("HomePage");
+
+  }
+  
+
+
+  
+  }
+
+  crearPublicacion = async () => {
+    await Alert.alert(
+      "Agregar Publicación",
+      "¿Estas seguro que deseas agregar esta publicación?\n\nLas Publicaciones no se pueden editar, además de que pierdes el item del inventario",
+      [
+        {
+          text: "Cancelar",
+          onPress: () => {},
+          style: "cancel"
+        },
+        { text: "Aceptar", onPress: async () => {
+
+          if(this.state.precio === ''){
+            Alert.alert("Error", "Debe ingresar un precio");
+            return;
+          }else if(isNaN(this.state.precio)){
+            Alert.alert("Error", "El precio debe ser un número");
+            return;
+          }
+          else if(parseInt(this.state.precio)<500){
+            Alert.alert("Error", "El precio mínimo son 500 CRC");
+            return;
+          }
+      
+          else{
+      
+            let data = new FormData();
+            data.append("productoGUID", this.state.productoActual.productoGUID);
+            data.append("titulo", this.state.productoActual.titulo);
+            data.append("cuerpo", this.state.productoActual.cuerpo);
+            data.append("precio", this.state.precio);
+            data.append("fecha", moment(this.state.productoActual.fechaCaducidad).format("YYYY-MM-DD"));
+            data.append("usuarioGUID", this.state.UsuarioLogeado);
+            data.append("foto", this.state.productoActual.fotoProducto);
+            await fetch("http://10.0.2.2:5000/publicacionesnoticias/AddPublication", {method: "POST",body: data});
+            Alert.alert("Transacción Exitosa", "¡La publicación se ha creado exitosamente!\n\nPuedes revisar la publicación en tu perfil");
+            
+            
+            
+            this.props.navigation.navigate("HomePage");
+          }
+
+        }
+       }
+      ]
+    );
+   
+    
+  }
+
+ 
 
 
   onClickListener = (viewId) => {
@@ -65,7 +201,7 @@ export default class SignUp extends Component {
               placeholder="Precio de la publicación (CRC)"
 
               underlineColorAndroid='transparent'
-              onChangeText={(fullName) => this.setState({ fullName })} />
+              onChangeText={(precio) => this.setState({ precio })} />
           </View>
           <Text style={{ color: "black", textAlign: "center", margin: 20 }}>Producto</Text>
 
@@ -74,15 +210,18 @@ export default class SignUp extends Component {
           <View style={[styles.inputContainer]}>
 
             <Picker
-              selectedValue={this.state.elementoSeleccionado}
+              selectedValue={this.state.productoGUID}
               style={{ height: 50, width: 250, justifyContent: 'center', alignItems: 'center', }}
-              onValueChange={() =>
-                this.popularInformacionProducto()
+              onValueChange={(value) =>
+                this.popularInformacionProducto(value)
               }
             >
-              <Picker.Item label={"No seleccionado"} value={"No seleccionado"} />
-              <Picker.Item label={"Sandias Grises"} value={"Sandias Grises"} />
-              <Picker.Item label={"Saco de 20 Kilos de lúpulos"} value={"Saco de 20 Kilos de lúpulos"} />
+              {this.state.productos.map((producto) => (
+                <Picker.Item
+                  label={producto.titulo}
+                  value={producto.productoGUID}
+                />
+              ))}
             </Picker>
           </View>
           <Text style={{ color: "black", textAlign: "center", margin: 20, fontSize: 20 }}>Información del Producto</Text>
@@ -92,35 +231,25 @@ export default class SignUp extends Component {
 
             <TextInput style={styles.inputs} editable={false}
               placeholder="Nombre del Producto"
-              defaultValue={this.state.informacionProducto[0]}
+              defaultValue={this.state.productoActual.titulo}
               underlineColorAndroid='transparent'
               onChangeText={(fullName) => this.setState({ fullName })} />
           </View>
-          <Text style={{ color: "black", textAlign: "center", margin: 20 }}>Cantidad</Text>
+          <Text style={{ color: "black", textAlign: "center", margin: 20 }}>Cantidad restante en tu inventario</Text>
           <View style={[styles.inputContainer]}>
 
             <Picker enabled={false}
-              selectedValue={this.state.informacionProducto[1]}
+              selectedValue={this.state.cantidad}
               style={{ height: 50, width: 250, justifyContent: 'center', alignItems: 'center', }}
 
             >
               {myloop}
             </Picker>
           </View>
-          <Text style={{ color: "black", textAlign: "center", margin: 20 }}>Días antes de la caducidad para enviar recordatorio</Text>
-          <View style={[styles.inputContainer]}>
-
-            <Picker enabled={false}
-              selectedValue={this.state.informacionProducto[2]}
-              style={{ height: 50, width: 250, justifyContent: 'center', alignItems: 'center', }}
-
-            >
-              {myloop}
-            </Picker>
-          </View>
+        
           <Text style={{ color: "black", textAlign: "center", margin: 20 }}>Fecha de Caducidad</Text>
 
-          <Text style={{ color: "black", textAlign: "center", margin: 20 }}>{this.state.informacionProducto[3]}</Text>
+          <Text style={{ color: "black", textAlign: "center", margin: 20 }}>{this.parseDate(this.state.productoActual.fechaCaducidad)}</Text>
 
           <Text style={{ color: "black", textAlign: "center", margin: 20 }}>Descripción del Producto</Text>
           <View style={styles.inputContainerBox}>
@@ -130,7 +259,7 @@ export default class SignUp extends Component {
               numberOfLines={4} style={styles.inputsBox}
               placeholder="Descripción del Producto"
               editable={false}
-              defaultValue={this.state.informacionProducto[4]}
+              defaultValue={this.state.productoActual.cuerpo}
               underlineColorAndroid='transparent'
               onChangeText={(email) => this.setState({ email })} />
           </View>
@@ -142,11 +271,11 @@ export default class SignUp extends Component {
               width: 250,
               height: 250,
             }}
-            source={{ uri: this.state.informacionProducto[5] }}
+            source={{ uri: this.state.productoActual.fotoProducto }}
           />
 
 
-          <TouchableOpacity style={[styles.buttonContainer, styles.signupButton, { marginTop: 20 }]} onPress={() => this.props.navigation.navigate('HomePage')}>
+          <TouchableOpacity style={[styles.buttonContainer, styles.signupButton, { marginTop: 20 }]} onPress={() => this.crearPublicacion()}>
             <Text style={styles.signUpText}>Agregar</Text>
           </TouchableOpacity>
 

@@ -5,8 +5,9 @@ import {
   View,
   Image,
   TouchableOpacity,
-  ScrollView, FlatList, TextInput, Dimensions, Modal, AsyncStorage,
+  ScrollView, FlatList, TextInput, Dimensions, Modal, AsyncStorage,Alert
 } from 'react-native';
+import moment from "moment";
 
 export default class PostView extends Component {
   constructor(props) {
@@ -21,7 +22,9 @@ export default class PostView extends Component {
       bloqueadoAuxiliarMe: false,
       isChecked: false,
       dataCargada: [{}],
-      data: []
+      data: [],
+      comment: "",
+
     }
   }
 
@@ -137,6 +140,33 @@ export default class PostView extends Component {
     await this.loadCommentaries();
   }
 
+
+
+  addComment = async () => {
+    const formData = new FormData();
+    const currentDate = new Date();
+    formData.append("contenido", this.state.comment);
+    formData.append("deUsuarioGUID", this.state.UsuarioLogeado);
+    formData.append("fecha", moment(currentDate).format("YYYY-MM-DD"));
+
+    await fetch(
+      `http://10.0.2.2:5000/comentarios/addComment/${this.state.idNew}`,
+      {
+        method: "POST",
+        body: formData,
+      }
+    )
+      .then((response) => response.json())
+      .then((responseJson) => {
+        console.log(responseJson);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+    Alert.alert("Comentario agregado exitosamente");
+    this.props.navigation.navigate("HomePage");
+  };
+
   clickEventListener = () => {
     this.setModalVisible(true);
   }
@@ -167,6 +197,9 @@ export default class PostView extends Component {
   }
 
 
+  
+
+
   footerComponent() {
     return (
       <View style={styles.container}>
@@ -177,9 +210,12 @@ export default class PostView extends Component {
             borderColor: '#000000',
             borderWidth: 1, textAlignVertical: 'top'
           }} placeholder="Agrega un comentario! (255 caracteres)" multiline={true}
-            numberOfLines={4} />
+            numberOfLines={4}
+            onChangeText={(comment) => this.setState({ comment })}
+            />
 
-          <TouchableOpacity style={styles.shareButton}>
+          <TouchableOpacity style={styles.shareButton}
+          onPress={() => this.addComment()}>
             <Text style={styles.shareButtonText}>Comentar</Text>
           </TouchableOpacity>
         </View>
@@ -306,7 +342,9 @@ export default class PostView extends Component {
                   borderColor: '#000000',
                   borderWidth: 1, textAlignVertical: 'top'
                 }} placeholder="Describe el motivo del reporte (255 caracteres)" multiline={true}
-                  numberOfLines={4} />
+                  numberOfLines={4}
+                  
+                  />
               </View>
               <View style={stylesReport.popupButtons}>
                 <TouchableOpacity onPress={() => { this.setModalVisible(false) }} style={[stylesReport.btnClose, { marginRight: 10 }]}>

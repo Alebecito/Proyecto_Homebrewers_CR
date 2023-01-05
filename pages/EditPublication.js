@@ -25,6 +25,7 @@ export default class SignUp extends Component {
       productos: [],
       post: [],
       productoGUID: this.props.route.params.post.productoGUID,
+      precio: this.props.route.params.post.precioExpuesto,
     };
   }
 
@@ -43,9 +44,31 @@ export default class SignUp extends Component {
   }
 
   popularInformacionProducto = async (value) => {
-    await this.setStateAsync({ productoGUID: value });
+    await this.setState({ productoGUID: value });
     await this.getSpecificProduct();
   };
+
+
+  editarPrecio = async () => {
+
+    if(this.state.precio === ''){
+      Alert.alert("Error", "Debe ingresar un precio");
+      return;
+    }else if(isNaN(this.state.precio)){
+      Alert.alert("Error", "El precio debe ser un número");
+      return;
+    }
+    else if(parseInt(this.state.precio)<500){
+      Alert.alert("Error", "El precio mínimo son 500 CRC");
+      return;
+    }else{
+      await fetch(`http://10.0.2.2:5000/publicacionesnoticias/updatePricePublication/${this.state.post.publicacionNoticiaGUID}`, {method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({precio: this.state.precio})});
+      Alert.alert("Éxito", "Precio editado con éxito");
+      this.props.navigation.navigate("HomePage");
+    }
+
+    
+  }
 
   getUserProducts = async () => {
     await fetch(
@@ -110,139 +133,12 @@ export default class SignUp extends Component {
             <TextInput
               style={styles.inputs}
               placeholder="Precio de la publicación (CRC)"
-              defaultValue={this.state.post.precioExpuesto}
+              defaultValue={this.state.precio}
               underlineColorAndroid="transparent"
-              onChangeText={(fullName) => this.setState({ fullName })}
+              onChangeText={(precio) => this.setState({ precio })}
             />
           </View>
-          <Text style={{ color: "black", textAlign: "center", margin: 20 }}>
-            Producto
-          </Text>
-
-          <View style={[styles.inputContainer]}>
-            <Picker
-              selectedValue={this.state.productoGUID}
-              style={{
-                height: 50,
-                width: 250,
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-              onValueChange={(value) => this.popularInformacionProducto(value)}
-            >
-              {this.state.productos.map((producto) => (
-                <Picker.Item
-                  label={producto.titulo}
-                  value={producto.productoGUID}
-                />
-              ))}
-            </Picker>
-          </View>
-          <Text
-            style={{
-              color: "black",
-              textAlign: "center",
-              margin: 20,
-              fontSize: 20,
-            }}
-          >
-            Información del Producto
-          </Text>
-          <Text style={{ color: "black", textAlign: "center", margin: 20 }}>
-            Nombre del Producto
-          </Text>
-          <View style={styles.inputContainer}>
-            <Image
-              style={styles.inputIcon}
-              source={{
-                uri: "https://png.icons8.com/male-user/ultraviolet/50/3498db",
-              }}
-            />
-
-            <TextInput
-              style={styles.inputs}
-              editable={false}
-              placeholder="Nombre del Producto"
-              defaultValue={this.state.productoActual.titulo}
-              underlineColorAndroid="transparent"
-              onChangeText={(fullName) => this.setState({ fullName })}
-            />
-          </View>
-          <Text style={{ color: "black", textAlign: "center", margin: 20 }}>
-            Cantidad
-          </Text>
-          <View style={[styles.inputContainer]}>
-            <Picker
-              enabled={false}
-              selectedValue={`${this.state.productoActual.cantidad}`}
-              style={{
-                height: 50,
-                width: 250,
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              {myloop}
-            </Picker>
-          </View>
-          <Text style={{ color: "black", textAlign: "center", margin: 20 }}>
-            Días antes de la caducidad para enviar recordatorio
-          </Text>
-          <View style={[styles.inputContainer]}>
-            <Picker
-              enabled={false}
-              selectedValue="10"
-              style={{
-                height: 50,
-                width: 250,
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              {myloop}
-            </Picker>
-          </View>
-          <Text style={{ color: "black", textAlign: "center", margin: 20 }}>
-            Fecha de Caducidad
-          </Text>
-
-          <Text style={{ color: "black", textAlign: "center", margin: 20 }}>
-            {this.parseDate(this.state.productoActual.fechaCaducidad)}
-          </Text>
-
-          <Text style={{ color: "black", textAlign: "center", margin: 20 }}>
-            Descripción del Producto
-          </Text>
-          <View style={styles.inputContainerBox}>
-            <Image
-              style={styles.inputIcon}
-              source={{
-                uri: "https://png.icons8.com/message/ultraviolet/50/3498db",
-              }}
-            />
-            <TextInput
-              UselessTextInput
-              multiline
-              numberOfLines={4}
-              style={styles.inputsBox}
-              placeholder="Descripción del Producto"
-              editable={false}
-              defaultValue={this.state.productoActual.cuerpo}
-              underlineColorAndroid="transparent"
-              onChangeText={(email) => this.setState({ email })}
-            />
-          </View>
-          <Text style={{ color: "black", textAlign: "center", margin: 20 }}>
-            Imagen del producto
-          </Text>
-
-          <Image
-            style={{
-              width: 250,
-              height: 250,
-            }}
-            source={{ uri: this.state.productoActual.fotoProducto }}
-          />
+          
 
           <TouchableOpacity
             style={[
@@ -250,7 +146,7 @@ export default class SignUp extends Component {
               styles.signupButton,
               { marginTop: 20 },
             ]}
-            onPress={() => this.props.navigation.navigate("HomePage")}
+            onPress={() => this.editarPrecio()}
           >
             <Text style={styles.signUpText}>Editar</Text>
           </TouchableOpacity>

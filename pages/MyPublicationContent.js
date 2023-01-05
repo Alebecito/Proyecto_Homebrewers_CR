@@ -8,7 +8,9 @@ import {
   ScrollView,
   FlatList,
   TextInput,
+  Alert,
 } from "react-native";
+import moment from "moment";
 
 export default class PostView extends Component {
   constructor(props) {
@@ -17,9 +19,12 @@ export default class PostView extends Component {
       post: [],
       userData: [],
       comentarios: [],
+      comment: "",
     };
   }
 
+
+  
   parseDate = (date) => {
     const d = new Date(date);
     const day = d.getDate();
@@ -27,6 +32,34 @@ export default class PostView extends Component {
     const year = d.getFullYear();
     return `${day}/${month}/${year}`;
   };
+
+
+
+
+  eliminarPublicacion = async () => {
+    await Alert.alert(
+      "Eliminar Publicación",
+      "¿Estas seguro que deseas eliminar esta publicación?",
+      [
+        {
+          text: "Cancelar",
+          onPress: () => {},
+          style: "cancel"
+        },
+        { text: "Aceptar", onPress: async () => {
+          await fetch(`http://10.0.2.2:5000/publicacionesnoticias/deleteNewOrPublication/${this.state.post.publicacionNoticiaGUID}`,
+          {method: 'DELETE'});
+          Alert.alert("Sistema","Publicación eliminada!")
+          this.props.navigation.navigate("HomePage");
+        }
+       }
+      ]
+    );
+
+    
+    
+  };
+
 
   async getComments() {
     await fetch(
@@ -57,8 +90,42 @@ export default class PostView extends Component {
     await this.getComments();
   }
 
-  navigateToOtherProfile() {
-    this.props.navigation.navigate("OtherProfile");
+  addComment = async () => {
+
+    
+    const formData = new FormData();
+    const currentDate = new Date();
+    formData.append("contenido", this.state.comment);
+    formData.append("deUsuarioGUID", this.state.userData.usuarioGUID);
+    formData.append("fecha", moment(currentDate).format("YYYY-MM-DD"));
+
+    await fetch(
+      `http://10.0.2.2:5000/comentarios/addComment/${this.state.post.publicacionNoticiaGUID}`,
+      {
+        method: "POST",
+        body: formData,
+      }
+    )
+      .then((response) => response.json())
+      .then((responseJson) => {
+        console.log(responseJson);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+    Alert.alert("Comentario agregado exitosamente");
+    this.props.navigation.navigate("HomePage");
+    
+  };
+
+  navigateToOtherProfile(id) {
+   
+    
+    if(id === this.state.userData.usuarioGUID){
+      this.props.navigation.navigate("MyProfile");
+    }else{
+      this.props.navigation.navigate("OtherProfile",{idOtroUsuario: id});
+    }
   }
 
   footerComponent() {
@@ -78,9 +145,12 @@ export default class PostView extends Component {
             placeholder="Agrega un comentario! (255 caracteres)"
             multiline={true}
             numberOfLines={4}
+            onChangeText={(comment) => this.setState({ comment })}
           />
 
-          <TouchableOpacity style={styles.shareButton}>
+          <TouchableOpacity style={styles.shareButton}
+          onPress={() => this.addComment()}
+          >
             <Text style={styles.shareButtonText}>Comentar</Text>
           </TouchableOpacity>
         </View>
@@ -136,9 +206,9 @@ export default class PostView extends Component {
               navigationC.navigate("EditPublication", { post: this.state.post })
             }
           >
-            <Text style={styles.shareButtonText}>Editar Publicación</Text>
+            <Text style={styles.shareButtonText}>Editar precio de la publicación</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.shareButton}>
+          <TouchableOpacity style={styles.shareButton} onPress={()=> this.eliminarPublicacion()}>
             <Text style={styles.shareButtonText}>Eliminar Publicación</Text>
           </TouchableOpacity>
         </View>
@@ -167,11 +237,7 @@ export default class PostView extends Component {
             return (
               <View style={styles2.container}>
                 <TouchableOpacity
-                  onPress={() =>
-                    this.props.navigation.navigate("OtherProfile", {
-                      idOtroUsuario: Notification.usuarioGUID,
-                    })
-                  }
+                  onPress={() => this.navigateToOtherProfile(Notification.deUsuarioGUID)}
                 >
                   <Image
                     style={styles2.image}

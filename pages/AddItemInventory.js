@@ -221,22 +221,8 @@ export default class SignUp extends Component {
               {myloop}
             </Picker>
           </View>
-          <Text style={{ color: "black", textAlign: "center", margin: 20 }}>
-            Días antes de la caducidad para enviar recordatorio
-          </Text>
-          <View style={[styles.inputContainer]}>
-            <Picker
-              selectedValue={"0"}
-              style={{
-                height: 50,
-                width: 250,
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              {myloop}
-            </Picker>
-          </View>
+        
+         
           <Text style={{ color: "black", textAlign: "center", margin: 20 }}>
             Fecha de Caducidad
           </Text>
