@@ -15,6 +15,7 @@ export default class Users extends Component {
     super(props);
     this.state = {
       idOtroUsuario: '',
+      relacionAuxiliar: false,
       UsuarioLogeado: "",
       data: [
         
@@ -24,15 +25,16 @@ export default class Users extends Component {
 
   loadUsers = async () => {
     await fetch(`http://10.0.2.2:5000/relaciones/getFollowingFromUser/${this.state.idOtroUsuario}`, 
-    {method: 'GET'}).then((response) => response.json()).then((responseJson) => {
+    {method: 'GET'}).then((response) => response.json()).then(async (responseJson) => {
       var temporalData = [];
       for (var i = 0; i < responseJson[0].length; i++) {
+        await this.checkIfFollows(responseJson[0][i].usuarioGUID);
         temporalData.push({
           id: responseJson[0][i].usuarioGUID,
           name: responseJson[0][i].nombre,
           position: responseJson[0][i].descripcion,
           image: responseJson[0][i].fotoDePerfil,
-          relacion: "Dejar de Seguir",
+          relacion: this.state.relacionAuxiliar===true?"Dejar de Seguir":"Seguir",
         });
 
       }
@@ -71,6 +73,54 @@ export default class Users extends Component {
   clickEventListenerFollow(item) {
     Alert.alert(item.relacion);
   }
+
+  checkIfFollows = async (id) => {
+   
+    await fetch(
+      `http://10.0.2.2:5000/relaciones/CheckIfUserFollowsAnother/${this.state.UsuarioLogeado}/${id}`,
+      { method: "GET" }
+    )
+      .then((response) => response.json())
+      .then((responseJson) => {
+        this.setState({
+          relacionAuxiliar: responseJson[0].length > 0 ? true : false,
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  followUnfollowUser = async (id, item) => {
+    
+    Alert.alert("Sistema", "¿Está seguro que desea Seguir o Dejar de seguir a este usuario?", [
+      {
+        text: "Cancelar",
+        onPress: () => {},
+        style: "cancel",
+      },
+      {
+        text: "Aceptar",
+        onPress: async () => {
+          var formData = new FormData();
+          formData.append("de", id);
+          formData.append("hacia", item.id);
+          formData.append("tipo", "seguir");
+          if(item.relacion==="Seguir"){
+            await fetch("http://10.0.2.2:5000/relaciones/createRelation", {method: "POST", body: formData});
+            Alert.alert("Sistema", "Usuario Seguido")
+            await this.componentDidMount();
+            
+          }else{
+            await fetch("http://10.0.2.2:5000/relaciones/deleteRelation", {method: "DELETE", body: formData});
+            Alert.alert("Sistema", "Usuario Dejado de Seguir")
+            await this.componentDidMount();
+            
+          }
+        }
+      },
+    ]);
+  };
  
 
   render() {
@@ -86,43 +136,69 @@ export default class Users extends Component {
             return item.id;
           }}
           renderItem={({ item }) => {
-            return (
-              <TouchableOpacity
-                style={styles.card}
-                onPress={() => {
-                  this.clickEventListenerProfile(item);
-                }}
-              >
-                <View style={styles.cardHeader}></View>
-                <Image style={styles.userImage} source={{ uri: item.image }} />
-                <View style={styles.cardFooter}>
-                  <View
-                    style={{ alignItems: "center", justifyContent: "center" }}
-                  >
-                    <Text style={styles.name}>{item.name}</Text>
-                    <Text style={styles.position}>{item.position}</Text>
-                    <TouchableOpacity
-                      style={
-                        item.relacion === "Seguir"
-                          ? styles.followButton
-                          : styles.UnfollowButton
-                      }
-                      onPress={() => this.clickEventListenerFollow(item)}
+            if(item.id!==this.state.UsuarioLogeado){
+              return (
+                <TouchableOpacity
+                  style={styles.card}
+                  onPress={() => {
+                    this.clickEventListenerProfile(item);
+                  }}
+                >
+                  <View style={styles.cardHeader}></View>
+                  <Image style={styles.userImage} source={{ uri: item.image }} />
+                  <View style={styles.cardFooter}>
+                    <View
+                      style={{ alignItems: "center", justifyContent: "center" }}
                     >
-                      <Text
+                      <Text style={styles.name}>{item.name}</Text>
+                      <Text style={styles.position}>{item.position}</Text>
+                      <TouchableOpacity
                         style={
                           item.relacion === "Seguir"
-                            ? styles.followButtonText
-                            : styles.UnfollowButtonText
+                            ? styles.followButton
+                            : styles.UnfollowButton
                         }
+                        onPress={() => this.followUnfollowUser(this.state.UsuarioLogeado,item)}
                       >
-                        {item.relacion}
-                      </Text>
-                    </TouchableOpacity>
+                        <Text
+                          style={
+                            item.relacion === "Seguir"
+                              ? styles.followButtonText
+                              : styles.UnfollowButtonText
+                          }
+                        >
+                          {item.relacion}
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
                   </View>
-                </View>
-              </TouchableOpacity>
-            );
+                </TouchableOpacity>
+              );
+            }else{
+              return (
+                <TouchableOpacity
+                  style={styles.card}
+                  onPress={() => {
+                    this.props.navigation.navigate("MyProfile");
+                  }}
+                >
+                  <View style={styles.cardHeader}></View>
+                  <Image style={styles.userImage} source={{ uri: item.image }} />
+                  <View style={styles.cardFooter}>
+                    <View
+                      style={{ alignItems: "center", justifyContent: "center" }}
+                    >
+                      <Text style={styles.name}>{item.name}</Text>
+                      <Text style={styles.position}>{item.position}</Text>
+                     
+                          
+                       
+                      
+                    </View>
+                  </View>
+                </TouchableOpacity>
+              );
+            }
           }}
         />
       </View>

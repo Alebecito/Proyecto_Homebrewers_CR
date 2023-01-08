@@ -124,6 +124,36 @@ export default class Store extends Component {
     });
 
   }
+  likeUnlikePost = async (id,item) => {
+    Alert.alert("Sistema", "¿Está seguro que desea dar me gusta o quitar me gusta a esta publicación?", [
+      {
+        text: "Cancelar",
+        onPress: () => {},
+        style: "cancel",
+      },
+      {
+        text: "Aceptar",
+        onPress: async () => {
+          var formData = new FormData();
+          formData.append("de", id);
+          formData.append("hacia", item.id);
+          formData.append("tipo", "meGusta");
+          if(item.teGusta===false){
+            await fetch("http://10.0.2.2:5000/relaciones/createRelation", {method: "POST", body: formData});
+            Alert.alert("Sistema", "Te gusta esta publicación")
+            await this.componentDidMount();
+            
+          }else{
+            await fetch("http://10.0.2.2:5000/relaciones/deleteRelation", {method: "DELETE", body: formData});
+            Alert.alert("Sistema", "Ya no te gusta esta publicación")
+            await this.componentDidMount();
+            
+          }
+        }
+      },
+    ]);
+    
+  };
 
  async componentDidMount() {
     await this.loadId();
@@ -281,7 +311,7 @@ export default class Store extends Component {
                     <View style={styles.socialBarContainer}>
                       
                       <View style={styles.socialBarSection}>
-                        <TouchableOpacity style={styles.socialBarButton} onPress={() => this.addProductToCart()}>
+                        <TouchableOpacity style={styles.socialBarButton} onPress={()=> this.likeUnlikePost(this.state.UsuarioLogeado,item)}>
                           <Image style={styles.icon} source={{ uri: 'https://img.icons8.com/stickers/512/good-quality.png' }} />
                           <Text style={styles.socialBarLabel}>Te Gusta</Text>
                         </TouchableOpacity>
@@ -317,7 +347,7 @@ export default class Store extends Component {
                     <View style={styles.socialBarContainer}>
                       
                       <View style={styles.socialBarSection}>
-                        <TouchableOpacity style={styles.socialBarButton} onPress={() => this.addProductToCart()}>
+                        <TouchableOpacity style={styles.socialBarButton} onPress={()=> this.likeUnlikePost(this.state.UsuarioLogeado,item)}>
                           <Image style={styles.icon} source={{ uri: 'https://img.icons8.com/stickers/512/good-quality.png' }} />
                           <Text style={styles.socialBarLabel}>{item.likes}</Text>
                         </TouchableOpacity>

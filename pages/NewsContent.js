@@ -182,14 +182,45 @@ export default class PostView extends Component {
     }
   }
 
+  likeUnlikePost = async () => {
+    
+    Alert.alert("Sistema", "¿Está seguro que desea dar me gusta o quitar me gusta a esta noticia?", [
+      {
+        text: "Cancelar",
+        onPress: () => {},
+        style: "cancel",
+      },
+      {
+        text: "Aceptar",
+        onPress: async () => {
+          var formData = new FormData();
+          formData.append("de", this.state.UsuarioLogeado);
+          formData.append("hacia", this.state.idNew);
+          formData.append("tipo", "meGusta");
+          if(this.state.dataCargada[0].teGusta===false){
+            await fetch("http://10.0.2.2:5000/relaciones/createRelation", {method: "POST", body: formData});
+            Alert.alert("Sistema", "Te gusta esta noticia")
+            await this.componentDidMount();
+            
+          }else{
+            await fetch("http://10.0.2.2:5000/relaciones/deleteRelation", {method: "DELETE", body: formData});
+            Alert.alert("Sistema", "Ya no te gusta esta noticia")
+            await this.componentDidMount();
+            
+          }
+        }
+      },
+    ]);
+  };
+
   renderIfyoulike() {
     if (this.state.dataCargada[0].teGusta) {
-      return(<TouchableOpacity style={styles.shareButton}>
+      return(<TouchableOpacity style={styles.shareButton} onPress={()=>this.likeUnlikePost()}>
         <Text style={styles.shareButtonText}>Me gusta esta noticia</Text>
       </TouchableOpacity>)
       
     }else{
-      return(<TouchableOpacity style={styles.shareButton}>
+      return(<TouchableOpacity style={styles.shareButton} onPress={()=>this.likeUnlikePost()}>
         <Text style={styles.shareButtonText}>Dar me gusta a esta noticia</Text>
       </TouchableOpacity>)
       

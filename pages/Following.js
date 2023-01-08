@@ -67,6 +67,37 @@ export default class Users extends Component {
   clickEventListenerFollow(item) {
     Alert.alert(item.relacion);
   }
+
+  followUnfollowUser = async (id, item) => {
+    
+    Alert.alert("Sistema", "¿Está seguro que desea Seguir o Dejar de seguir a este usuario?", [
+      {
+        text: "Cancelar",
+        onPress: () => {},
+        style: "cancel",
+      },
+      {
+        text: "Aceptar",
+        onPress: async () => {
+          var formData = new FormData();
+          formData.append("de", id);
+          formData.append("hacia", item.id);
+          formData.append("tipo", "seguir");
+          if(item.relacion==="Seguir"){
+            await fetch("http://10.0.2.2:5000/relaciones/createRelation", {method: "POST", body: formData});
+            Alert.alert("Sistema", "Usuario Seguido")
+            await this.componentDidMount();
+            
+          }else{
+            await fetch("http://10.0.2.2:5000/relaciones/deleteRelation", {method: "DELETE", body: formData});
+            Alert.alert("Sistema", "Usuario Dejado de Seguir")
+            await this.componentDidMount();
+            
+          }
+        }
+      },
+    ]);
+  };
  
 
   render() {
@@ -103,7 +134,7 @@ export default class Users extends Component {
                           ? styles.followButton
                           : styles.UnfollowButton
                       }
-                      onPress={() => this.clickEventListenerFollow(item)}
+                      onPress={() => this.followUnfollowUser(this.state.UsuarioLogeado,item)}
                     >
                       <Text
                         style={

@@ -24,7 +24,7 @@ export default class ProfileView extends Component {
       refrescar: true,
       bloqueadoAuxiliarMe: false,
       usuarioSeguido: false,
-      usuarioBloqueado: "Bloquear usuario",
+      usuarioBloqueado: "",
       userData: [],
       idOtroUsuario: "",
       usuarioLogeado: "",
@@ -188,7 +188,7 @@ export default class ProfileView extends Component {
   CheckIfUserFollowed = () => {
     if (this.state.usuarioSeguido) {
       return (
-        <TouchableOpacity style={styles.detailContent} onPress={() => {}}>
+        <TouchableOpacity style={styles.detailContent} onPress={() => this.followUnfollowUser()}>
           <Text style={styles.title}>
             {"\r\r\r"}Dejar{"\n"}de Seguir
           </Text>
@@ -196,12 +196,77 @@ export default class ProfileView extends Component {
       );
     } else {
       return (
-        <TouchableOpacity style={styles.detailContent} onPress={() => {}}>
+        <TouchableOpacity style={styles.detailContent} onPress={() => this.followUnfollowUser()}>
           <Text style={styles.title}>Seguir</Text>
         </TouchableOpacity>
       );
     }
   };
+
+
+  followUnfollowUser = async () => {
+    
+    Alert.alert("Sistema", "¿Está seguro que desea Seguir o Dejar de seguir a este usuario?", [
+      {
+        text: "Cancelar",
+        onPress: () => {},
+        style: "cancel",
+      },
+      {
+        text: "Aceptar",
+        onPress: async () => {
+          var formData = new FormData();
+          formData.append("de", this.state.usuarioLogeado);
+          formData.append("hacia", this.state.idOtroUsuario);
+          formData.append("tipo", "seguir");
+          if(this.state.usuarioSeguido===false){
+            await fetch("http://10.0.2.2:5000/relaciones/createRelation", {method: "POST", body: formData});
+            Alert.alert("Sistema", "Usuario Seguido")
+            await this.componentDidMount();
+            
+          }else{
+            await fetch("http://10.0.2.2:5000/relaciones/deleteRelation", {method: "DELETE", body: formData});
+            Alert.alert("Sistema", "Usuario Dejado de Seguir")
+            await this.componentDidMount();
+            
+          }
+        }
+      },
+    ]);
+  };
+
+  blockUnblockUser = async () => {
+    
+    Alert.alert("Sistema", "¿Está seguro que desea bloquear o desbloquear a este usuario?", [
+      {
+        text: "Cancelar",
+        onPress: () => {},
+        style: "cancel",
+      },
+      {
+        text: "Aceptar",
+        onPress: async () => {
+          var formData = new FormData();
+          formData.append("de", this.state.usuarioLogeado);
+          formData.append("hacia", this.state.idOtroUsuario);
+          formData.append("tipo", "bloqueado");
+          if(this.state.usuarioBloqueado==="Bloquear usuario"){
+            await fetch("http://10.0.2.2:5000/relaciones/createRelation", {method: "POST", body: formData});
+            Alert.alert("Sistema", "Usuario Bloqueado")
+            await this.componentDidMount();
+           
+          }else{
+            await fetch("http://10.0.2.2:5000/relaciones/deleteRelation", {method: "DELETE", body: formData});
+            Alert.alert("Sistema", "Usuario Desbloqueado")
+            await this.componentDidMount();
+          
+          }
+        }
+      },
+    ]);
+  };
+
+  
   render() {
     return (
       <ScrollView>
@@ -289,7 +354,7 @@ export default class ProfileView extends Component {
                   borderRadius: 30,
                   backgroundColor: "red",
                 }}
-                onPress={() => Alert.alert("Bloquear Usuario")}
+                onPress={() => this.blockUnblockUser()}
               >
                 <Text
                   style={{
