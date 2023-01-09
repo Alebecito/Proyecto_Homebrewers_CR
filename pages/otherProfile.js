@@ -16,6 +16,8 @@ import {
   NavigationContainer,
 } from "react-native";
 
+import moment from "moment";
+
 export default class ProfileView extends Component {
   constructor(props) {
     super(props);
@@ -31,6 +33,7 @@ export default class ProfileView extends Component {
       modalVisible: false,
       posts: [],
       reviews: [],
+      reporte: "",
     };
   }
 
@@ -188,7 +191,10 @@ export default class ProfileView extends Component {
   CheckIfUserFollowed = () => {
     if (this.state.usuarioSeguido) {
       return (
-        <TouchableOpacity style={styles.detailContent} onPress={() => this.followUnfollowUser()}>
+        <TouchableOpacity
+          style={styles.detailContent}
+          onPress={() => this.followUnfollowUser()}
+        >
           <Text style={styles.title}>
             {"\r\r\r"}Dejar{"\n"}de Seguir
           </Text>
@@ -196,77 +202,111 @@ export default class ProfileView extends Component {
       );
     } else {
       return (
-        <TouchableOpacity style={styles.detailContent} onPress={() => this.followUnfollowUser()}>
+        <TouchableOpacity
+          style={styles.detailContent}
+          onPress={() => this.followUnfollowUser()}
+        >
           <Text style={styles.title}>Seguir</Text>
         </TouchableOpacity>
       );
     }
   };
 
-
   followUnfollowUser = async () => {
-    
-    Alert.alert("Sistema", "¿Está seguro que desea Seguir o Dejar de seguir a este usuario?", [
-      {
-        text: "Cancelar",
-        onPress: () => {},
-        style: "cancel",
-      },
-      {
-        text: "Aceptar",
-        onPress: async () => {
-          var formData = new FormData();
-          formData.append("de", this.state.usuarioLogeado);
-          formData.append("hacia", this.state.idOtroUsuario);
-          formData.append("tipo", "seguir");
-          if(this.state.usuarioSeguido===false){
-            await fetch("http://10.0.2.2:5000/relaciones/createRelation", {method: "POST", body: formData});
-            Alert.alert("Sistema", "Usuario Seguido")
-            await this.componentDidMount();
-            
-          }else{
-            await fetch("http://10.0.2.2:5000/relaciones/deleteRelation", {method: "DELETE", body: formData});
-            Alert.alert("Sistema", "Usuario Dejado de Seguir")
-            await this.componentDidMount();
-            
-          }
-        }
-      },
-    ]);
+    Alert.alert(
+      "Sistema",
+      "¿Está seguro que desea Seguir o Dejar de seguir a este usuario?",
+      [
+        {
+          text: "Cancelar",
+          onPress: () => {},
+          style: "cancel",
+        },
+        {
+          text: "Aceptar",
+          onPress: async () => {
+            var formData = new FormData();
+            formData.append("de", this.state.usuarioLogeado);
+            formData.append("hacia", this.state.idOtroUsuario);
+            formData.append("tipo", "seguir");
+            if (this.state.usuarioSeguido === false) {
+              await fetch("http://10.0.2.2:5000/relaciones/createRelation", {
+                method: "POST",
+                body: formData,
+              });
+              Alert.alert("Sistema", "Usuario Seguido");
+              await this.componentDidMount();
+            } else {
+              await fetch("http://10.0.2.2:5000/relaciones/deleteRelation", {
+                method: "DELETE",
+                body: formData,
+              });
+              Alert.alert("Sistema", "Usuario Dejado de Seguir");
+              await this.componentDidMount();
+            }
+          },
+        },
+      ]
+    );
   };
 
   blockUnblockUser = async () => {
-    
-    Alert.alert("Sistema", "¿Está seguro que desea bloquear o desbloquear a este usuario?", [
-      {
-        text: "Cancelar",
-        onPress: () => {},
-        style: "cancel",
-      },
-      {
-        text: "Aceptar",
-        onPress: async () => {
-          var formData = new FormData();
-          formData.append("de", this.state.usuarioLogeado);
-          formData.append("hacia", this.state.idOtroUsuario);
-          formData.append("tipo", "bloqueado");
-          if(this.state.usuarioBloqueado==="Bloquear usuario"){
-            await fetch("http://10.0.2.2:5000/relaciones/createRelation", {method: "POST", body: formData});
-            Alert.alert("Sistema", "Usuario Bloqueado")
-            await this.componentDidMount();
-           
-          }else{
-            await fetch("http://10.0.2.2:5000/relaciones/deleteRelation", {method: "DELETE", body: formData});
-            Alert.alert("Sistema", "Usuario Desbloqueado")
-            await this.componentDidMount();
-          
-          }
-        }
-      },
-    ]);
+    Alert.alert(
+      "Sistema",
+      "¿Está seguro que desea bloquear o desbloquear a este usuario?",
+      [
+        {
+          text: "Cancelar",
+          onPress: () => {},
+          style: "cancel",
+        },
+        {
+          text: "Aceptar",
+          onPress: async () => {
+            var formData = new FormData();
+            formData.append("de", this.state.usuarioLogeado);
+            formData.append("hacia", this.state.idOtroUsuario);
+            formData.append("tipo", "bloqueado");
+            if (this.state.usuarioBloqueado === "Bloquear usuario") {
+              await fetch("http://10.0.2.2:5000/relaciones/createRelation", {
+                method: "POST",
+                body: formData,
+              });
+              Alert.alert("Sistema", "Usuario Bloqueado");
+              await this.componentDidMount();
+            } else {
+              await fetch("http://10.0.2.2:5000/relaciones/deleteRelation", {
+                method: "DELETE",
+                body: formData,
+              });
+              Alert.alert("Sistema", "Usuario Desbloqueado");
+              await this.componentDidMount();
+            }
+          },
+        },
+      ]
+    );
   };
 
-  
+  handleReport = async () => {
+    const currentDate = new Date();
+    var formData = new FormData();
+    formData.append("deGUID", this.state.usuarioLogeado);
+    formData.append("haciaGUID", this.state.idOtroUsuario);
+    formData.append("tipoReporte", "Usuario");
+    formData.append("fecha", moment(currentDate).format("YYYY-MM-DD"));
+    formData.append("descripcion", this.state.reporte);
+    formData.append("estado", "abierto");
+    formData.append("realizadoPor", null);
+
+    await fetch("http://10.0.2.2:5000/reportes/createReport", {
+      method: "POST",
+      body: formData,
+    });
+    Alert.alert("Sistema", "Reporte Enviado");
+    this.setModalVisible(false);
+  };
+
   render() {
     return (
       <ScrollView>
@@ -373,7 +413,11 @@ export default class ProfileView extends Component {
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.buttonContainer}
-                onPress={() => this.props.navigation.navigate("AddReview", {idOtroUsuario: this.state.idOtroUsuario})}
+                onPress={() =>
+                  this.props.navigation.navigate("AddReview", {
+                    idOtroUsuario: this.state.idOtroUsuario,
+                  })
+                }
               >
                 <Text style={{ color: "white" }}>Añadir reseña</Text>
               </TouchableOpacity>
@@ -566,6 +610,7 @@ export default class ProfileView extends Component {
                     placeholder="Describe el motivo del reporte (255 caracteres)"
                     multiline={true}
                     numberOfLines={4}
+                    onChangeText={(reporte) => this.setState({ reporte })}
                   />
                 </View>
                 <View style={stylesReport.popupButtons}>
@@ -587,7 +632,7 @@ export default class ProfileView extends Component {
                   </TouchableOpacity>
                   <TouchableOpacity
                     onPress={() => {
-                      this.setModalVisible(false);
+                      this.handleReport();
                     }}
                     style={[stylesReport.btnClose, { marginLeft: 10 }]}
                   >

@@ -26,6 +26,7 @@ export default class PostView extends Component {
       dataCargada: [{}],
       data: [],
       comment: "",
+      reporte: "",
     };
   }
 
@@ -135,13 +136,19 @@ export default class PostView extends Component {
   renderIfyoulike() {
     if (this.state.dataCargada[0].teGusta) {
       return (
-        <TouchableOpacity style={styles.shareButton} onPress={()=> this.likeUnlikePost()}>
+        <TouchableOpacity
+          style={styles.shareButton}
+          onPress={() => this.likeUnlikePost()}
+        >
           <Text style={styles.shareButtonText}>Me gusta esta publicación</Text>
         </TouchableOpacity>
       );
     } else {
       return (
-        <TouchableOpacity style={styles.shareButton}  onPress={()=> this.likeUnlikePost()}>
+        <TouchableOpacity
+          style={styles.shareButton}
+          onPress={() => this.likeUnlikePost()}
+        >
           <Text style={styles.shareButtonText}>
             Dar me gusta a esta publicación
           </Text>
@@ -203,34 +210,60 @@ export default class PostView extends Component {
   };
 
   likeUnlikePost = async () => {
-    
-    Alert.alert("Sistema", "¿Está seguro que desea dar me gusta o quitar me gusta a esta publicación?", [
-      {
-        text: "Cancelar",
-        onPress: () => {},
-        style: "cancel",
-      },
-      {
-        text: "Aceptar",
-        onPress: async () => {
-          var formData = new FormData();
-          formData.append("de", this.state.UsuarioLogeado);
-          formData.append("hacia", this.state.idPublication);
-          formData.append("tipo", "meGusta");
-          if(this.state.dataCargada[0].teGusta===false){
-            await fetch("http://10.0.2.2:5000/relaciones/createRelation", {method: "POST", body: formData});
-            Alert.alert("Sistema", "Te gusta esta publicación")
-            await this.componentDidMount();
-            
-          }else{
-            await fetch("http://10.0.2.2:5000/relaciones/deleteRelation", {method: "DELETE", body: formData});
-            Alert.alert("Sistema", "Ya no te gusta esta publicación")
-            await this.componentDidMount();
-            
-          }
-        }
-      },
-    ]);
+    Alert.alert(
+      "Sistema",
+      "¿Está seguro que desea dar me gusta o quitar me gusta a esta publicación?",
+      [
+        {
+          text: "Cancelar",
+          onPress: () => {},
+          style: "cancel",
+        },
+        {
+          text: "Aceptar",
+          onPress: async () => {
+            var formData = new FormData();
+            formData.append("de", this.state.UsuarioLogeado);
+            formData.append("hacia", this.state.idPublication);
+            formData.append("tipo", "meGusta");
+            if (this.state.dataCargada[0].teGusta === false) {
+              await fetch("http://10.0.2.2:5000/relaciones/createRelation", {
+                method: "POST",
+                body: formData,
+              });
+              Alert.alert("Sistema", "Te gusta esta publicación");
+              await this.componentDidMount();
+            } else {
+              await fetch("http://10.0.2.2:5000/relaciones/deleteRelation", {
+                method: "DELETE",
+                body: formData,
+              });
+              Alert.alert("Sistema", "Ya no te gusta esta publicación");
+              await this.componentDidMount();
+            }
+          },
+        },
+      ]
+    );
+  };
+
+  handleReport = async () => {
+    const currentDate = new Date();
+    var formData = new FormData();
+    formData.append("deGUID", this.state.UsuarioLogeado);
+    formData.append("haciaGUID", this.state.idPublication);
+    formData.append("tipoReporte", "Publicación");
+    formData.append("fecha", moment(currentDate).format("YYYY-MM-DD"));
+    formData.append("descripcion", this.state.reporte);
+    formData.append("estado", "abierto");
+    formData.append("realizadoPor", this.state.dataCargada[0].usuarioGUID);
+
+    await fetch("http://10.0.2.2:5000/reportes/createReport", {
+      method: "POST",
+      body: formData,
+    });
+    Alert.alert("Sistema", "Reporte Enviado");
+    this.setModalVisible(false);
   };
 
   footerComponent() {
@@ -369,6 +402,7 @@ export default class PostView extends Component {
                   placeholder="Describe el motivo del reporte (255 caracteres)"
                   multiline={true}
                   numberOfLines={4}
+                  onChangeText={(reporte) => this.setState({ reporte })}
                 />
               </View>
               <View style={stylesReport.popupButtons}>
@@ -390,7 +424,7 @@ export default class PostView extends Component {
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={() => {
-                    this.setModalVisible(false);
+                    this.handleReport();
                   }}
                   style={[stylesReport.btnClose, { marginLeft: 10 }]}
                 >
@@ -411,9 +445,6 @@ export default class PostView extends Component {
       </View>
     );
   }
-
-
-  
 
   render() {
     return (
