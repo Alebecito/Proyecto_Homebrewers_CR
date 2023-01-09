@@ -9,9 +9,11 @@ import {
   Dimensions,
   Modal,
   TextInput,
+  Alert,
 } from "react-native";
 
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import moment from "moment";
 
 export default class PostView extends Component {
   constructor(props) {
@@ -20,6 +22,7 @@ export default class PostView extends Component {
     this.state = {
       modalVisible: false,
       data: [],
+      reporte: "",
     };
   }
 
@@ -42,6 +45,25 @@ export default class PostView extends Component {
   async componentDidMount() {
     this.setState({ data: this.props.route.params.data });
   }
+
+  handleReport = async () => {
+    const currentDate = new Date();
+    var formData = new FormData();
+    formData.append("deGUID", this.state.data.haciaGUID);
+    formData.append("haciaGUID", this.state.data.reseñaGUID);
+    formData.append("tipoReporte", "Reseña");
+    formData.append("fecha", moment(currentDate).format("YYYY-MM-DD"));
+    formData.append("descripcion", this.state.reporte);
+    formData.append("estado", "abierto");
+    formData.append("realizadoPor", this.state.data.deGUID);
+
+    await fetch("http://10.0.2.2:5000/reportes/createReport", {
+      method: "POST",
+      body: formData,
+    });
+    Alert.alert("Sistema", "Reporte Enviado");
+    this.setModalVisible(false);
+  };
 
   render() {
     return (
@@ -147,6 +169,7 @@ export default class PostView extends Component {
                   placeholder="Describe el motivo del reporte (255 caracteres)"
                   multiline={true}
                   numberOfLines={4}
+                  onChangeText={(reporte) => this.setState({ reporte })}
                 />
               </View>
               <View style={stylesReport.popupButtons}>
@@ -168,7 +191,7 @@ export default class PostView extends Component {
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={() => {
-                    this.setModalVisible(false);
+                    this.handleReport();
                   }}
                   style={[stylesReport.btnClose, { marginLeft: 10 }]}
                 >
