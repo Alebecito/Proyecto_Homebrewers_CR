@@ -12,6 +12,9 @@ import {
 
 import * as ImagePicker from "expo-image-picker";
 // import moment from "moment";
+import {auth} from '../firebase';
+import {createUserWithEmailAndPassword,updateProfile  } from "firebase/auth";
+
 
 export default class SignUp extends Component {
   constructor(props) {
@@ -101,7 +104,23 @@ export default class SignUp extends Component {
       });
   };
 
+  editInFirebase = (entrada) => {
+            const user = auth.currentUser;
+            updateProfile(user, {
+                displayName: this.state.fullName, 
+                photoURL: entrada
+              }).then(() => {
+                Alert.alert("Perfil editado exitosamente");
+                this.props.navigation.navigate("HomePage");
+                // ...
+              }).catch((error) => {
+                // An error occurred
+                alert(error);
+              });
+}
+
   editFunction = async () => {
+    let imagenAEditar="";
     if (
       this.state.description === "" ||
       this.state.fullName === "" ||
@@ -131,8 +150,10 @@ export default class SignUp extends Component {
       if (this.state.profileEdited === true) {
         await this.uploadImage(this.state.imgSources[1], "profile");
         formData.append("imagenPerfil", this.state.resultURLS[1]);
+        imagenAEditar= this.state.resultURLS[1];
       } else {
         formData.append("imagenPerfil", this.state.data.fotoDePerfil);
+        imagenAEditar = this.state.data.fotoDePerfil;
       }
 
       await fetch(
@@ -142,10 +163,12 @@ export default class SignUp extends Component {
           body: formData,
         }
       );
-      Alert.alert("Perfil editado exitosamente");
-      this.props.navigation.navigate("HomePage");
+      this.editInFirebase(imagenAEditar);
+     
     }
   };
+
+ 
 
   onClickListener = (viewId) => {
     Alert.alert("Alert", "Button pressed " + viewId);

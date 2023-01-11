@@ -15,6 +15,8 @@ import {
 import * as ImagePicker from "expo-image-picker";
 
 import Checkbox from "expo-checkbox";
+import {auth} from '../firebase';
+import {createUserWithEmailAndPassword,updateProfile  } from "firebase/auth";
 
 export default class SignUp extends Component {
   constructor(props) {
@@ -88,6 +90,32 @@ export default class SignUp extends Component {
       });
   };
 
+ registerInFireBase = async () => {
+   await createUserWithEmailAndPassword(auth, this.state.email, this.state.password)
+        .then(async (userCredential) => {
+            const user = userCredential.user;
+            await updateProfile(user, {
+                displayName: this.state.fullName, 
+                photoURL: 'https://st3.depositphotos.com/1767687/16607/v/450/depositphotos_166074422-stock-illustration-default-avatar-profile-icon-grey.jpg'
+              }).then(() => {
+              Alert.alert("Usuario registrado exitosamente");
+              this.props.navigation.goBack();
+                // ...
+              }).catch((error) => {
+                // An error occurred
+                alert(error);
+                // ...
+              });
+
+          
+        })
+        .catch((error) => {
+            const errorMessage = error.message;
+           alert(errorMessage);
+        });
+}
+
+
   registerFunction = async () => {
     if (
       this.state.description === "" ||
@@ -105,7 +133,10 @@ export default class SignUp extends Component {
       Alert.alert("Error", "Las contraseñas no coinciden");
     } else if (this.state.sourceImage === null) {
       Alert.alert("Error", "Por favor, selecciona una imagen");
-    } else {
+    } else if (this.state.password.length < 6) {
+      Alert.alert("Error", "La contraseña debe tener al menos 6 caracteres");
+    }
+    else {
       await this.uploadImage();
       let formData = new FormData();
       formData.append("nombre", this.state.fullName);
@@ -113,13 +144,13 @@ export default class SignUp extends Component {
       formData.append("descripcionPerfil", this.state.description);
       formData.append("contrasena", this.state.password);
       formData.append("imagen", this.state.resultURL);
-
       await fetch("http://10.0.2.2:5000/usuario/SignUpUser/", {
         method: "POST",
         body: formData,
       });
-      Alert.alert("Usuario registrado exitosamente");
-      this.props.navigation.navigate("Login");
+
+      await this.registerInFireBase();
+      
     }
   };
 

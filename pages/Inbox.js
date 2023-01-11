@@ -1,174 +1,165 @@
-import React, { Component } from "react";
+
+import React, { Component } from 'react';
 import {
   StyleSheet,
   Text,
   View,
-  TouchableOpacity,
+  TouchableHighlight,
   Image,
-  FlatList, Alert, TextInput
-} from "react-native";
+  Alert,
+  ScrollView,
+  TextInput,
+  FlatList,
+  TouchableOpacity, Button, AsyncStorage
+} from 'react-native';
 
-export default class Notifications extends Component {
+export default class ContactsView extends Component {
+
   constructor(props) {
     super(props);
     this.state = {
-      data: [
-        {
-          id: 3,
-          image: "https://bootdey.com/img/Content/avatar/avatar7.png",
-          name: "March SoulLaComa",
-          text: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.",
-          attachment: "https://via.placeholder.com/100x100/FFB6C1/000000",
-        },
-        {
-          id: 2,
-          image: "https://bootdey.com/img/Content/avatar/avatar6.png",
-          name: "John DoeLink",
-          text: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.",
-          attachment: "https://via.placeholder.com/100x100/20B2AA/000000",
-        },
-        {
-          id: 4,
-          image: "https://bootdey.com/img/Content/avatar/avatar2.png",
-          name: "Finn DoRemiFaso",
-          text: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.",
-          attachment: "",
-        },
-        {
-          id: 5,
-          image: "https://bootdey.com/img/Content/avatar/avatar3.png",
-          name: "Maria More More",
-          text: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.",
-          attachment: "",
-        },
-        {
-          id: 1,
-          image: "https://bootdey.com/img/Content/avatar/avatar1.png",
-          name: "Frank Odalthh",
-          text: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.",
-          attachment: "https://via.placeholder.com/100x100/7B68EE/000000",
-        },
-        {
-          id: 6,
-          image: "https://bootdey.com/img/Content/avatar/avatar4.png",
-          name: "Clark June Boom!",
-          text: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.",
-          attachment: "",
-        },
-        {
-          id: 7,
-          image: "https://bootdey.com/img/Content/avatar/avatar5.png",
-          name: "The googler",
-          text: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.",
-          attachment: "",
-        },
-      ],
+      valorDeBusqueda: '',
+      UsuarioLogeado: '',
+      bloqueadoAuxiliar: false,
+      blockedOther:false,
+      dataCargada: [],
+      data: [],
     };
   }
 
-  clickEventListener(item) {
+  checkIfBlocked = async (id) => {
+      
+    await fetch(`http://10.0.2.2:5000/relaciones/CheckIfUserBlocked/${id}/${this.state.UsuarioLogeado}`,
+      { method: 'GET', }).then((response) => response.json()).then((responseJson) => {
+        
+        this.setState({ bloqueadoAuxiliar: responseJson[0].length>0?true:false });
 
-    this.props.navigation.navigate("Chat")
+      }
+      ).catch((error) => {
+        console.log(error)
+      }
+      );
+
+}
+
+
+checkBlockOther = async (id) => {
+      
+  await fetch(`http://10.0.2.2:5000/relaciones/CheckIfUserBlocked/${this.state.UsuarioLogeado}/${id}`,
+    { method: 'GET', }).then((response) => response.json()).then((responseJson) => {
+      
+      this.setState({ blockedOther: responseJson[0].length>0?true:false });
+
+    }
+    ).catch((error) => {
+      console.log(error)
+    }
+    );
+
+}
+
+
+  async realizarBusqueda(input) {
+    await this.setState({ valorDeBusqueda: input });
+    var temporalData = this.state.dataCargada;
+    if (input === '') {
+
+      this.setState({ data: this.state.dataCargada });
+      return;
+    }
+    var resultData = [];
+    var tituloAuxiliar = '';
+    for (var i = 0; i < temporalData.length; i++) {
+
+      var tituloAuxiliar = temporalData[i].description;
+      if (tituloAuxiliar.toLocaleLowerCase().startsWith(this.state.valorDeBusqueda.toLocaleLowerCase()) === true) {
+        resultData.push(temporalData[i]);
+      }
+    }
+
+    this.setState({ data: resultData });
+  }
+  loadId = async () => {
+    try {
+      const id = await AsyncStorage.getItem('UsuarioLogeado');
+      this.setState({ UsuarioLogeado: id });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  loadUsers = async () => {
+    await fetch(`http://10.0.2.2:5000/mensajes/getMyInbox/${this.state.UsuarioLogeado}`,
+      { method: 'GET', }).then((response) => response.json()).then(async(responseJson) => {
+        var temporalData = [];
+        for (var i = 0; i < responseJson.length; i++) {
+          await this.checkIfBlocked(responseJson[i].usuarioGUID);
+          await this.checkBlockOther(responseJson[i].usuarioGUID);
+          if(this.state.bloqueadoAuxiliar!=true && this.state.blockedOther!=true){
+
+          if (responseJson[i].usuarioGUID != this.state.UsuarioLogeado) {
+            temporalData.push({ id: responseJson[i].usuarioGUID, icon: responseJson[i].fotoDePerfil, description: responseJson[i].nombre });
+          }
+        }
+      }
+        this.setState({ dataCargada: temporalData });
+      });
+  }
+
+  async componentDidMount() {
+    await this.loadId();
+    await this.loadUsers();
+    this.setState({ data: this.state.dataCargada });
+    this.setState({valorDeBusqueda:''});
+
+  }
+
+  onClickListener = (viewId) => {
+    Alert.alert("Alert", "Button pressed " + viewId);
   }
 
   render() {
     return (
-      <View style={styles.containerView}>
+      <View style={styles.container}>
         <View style={styles.formContent}>
           <View style={styles.inputContainer}>
-            <Image style={[styles.icon, styles.inputIcon]} source={{ uri: 'https://png.icons8.com/search/androidL/100/000000' }} />
+
             <TextInput style={styles.inputs}
               ref={'txtPassword'}
-              placeholder="Buscar contactos"
+              placeholder="Buscar nombre de usuario"
               underlineColorAndroid='transparent'
-              onChangeText={(name_address) => this.setState({ name_address })} />
+              onChangeText={(valorDeBusqueda) => this.realizarBusqueda(valorDeBusqueda)} />
           </View>
         </View>
+
         <FlatList
-          style={styles.root}
+          style={styles.notificationList}
           data={this.state.data}
-          extraData={this.state}
-          ItemSeparatorComponent={() => {
-            return <View style={styles.separator} />;
-          }}
           keyExtractor={(item) => {
             return item.id;
           }}
-          renderItem={(item) => {
-            const Notification = item.item;
-            let attachment = <View />;
-
-            let mainContentStyle;
-
+          renderItem={({ item }) => {
             return (
-              // <View style={styles.container}>
-              <TouchableOpacity
-                style={styles.container}
-                onPress={() => {
-                  { this.clickEventListener(Notification) }
-                }}
-              >
-                <Image
-                  source={{ uri: Notification.image }}
-                  style={styles.avatar}
-                />
-                <View style={styles.content}>
-                  <View style={mainContentStyle}>
-                    <View style={styles.text}>
-                      <Text style={styles.name}>{Notification.name}</Text>
-                      <Text>{Notification.text}</Text>
-                    </View>
-                    <Text style={styles.timeAgo}>2 hours ago</Text>
-                  </View>
-                  {attachment}
-                </View>
-              </TouchableOpacity>
+              <TouchableOpacity style={styles.notificationBox} onPress={() => this.props.navigation.navigate("Chat", {usuarioLogeado:this.state.UsuarioLogeado,idOtroUsuario:item.id}) }>
+                <Image style={styles.image} source={{ uri: item.icon }} />
+                <Text style={styles.name}>{item.description}</Text>
 
-              // </View>
-            );
-          }}
-        />
+              </TouchableOpacity>
+            )
+          }} />
       </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  root: {
-    backgroundColor: "#FFFFFF",
-  },
   container: {
-    padding: 16,
-    flexDirection: "row",
-    borderBottomWidth: 1,
-    borderColor: "#FFFFFF",
-    alignItems: "flex-start",
-  },
-  containerView: {
     flex: 1,
     backgroundColor: '#EBEBEB',
   },
-  avatar: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-  },
-  text: {
-    marginBottom: 5,
-    flexDirection: "row",
-    flexWrap: "wrap",
-  },
-  content: {
-    flex: 1,
-    marginLeft: 16,
-    marginRight: 0,
-  },
-  mainContent: {
-    marginRight: 60,
-  },
   formContent: {
     flexDirection: 'row',
-   
+    marginTop: 30,
   },
   inputContainer: {
     borderBottomColor: '#F5FCFF',
@@ -181,31 +172,46 @@ const styles = StyleSheet.create({
     flex: 1,
     margin: 10,
   },
-  img: {
-    height: 50,
-    width: 50,
-    margin: 0,
+  icon: {
+    width: 30,
+    height: 30,
   },
-  attachment: {
-    position: "absolute",
-    right: 0,
-    height: 50,
-    width: 50,
+  iconBtnSearch: {
+    alignSelf: 'center'
   },
-  separator: {
-    height: 1,
-    backgroundColor: "#CCCCCC",
+  inputs: {
+    height: 45,
+    marginLeft: 16,
+    borderBottomColor: '#FFFFFF',
+    flex: 1,
   },
-  timeAgo: {
-    fontSize: 12,
-    color: "#696969",
+  inputIcon: {
+    marginLeft: 15,
+    justifyContent: 'center'
+  },
+  notificationList: {
+    marginTop: 20,
+    padding: 10,
+  },
+  notificationBox: {
+    paddingTop: 10,
+    paddingBottom: 10,
+    marginTop: 5,
+    backgroundColor: '#FFFFFF',
+    flexDirection: 'row',
+    borderRadius: 10,
+  },
+  image: {
+    width: 45,
+    height: 45,
+    borderRadius: 20,
+    marginLeft: 20
   },
   name: {
-    fontSize: 16,
-    color: "#454545",
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: "#000000",
+    marginLeft: 10,
+    alignSelf: 'center'
   },
-  chatbox: {
-    backgroundColor: "red", padding: 20, height: 50,
-    width: 100,
-  },
-});
+}); 

@@ -1,6 +1,10 @@
 import React, { Component } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import { auth, db } from '../firebase';
+import { confirmPasswordReset, getAuth, signOut } from "firebase/auth";
+
+
 import {
   StyleSheet,
   Text,
@@ -36,8 +40,18 @@ export default class Menu extends Component {
   clickEventListener(item) {
     
     if(item.direccion !==""){
-    
-      this.props.navigation.navigate(item.direccion)
+      if(item.direccion === "Login"){
+        signOut(auth).then(() => {
+          this.props.navigation.reset({index:0, routes: [{name:"Login"}]})
+      }).catch((error) => {
+          const errorMessage = error.message;
+          alert(errorMessage);
+      });
+      }
+      else{
+        this.props.navigation.navigate(item.direccion)
+      }
+      
     }else{
       Alert.alert(item.title)
     }
