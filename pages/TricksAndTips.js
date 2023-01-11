@@ -1,5 +1,4 @@
-            
-import React, { Component } from 'react';
+import React, { Component } from "react";
 import {
   StyleSheet,
   Text,
@@ -8,47 +7,79 @@ import {
   Image,
   Alert,
   ScrollView,
-} from 'react-native';
+} from "react-native";
 
 export default class CompanyDescriptionView extends Component {
-
   constructor(props) {
     super(props);
   }
 
   onClickListener = (viewId) => {
     Alert.alert("Alert", "Button pressed ");
-  }
+  };
 
   render() {
     return (
       <ScrollView style={styles.scrollContainer}>
         <View style={styles.container}>
-        
-          <Image style={{width: 300, height: 200, marginBottom:40}} source={require('../assets/images/logo.png')}/>
-          <Image style={styles.logo} source={{uri: 'https://img.icons8.com/stickers/512/classroom.png'}}/>
-          <Text style={styles.slogan}>¡Tu también puedes ser cervecero artesanal!</Text>
+          <Image
+            style={{ width: 300, height: 200, marginBottom: 40 }}
+            source={require("../assets/images/logo.png")}
+          />
+          <Image
+            style={styles.logo}
+            source={{
+              uri: "https://img.icons8.com/stickers/512/classroom.png",
+            }}
+          />
+          <Text style={styles.slogan}>
+            ¡Tu también puedes ser cervecero artesanal!
+          </Text>
           <View style={styles.descriptionContent}>
             <Text style={styles.description}>
-              Lorem ipsum dolor sit amet, altera conceptam ei cum. Hinc temporibus repudiandae eu mel, cum impetus legendos ei. 
-              Fugit everti dissentias duo cu, nihil fabellas id pri, nonumy verear ea pri. Sit et nisl eros. Ad sapientem forensibus est, 
-              ne vis sonet iuvaret, his sint fabulas dolores ad. Repudiare gubergren voluptatum ius ne, nec nostro possim nostrud ad, 
+              Se puede hacer buena cerveza con un equipo muy básico. Es por eso
+              que no se recomienda gastar mucho. Por dos razones, si nos damos
+              cuenta que la cervecería no es lo nuestro, no incurrimos en un
+              gasto muy grande. La segunda es que se aprende mucho más con
+              equipos más básicos, uno tiene más contacto con el proceso y los
+              materiales.
             </Text>
-            <Image style={{width:350, height:350}} source={{uri: 'https://pixabay.com/get/ga36f1ee345fa43b48d073da9916c746aed3bc55f1aabf62c56d5efe2b1f00c7bd16d99fb456b3043f7ba074f02cc1114_1280.jpg'}}/>
+            <Image
+              style={{ width: 350, height: 350 }}
+              source={{
+                uri: "https://images.squarespace-cdn.com/content/v1/56e0a7dae707eb4ea75d3915/1529437610464-V5RA145CM71Z2GQ6WUJZ/brewing_beer_ingredients.jpg?format=1000w",
+              }}
+            />
             <Text style={styles.description}>
-              Lorem ipsum dolor sit amet, altera conceptam ei cum. Hinc temporibus repudiandae eu mel, cum impetus legendos ei. 
-              Fugit everti dissentias duo cu, nihil fabellas id pri, nonumy verear ea pri. Sit et nisl eros. Ad sapientem forensibus est, 
-              ne vis sonet iuvaret, his sint fabulas dolores ad. Repudiare gubergren voluptatum ius ne, nec nostro possim nostrud ad, 
+              Se recomienda iniciar con una receta que no presente
+              complicaciones, generalmente, estas carecen de lúpulos adicionales
+              y con poca malta, esto disminuye la dificultad del cocinado. Otro
+              método útil es iniciar por estilos de cerveza más oscuros, ya que
+              de esta forma se pueden ocultar imperfecciones en la cerveza.
             </Text>
-            <Image style={{width:350, height:350}} source={{uri: 'https://pixabay.com/get/g05c9034316f900bef52b128419ac1dd54fe5368a34722e5fa6d886283c398d153ce3bb26f50f50bf796421ecf74e2906_1280.jpg'}}/>
+            <Image
+              style={{ width: 350, height: 350 }}
+              source={{
+                uri: "https://www.liquor.com/thmb/g8j81x1BLqWicFenwikKnVWbtQg=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/GettyImages-910481830-3c75cb0cfadb4e868961a02e748c2b27.jpg",
+              }}
+            />
             <Text style={styles.description}>
-              Lorem ipsum dolor sit amet, altera conceptam ei cum. Hinc temporibus repudiandae eu mel, cum impetus legendos ei. 
-              Fugit everti dissentias duo cu, nihil fabellas id pri, nonumy verear ea pri. Sit et nisl eros. Ad sapientem forensibus est, 
-              ne vis sonet iuvaret, his sint fabulas dolores ad. Repudiare gubergren voluptatum ius ne, nec nostro possim nostrud ad, 
+              Es recomendable antes de iniciarnos con una cerveza nueva, probar
+              varias muestras de ese estilo para saber qué nos gusta y que no
+              nos gusta del mismo. En base a eso podemos tener en mente la
+              cerveza que queremos lograr.
             </Text>
-            <Image style={{width:350, height:350}} source={{uri: 'https://pixabay.com/get/gaa6fcb92a36158817524b9d55bbca1eab08292110e7438fd5fe34e0c2f37ad95c60b824770db6e8ccaedd296f7e0086e_1280.jpg'}}/>
+            <Image
+              style={{ width: 350, height: 350 }}
+              source={{
+                uri: "https://i0.wp.com/farmfreshex.com/wp-content/uploads/2019/10/iStock-854848732_0_0.jpg?fit=870%2C565&ssl=1",
+              }}
+            />
           </View>
-          <TouchableHighlight style={[styles.buttonContainer, styles.sendButton]} onPress={()=>this.props.navigation.goBack()}>
+          <TouchableHighlight
+            style={[styles.buttonContainer, styles.sendButton]}
+            onPress={() => this.props.navigation.goBack()}
+          >
             <Text style={styles.buttonText}>Regresar</Text>
           </TouchableHighlight>
         </View>
@@ -58,54 +89,53 @@ export default class CompanyDescriptionView extends Component {
 }
 
 const styles = StyleSheet.create({
-  scrollContainer:{
+  scrollContainer: {
     flex: 1,
   },
   container: {
     flex: 1,
-    alignItems: 'center',
-   
+    alignItems: "center",
   },
-  logo:{
-    width:100,
-    height:100,
-    justifyContent: 'center',
-    marginBottom:10,
-    marginTop:30,
+  logo: {
+    width: 100,
+    height: 100,
+    justifyContent: "center",
+    marginBottom: 10,
+    marginTop: 30,
   },
   companyName: {
-    fontSize:32,
-    fontWeight: '600',
-    color: 'black',
+    fontSize: 32,
+    fontWeight: "600",
+    color: "black",
   },
-  slogan:{
-    fontSize:18,
-    fontWeight: '600',
-    color: '#454545',
-    marginTop:10,
+  slogan: {
+    fontSize: 18,
+    fontWeight: "600",
+    color: "#454545",
+    marginTop: 10,
   },
-  descriptionContent:{
-    padding:30
+  descriptionContent: {
+    padding: 30,
   },
-  description:{
-    fontSize:18,
-    textAlign:'left',
-    marginTop:10,
-    color: '#black',
+  description: {
+    fontSize: 18,
+    textAlign: "left",
+    marginTop: 10,
+    color: "#black",
   },
   buttonContainer: {
-    height:45,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom:20,
-    width:100,
-    borderRadius:30,
+    height: 45,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 20,
+    width: 100,
+    borderRadius: 30,
   },
   sendButton: {
     backgroundColor: "#FFFFFF",
   },
   buttonText: {
-    color: '#black',
-  }
+    color: "#black",
+  },
 });
