@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import {auth} from '../firebase';
+import { signInWithEmailAndPassword , onAuthStateChanged } from "firebase/auth";
 
 //import axios for react native
 
@@ -49,6 +51,18 @@ export default class Login extends Component {
     }
   }
 
+   signInInFireBase = async () => {
+    await signInWithEmailAndPassword(auth, this.state.email, this.state.password)
+        .then((userCredential) => {
+            Alert.alert("Sistema","Inicio de Sesión exitoso para el usuario ");
+            this.props.navigation.reset({index:0, routes: [{name:"HomePage"}]})
+        })
+        .catch((error) => {
+          
+            const errorMessage = error.message;
+            alert(errorMessage);
+        });
+}
 
   loginFunction = () => {
     try {
@@ -62,17 +76,20 @@ export default class Login extends Component {
       return;
     }
     fetch(`http://10.0.2.2:5000/usuario/login/${this.state.email}/${this.state.password}`,
-      { method: 'GET', }).then((response) => response.json()).then((responseJson) => {
+      { method: 'GET', }).then((response) => response.json()).then(async (responseJson) => {
 
         if (responseJson.length > 0) {
           
           if (responseJson[0].estado === "habilitado") {
           
-            this.saveId(responseJson[0].id);
-            this.loadId();
+           await this.saveId(responseJson[0].id);
+           await this.loadId();
+           await this.signInInFireBase();
+
+
+
             
-            alert("Inicio de Sesión exitoso para el usuario ");
-            this.props.navigation.reset({index:0, routes: [{name:"HomePage"}]})
+            
           } else if(responseJson[0].estado === "noValidado"){
             alert("Usuario no validado, favor esperar a que el administrador valide su cuenta");
           }

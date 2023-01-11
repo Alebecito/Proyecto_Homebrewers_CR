@@ -1,237 +1,167 @@
-import React, { Component } from 'react';
+import React, { useLayoutEffect, useEffect, useState, useCallback } from "react";
+import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import { confirmPasswordReset, getAuth, signOut } from "firebase/auth";
+import { auth, db } from '../firebase';
+import { AntDesign } from '@expo/vector-icons';
+import { Avatar } from 'react-native-elements';
+import { GiftedChat } from 'react-native-gifted-chat'
 import {
-  StyleSheet,
-  Text,
-  View,
-  TouchableOpacity,
-  Image,
-  Alert,
-  ScrollView,
-  TextInput,
-  FlatList,
-  Button,
-  Dimensions,
-  KeyboardAvoidingView
-} from 'react-native';
-const { width, height } = Dimensions.get('window');
-export default class Chat extends Component {
+    addDoc,
+    collection,
+    orderBy,
+    onSnapshot,
+    query, 
+    where
+   
+} from "firebase/firestore";
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      msg: '',
-      messages: [
-        {id:9, sent: true,  msg: 'Lorem ipsum dolor',   image:'https://www.bootdey.com/img/Content/avatar/avatar1.png'},
-        {id:20, sent: true,  msg: 'sit amet, consectetuer',   image:'https://www.bootdey.com/img/Content/avatar/avatar1.png'},
-        {id:10, sent: true,  msg: 'Lorem ipsum dolor',   image:'https://www.bootdey.com/img/Content/avatar/avatar1.png'},
-        {id:29, sent: true,  msg: 'sit amet, consectetuer',   image:'https://www.bootdey.com/img/Content/avatar/avatar1.png'},
 
-        {id:1, sent: true,  msg: 'Lorem ipsum dolor',   image:'https://www.bootdey.com/img/Content/avatar/avatar1.png'},
-        {id:2, sent: true,  msg: 'sit amet, consectetuer',   image:'https://www.bootdey.com/img/Content/avatar/avatar1.png'},
-        {id:3, sent: false, msg: 'adipiscing elit. Aenean ', image:'https://www.bootdey.com/img/Content/avatar/avatar6.png'},
-        {id:4, sent: true,  msg: 'commodo ligula eget dolor.',   image:'https://www.bootdey.com/img/Content/avatar/avatar1.png'},
-        {id:5, sent: false, msg: 'Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes', image:'https://www.bootdey.com/img/Content/avatar/avatar6.png'},
-        {id:6, sent: true,  msg: 'nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo',   image:'https://www.bootdey.com/img/Content/avatar/avatar1.png'},
-        {id:7, sent: false, msg: 'rhoncus ut, imperdiet', image:'https://www.bootdey.com/img/Content/avatar/avatar6.png'},
-        {id:8, sent: false, msg: 'a, venenatis vitae', image:'https://www.bootdey.com/img/Content/avatar/avatar6.png'},
-      ]
-    };
-    this.send = this.send.bind(this);
-    this.reply = this.reply.bind(this);
-    this.renderItem   = this._renderItem.bind(this);
-  }
+const ChatScreen = ({route, navigation }) => {
+    const [messages, setMessages] = useState([]);
+    const [otherUser, setOtherUser] = useState("");
+    const [insertInSQL, setinsertInSQL] = useState("");
+    let globalVariable=false;
+    const logOut = () => {
 
-  reply() {
-    var messages = this.state.messages;
-    messages.push({
-      id:Math.floor((Math.random() * 99999999999999999) + 1),
-      sent: false,
-      msg: this.state.msg,
-      image:'https://www.bootdey.com/img/Content/avatar/avatar6.png'
-    });
-    this.setState({msg:'', messages:messages});
-  }
-
-  send() {
-    if (this.state.msg.length > 0) {
-      var messages = this.state.messages;
-      messages.push({
-        id:Math.floor((Math.random() * 99999999999999999) + 1),
-        sent: true,
-        msg: this.state.msg,
-        image:'https://www.bootdey.com/img/Content/avatar/avatar1.png'
-      });
-      this.setState({messages:messages});
-      setTimeout(() => {
-        this.reply();
-      }, 2000);
+       navigation.goBack();
     }
-  }
 
-  _renderItem = ({item}) => {
+
+
+
+
    
-    if (item.sent === false) {
-      return (
-        <View style={styles.eachMsg}>
-          <Image source={{ uri: item.image}} style={styles.userPic} />
-          <View style={styles.msgBlock}>
-            <Text style={styles.msgTxt}>{item.msg}</Text>
-          </View>
-        </View>
-      );
-    } else{
-      return (
-        <View style={styles.rightMsg} >
-          <View style={styles.rightBlock} >
-            <Text style={styles.rightTxt}>{item.msg}</Text>
-          </View>
-          <Image source={{uri: item.image}} style={styles.userPic} />
-        </View>
-      );
+
+    useLayoutEffect(() => {
+
+        const fetchData = async () => {
+            await checkIfPreviousChatted();
+            getMessages();
+          }
+          fetchData()
+         
+         
+   
+
+   
+    }, [])
+    
+
+    const checkIfPreviousChatted = async () => {
+        
+       await fetch(`http://10.0.2.2:5000/mensajes/getMyInbox/${route.params.usuarioLogeado}`,{method: 'GET', }).
+        then((response) => response.json()).then((responseJson) => {
+                for(let element of responseJson) {
+                    if(element.usuarioGUID === route.params.idOtroUsuario){
+                        globalVariable=true;
+                        return;
+                    }
+                }
+               
+                }).catch((error) => {});
+
     }
-  };
-
-  clickEventListenerMyProfile() {
    
-    this.props.navigation.navigate("MyProfile")
-  }
 
-  clickEventListenerOtherProfile() {
-   
-    this.props.navigation.navigate("OtherProfile")
-  }
+    const getMessages =  async () => {
+        let referencia = await collection(db, "chat");
+       
+       let primerCaso = route.params.usuarioLogeado+"-"+route.params.idOtroUsuario;
+       let segundoCaso = route.params.idOtroUsuario+"-"+route.params.usuarioLogeado;
+        let filteredReferencia = await query(referencia, await where('dePara', 'in', [primerCaso,segundoCaso]));
+        let orderedReferencia  = await query(filteredReferencia,orderBy('createdAt', 'desc'));
+        const unsubscribe = await onSnapshot(orderedReferencia, async  (snapshot) => await setMessages(
+            snapshot.docs.map(doc=>({
+                _id: doc.data()._id,
+                createdAt: doc.data().createdAt.toDate(),
+                text: doc.data().text,
+                user: doc.data().user,
+            }))
+        ));   
+        return unsubscribe
+      
+    }
 
-  render() {
+
+    const insertInbox = async () =>{
+        let formdata = new FormData();
+        formdata.append("de", route.params.usuarioLogeado);
+        formdata.append("hacia", route.params.idOtroUsuario);
+        await fetch(`http://10.0.2.2:5000/mensajes/createNewInbox`,{method: 'POST', body:formdata}).
+        then((response) => response.json()).catch((error) => {console.log(error)});
+    }
+
+
+    const onSend = useCallback(async (messagesP = []) => {
+        if(globalVariable===false){
+           
+            await insertInbox();
+            globalVariable=true;
+        }
+
+        setMessages(previousMessages => GiftedChat.
+            append(previousMessages, messagesP))
+        const {
+            _id,
+            createdAt,
+            text,
+            user
+
+        } = messagesP[0]
+       let referencia = collection(db, "chat")
+       await addDoc(referencia, {
+            _id,
+            createdAt,
+            text,
+            user,
+            dePara: route.params.usuarioLogeado+"-"+route.params.idOtroUsuario
+        });
+
+    }, [])
+
+
+
+    useLayoutEffect(() => {
+        navigation.setOptions({
+            headerRight: () => (
+                <View style={{ marginRight: 20 }}>
+                    <Avatar
+                        rounded
+                        source={{
+                            uri: auth?.currentUser?.photoURL,
+                        }}
+                    />
+                </View>
+            ),
+            headerLeft: () => (
+                <TouchableOpacity style={{
+                    marginLeft: 10
+                }}
+                    onPress={logOut}
+                >
+                    <AntDesign name="arrowleft" size={24} color="black" />
+                </TouchableOpacity>
+            )
+        })
+    }, [navigation])
+
+
+
+
+
+
+
     return (
-      <View style={{ flex: 1 }}>
-          <KeyboardAvoidingView behavior="padding" style={styles.keyboard}>
-            <FlatList 
-              style={styles.list}
-              extraData={this.state}
-              data={this.state.messages}
-              keyExtractor = {(item) => {
-                return item.id;
-              }}
-              renderItem={this.renderItem}/>
-            <View style={styles.input}>
-              <TextInput
-                style={{flex: 1 }}
-                value={this.state.msg}
-                placeholderTextColor = "#696969"
-                onChangeText={msg => this.setState({ msg })}
-                blurOnSubmit={false}
-                onSubmitEditing={() => this.send()}
-                placeholder="Escribe tu mensaje..."
-                returnKeyType="send"/>
-            </View>
-          </KeyboardAvoidingView>
-      </View>
-    );
-  }
+        <GiftedChat
+            messages={messages}
+            showAvatarForEveryMessage={true}
+            onSend={messages => onSend(messages)}
+            user={{
+                _id: auth?.currentUser?.email,
+                name: auth?.currentUser?.displayName,
+                avatar: auth?.currentUser?.photoURL
+            }}
+        />
+    )
 }
-
-const styles = StyleSheet.create({
-  keyboard: {
-    flex: 1,
-    justifyContent: 'center',
-  },
-  image: {
-    width,
-    height,
-  },
-  header: {
-    height: 65,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: '#075e54',
-  },
-  left: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  right: {
-    flexDirection: 'row',
-  },
-  chatTitle: {
-    color: '#fff',
-    fontWeight: '600',
-    margin: 10,
-    fontSize: 15,
-  },
-  chatImage: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    margin: 5,
-  },
-  input: {
-    flexDirection: 'row',
-    alignSelf: 'flex-end',
-    padding: 10,
-    height: 40,
-    width: width - 20,
-    backgroundColor: '#fff',
-    margin: 10,
-    shadowColor: '#3d3d3d',
-    shadowRadius: 2,
-    shadowOpacity: 0.5,
-    shadowOffset: {
-      height: 1,
-    },
-    borderColor:'#696969',
-    borderWidth:1,
-  },
-  eachMsg: {
-    flexDirection: 'row',
-    alignItems: 'flex-end',
-    margin: 5,
-  },
-  rightMsg: {
-    flexDirection: 'row',
-    alignItems: 'flex-end',
-    margin: 5,
-    alignSelf: 'flex-end',
-  },
-  userPic: {
-    height: 40,
-    width: 40,
-    margin: 5,
-    borderRadius: 20,
-    backgroundColor: '#f8f8f8',
-  },
-  msgBlock: {
-    width: 220,
-    borderRadius: 5,
-    backgroundColor: '#ffffff',
-    padding: 10,
-    shadowColor: '#3d3d3d',
-    shadowRadius: 2,
-    shadowOpacity: 0.5,
-    shadowOffset: {
-      height: 1,
-    },
-  },
-  rightBlock: {
-    width: 220,
-    borderRadius: 5,
-    backgroundColor: '#FBEAAB',
-    padding: 10,
-    shadowColor: '#3d3d3d',
-    shadowRadius: 2,
-    shadowOpacity: 0.5,
-    shadowOffset: {
-      height: 1,
-    },
-  },
-  msgTxt: {
-    fontSize: 15,
-    color: '#555',
-    fontWeight: '600',
-  },
-  rightTxt: {
-    fontSize: 15,
-    color: '#202020',
-    fontWeight: '600',
-  },
-}); 
+export default ChatScreen;

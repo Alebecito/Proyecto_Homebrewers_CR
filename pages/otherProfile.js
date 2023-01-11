@@ -153,7 +153,7 @@ export default class ProfileView extends Component {
   };
 
   async componentDidMount() {
-    this.setState({ idOtroUsuario: this.props.route.params.idOtroUsuario });
+    this.setState({idOtroUsuario: this.props.route.params.idOtroUsuario });
     await this.loadId();
     await this.loadUserData();
     await this.checkIfBlockedMe(this.state.usuarioLogeado);
@@ -407,7 +407,7 @@ export default class ProfileView extends Component {
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.buttonContainer}
-                onPress={() => this.props.navigation.navigate("Chat")}
+                onPress={() => this.props.navigation.navigate("Chat", {usuarioLogeado:this.state.usuarioLogeado,idOtroUsuario: this.state.idOtroUsuario})}
               >
                 <Text style={{ color: "white" }}>Enviar Mensaje</Text>
               </TouchableOpacity>
