@@ -32,7 +32,7 @@ export default class PostView extends Component {
 
   checkIfLike = async (id) => {
     await fetch(
-      `http://10.0.2.2:5000/relaciones/getSpecificLikeState/${this.state.UsuarioLogeado}/${id}`,
+      `https://homebrewersapis.onrender.com/relaciones/getSpecificLikeState/${this.state.UsuarioLogeado}/${id}`,
       { method: "GET" }
     )
       .then((response) => response.json())
@@ -58,7 +58,7 @@ export default class PostView extends Component {
 
   loadPublications = async () => {
     await fetch(
-      `http://10.0.2.2:5000/publicacionesnoticias/getAllActivePublications/${this.state.UsuarioLogeado}`,
+      `https://homebrewersapis.onrender.com/publicacionesnoticias/getAllActivePublications/${this.state.UsuarioLogeado}`,
       {
         method: "GET",
       }
@@ -101,7 +101,7 @@ export default class PostView extends Component {
 
   loadCommentaries = async () => {
     await fetch(
-      `http://10.0.2.2:5000/comentarios/getAllCommentsFromPublicationNew/${this.state.idPublication}`,
+      `https://homebrewersapis.onrender.com/comentarios/getAllCommentsFromPublicationNew/${this.state.idPublication}`,
       { method: "GET" }
     )
       .then((response) => response.json())
@@ -192,7 +192,7 @@ export default class PostView extends Component {
     formData.append("fecha", moment(currentDate).format("YYYY-MM-DD"));
 
     await fetch(
-      `http://10.0.2.2:5000/comentarios/addComment/${this.state.idPublication}`,
+      `https://homebrewersapis.onrender.com/comentarios/addComment/${this.state.idPublication}`,
       {
         method: "POST",
         body: formData,
@@ -227,14 +227,14 @@ export default class PostView extends Component {
             formData.append("hacia", this.state.idPublication);
             formData.append("tipo", "meGusta");
             if (this.state.dataCargada[0].teGusta === false) {
-              await fetch("http://10.0.2.2:5000/relaciones/createRelation", {
+              await fetch("https://homebrewersapis.onrender.com/relaciones/createRelation", {
                 method: "POST",
                 body: formData,
               });
               Alert.alert("Sistema", "Te gusta esta publicación");
               await this.componentDidMount();
             } else {
-              await fetch("http://10.0.2.2:5000/relaciones/deleteRelation", {
+              await fetch("https://homebrewersapis.onrender.com/relaciones/deleteRelation", {
                 method: "DELETE",
                 body: formData,
               });
@@ -258,7 +258,7 @@ export default class PostView extends Component {
     formData.append("estado", "abierto");
     formData.append("realizadoPor", this.state.dataCargada[0].usuarioGUID);
 
-    await fetch("http://10.0.2.2:5000/reportes/createReport", {
+    await fetch("https://homebrewersapis.onrender.com/reportes/createReport", {
       method: "POST",
       body: formData,
     });

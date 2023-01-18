@@ -144,7 +144,7 @@ export default class SignUp extends Component {
       formData.append("descripcionPerfil", this.state.description);
       formData.append("contrasena", this.state.password);
       formData.append("imagen", this.state.resultURL);
-      await fetch("http://10.0.2.2:5000/usuario/SignUpUser/", {
+      await fetch("https://homebrewersapis.onrender.com/usuario/SignUpUser/", {
         method: "POST",
         body: formData,
       });

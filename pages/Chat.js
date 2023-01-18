@@ -49,7 +49,7 @@ const ChatScreen = ({route, navigation }) => {
 
     const checkIfPreviousChatted = async () => {
         
-       await fetch(`http://10.0.2.2:5000/mensajes/getMyInbox/${route.params.usuarioLogeado}`,{method: 'GET', }).
+       await fetch(`https://homebrewersapis.onrender.com/mensajes/getMyInbox/${route.params.usuarioLogeado}`,{method: 'GET', }).
         then((response) => response.json()).then((responseJson) => {
                 for(let element of responseJson) {
                     if(element.usuarioGUID === route.params.idOtroUsuario){
@@ -87,7 +87,7 @@ const ChatScreen = ({route, navigation }) => {
         let formdata = new FormData();
         formdata.append("de", route.params.usuarioLogeado);
         formdata.append("hacia", route.params.idOtroUsuario);
-        await fetch(`http://10.0.2.2:5000/mensajes/createNewInbox`,{method: 'POST', body:formdata}).
+        await fetch(`https://homebrewersapis.onrender.com/mensajes/createNewInbox`,{method: 'POST', body:formdata}).
         then((response) => response.json()).catch((error) => {console.log(error)});
     }
 

@@ -39,7 +39,7 @@ export default class ProfileView extends Component {
 
   checkIfBlockedMe = async (id) => {
     await fetch(
-      `http://10.0.2.2:5000/relaciones/CheckIfUserBlocked/${this.state.idOtroUsuario}/${id}`,
+      `https://homebrewersapis.onrender.com/relaciones/CheckIfUserBlocked/${this.state.idOtroUsuario}/${id}`,
       { method: "GET" }
     )
       .then((response) => response.json())
@@ -55,7 +55,7 @@ export default class ProfileView extends Component {
 
   checkIfBlocked = async (id) => {
     await fetch(
-      `http://10.0.2.2:5000/relaciones/CheckIfUserBlocked/${id}/${this.state.idOtroUsuario}`,
+      `https://homebrewersapis.onrender.com/relaciones/CheckIfUserBlocked/${id}/${this.state.idOtroUsuario}`,
       { method: "GET" }
     )
       .then((response) => response.json())
@@ -82,7 +82,7 @@ export default class ProfileView extends Component {
 
   checkIfFollows = async (id) => {
     await fetch(
-      `http://10.0.2.2:5000/relaciones/CheckIfUserFollowsAnother/${id}/${this.state.idOtroUsuario}`,
+      `https://homebrewersapis.onrender.com/relaciones/CheckIfUserFollowsAnother/${id}/${this.state.idOtroUsuario}`,
       { method: "GET" }
     )
       .then((response) => response.json())
@@ -98,7 +98,7 @@ export default class ProfileView extends Component {
 
   loadUserData = async () => {
     await fetch(
-      `http://10.0.2.2:5000/usuario/getSpecificUser/${this.state.idOtroUsuario}`
+      `https://homebrewersapis.onrender.com/usuario/getSpecificUser/${this.state.idOtroUsuario}`
     )
       .then((response) => response.json())
       .then((json) => {
@@ -120,7 +120,7 @@ export default class ProfileView extends Component {
 
   loadPosts = async () => {
     await fetch(
-      `http://10.0.2.2:5000/publicacionesnoticias/getallPublicationsfromUser/${this.state.idOtroUsuario}`
+      `https://homebrewersapis.onrender.com/publicacionesnoticias/getallPublicationsfromUser/${this.state.idOtroUsuario}`
     )
       .then((response) => response.json())
       .then((json) => {
@@ -137,7 +137,7 @@ export default class ProfileView extends Component {
 
   loadReviews = async () => {
     await fetch(
-      `http://10.0.2.2:5000/resena/getAllReviewsFromUser/${this.state.idOtroUsuario}`
+      `https://homebrewersapis.onrender.com/resena/getAllReviewsFromUser/${this.state.idOtroUsuario}`
     )
       .then((response) => response.json())
       .then((json) => {
@@ -230,14 +230,14 @@ export default class ProfileView extends Component {
             formData.append("hacia", this.state.idOtroUsuario);
             formData.append("tipo", "seguir");
             if (this.state.usuarioSeguido === false) {
-              await fetch("http://10.0.2.2:5000/relaciones/createRelation", {
+              await fetch("https://homebrewersapis.onrender.com/relaciones/createRelation", {
                 method: "POST",
                 body: formData,
               });
               Alert.alert("Sistema", "Usuario Seguido");
               await this.componentDidMount();
             } else {
-              await fetch("http://10.0.2.2:5000/relaciones/deleteRelation", {
+              await fetch("https://homebrewersapis.onrender.com/relaciones/deleteRelation", {
                 method: "DELETE",
                 body: formData,
               });
@@ -268,14 +268,14 @@ export default class ProfileView extends Component {
             formData.append("hacia", this.state.idOtroUsuario);
             formData.append("tipo", "bloqueado");
             if (this.state.usuarioBloqueado === "Bloquear usuario") {
-              await fetch("http://10.0.2.2:5000/relaciones/createRelation", {
+              await fetch("https://homebrewersapis.onrender.com/relaciones/createRelation", {
                 method: "POST",
                 body: formData,
               });
               Alert.alert("Sistema", "Usuario Bloqueado");
               await this.componentDidMount();
             } else {
-              await fetch("http://10.0.2.2:5000/relaciones/deleteRelation", {
+              await fetch("https://homebrewersapis.onrender.com/relaciones/deleteRelation", {
                 method: "DELETE",
                 body: formData,
               });
@@ -299,7 +299,7 @@ export default class ProfileView extends Component {
     formData.append("estado", "abierto");
     formData.append("realizadoPor", null);
 
-    await fetch("http://10.0.2.2:5000/reportes/createReport", {
+    await fetch("https://homebrewersapis.onrender.com/reportes/createReport", {
       method: "POST",
       body: formData,
     });

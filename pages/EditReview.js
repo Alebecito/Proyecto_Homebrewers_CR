@@ -49,7 +49,7 @@ export default class SignUp extends Component {
     formData.append("fecha", moment(currentDate).format("YYYY-MM-DD"));
 
     await fetch(
-      `http://10.0.2.2:5000/resena/updateReview/${this.state.review.reseñaGUID}`,
+      `https://homebrewersapis.onrender.com/resena/updateReview/${this.state.review.reseñaGUID}`,
       {
         method: "PUT",
         body: formData,

@@ -34,7 +34,7 @@ export default class Notifications extends Component {
   loadNotifications = async () => {
 
     await fetch(
-      `http://10.0.2.2:5000/notificacion/getAllNotificationsFromUser/${this.state.UsuarioLogeado}`
+      `https://homebrewersapis.onrender.com/notificacion/getAllNotificationsFromUser/${this.state.UsuarioLogeado}`
     )
       .then((response) => response.json())
       .then((responseJson) => {

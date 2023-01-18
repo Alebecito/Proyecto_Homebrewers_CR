@@ -52,7 +52,7 @@ export default class SignUp extends Component {
 
   getUserProducts = async () => {
     await fetch(
-      `http://10.0.2.2:5000/producto/getAllProductsFromUser/${this.state.UsuarioLogeado}`
+      `https://homebrewersapis.onrender.com/producto/getAllProductsFromUser/${this.state.UsuarioLogeado}`
     )
       .then((response) => response.json())
       .then((responseJson) => {
@@ -79,7 +79,7 @@ export default class SignUp extends Component {
 
   getSpecificProduct = async () => {
     await fetch(
-      `http://10.0.2.2:5000/producto/getSpecificProduct/${this.state.productoGUID}`
+      `https://homebrewersapis.onrender.com/producto/getSpecificProduct/${this.state.productoGUID}`
     )
       .then((response) => response.json())
       .then((responseJson) => {
@@ -153,7 +153,7 @@ export default class SignUp extends Component {
             data.append("fecha", moment(this.state.productoActual.fechaCaducidad).format("YYYY-MM-DD"));
             data.append("usuarioGUID", this.state.UsuarioLogeado);
             data.append("foto", this.state.productoActual.fotoProducto);
-            await fetch("http://10.0.2.2:5000/publicacionesnoticias/AddPublication", {method: "POST",body: data});
+            await fetch("https://homebrewersapis.onrender.com/publicacionesnoticias/AddPublication", {method: "POST",body: data});
             Alert.alert("Transacción Exitosa", "¡La publicación se ha creado exitosamente!\n\nPuedes revisar la publicación en tu perfil");
             
             

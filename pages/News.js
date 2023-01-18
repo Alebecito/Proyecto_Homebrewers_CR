@@ -56,7 +56,7 @@ export default class Blog extends Component {
 
   checkIfLike = async (id) => {
     await fetch(
-      `http://10.0.2.2:5000/relaciones/getSpecificLikeState/${this.state.UsuarioLogeado}/${id}`,
+      `https://homebrewersapis.onrender.com/relaciones/getSpecificLikeState/${this.state.UsuarioLogeado}/${id}`,
       { method: "GET" }
     )
       .then((response) => response.json())
@@ -71,7 +71,7 @@ export default class Blog extends Component {
   };
 
   loadNews = async () => {
-    await fetch(`http://10.0.2.2:5000/publicacionesnoticias/getAllNews/`, {
+    await fetch(`https://homebrewersapis.onrender.com/publicacionesnoticias/getAllNews/`, {
       method: "GET",
     })
       .then((response) => response.json())
@@ -180,12 +180,12 @@ export default class Blog extends Component {
           formData.append("hacia", item.id);
           formData.append("tipo", "meGusta");
           if(item.teGusta===false){
-            await fetch("http://10.0.2.2:5000/relaciones/createRelation", {method: "POST", body: formData});
+            await fetch("https://homebrewersapis.onrender.com/relaciones/createRelation", {method: "POST", body: formData});
             Alert.alert("Sistema", "Te gusta esta noticia")
             await this.componentDidMount();
             
           }else{
-            await fetch("http://10.0.2.2:5000/relaciones/deleteRelation", {method: "DELETE", body: formData});
+            await fetch("https://homebrewersapis.onrender.com/relaciones/deleteRelation", {method: "DELETE", body: formData});
             Alert.alert("Sistema", "Ya no te gusta esta noticia")
             await this.componentDidMount();
             

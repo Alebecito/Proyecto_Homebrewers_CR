@@ -157,7 +157,7 @@ export default class SignUp extends Component {
       }
 
       await fetch(
-        `http://10.0.2.2:5000/usuario/editUser/${this.state.data.usuarioGUID}`,
+        `https://homebrewersapis.onrender.com/usuario/editUser/${this.state.data.usuarioGUID}`,
         {
           method: "PUT",
           body: formData,

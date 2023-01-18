@@ -41,7 +41,7 @@ export default class Album extends Component {
 
   loadNews = async () => {
     await fetch(
-      `http://10.0.2.2:5000/producto/getAllProductsFromUser/${this.state.id}`,
+      `https://homebrewersapis.onrender.com/producto/getAllProductsFromUser/${this.state.id}`,
       { method: "GET" }
     )
       .then((response) => response.json())

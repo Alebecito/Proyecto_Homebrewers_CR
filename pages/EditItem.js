@@ -139,7 +139,7 @@ export default class SignUp extends Component {
       formData.append("cuerpo", this.state.description);
 
       await fetch(
-        `http://10.0.2.2:5000/producto/updateProduct/${this.state.data.productoGUID}`,
+        `https://homebrewersapis.onrender.com/producto/updateProduct/${this.state.data.productoGUID}`,
         {
           method: "PUT",
           body: formData,

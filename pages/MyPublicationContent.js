@@ -47,7 +47,7 @@ export default class PostView extends Component {
           style: "cancel"
         },
         { text: "Aceptar", onPress: async () => {
-          await fetch(`http://10.0.2.2:5000/publicacionesnoticias/deleteNewOrPublication/${this.state.post.publicacionNoticiaGUID}`,
+          await fetch(`https://homebrewersapis.onrender.com/publicacionesnoticias/deleteNewOrPublication/${this.state.post.publicacionNoticiaGUID}`,
           {method: 'DELETE'});
           Alert.alert("Sistema","Publicación eliminada!")
           this.props.navigation.navigate("HomePage");
@@ -63,7 +63,7 @@ export default class PostView extends Component {
 
   async getComments() {
     await fetch(
-      `http://10.0.2.2:5000/comentarios/getAllCommentsFromPublicationNew/${this.state.post.publicacionNoticiaGUID}`
+      `https://homebrewersapis.onrender.com/comentarios/getAllCommentsFromPublicationNew/${this.state.post.publicacionNoticiaGUID}`
     )
       .then((response) => response.json())
       .then((responseJson) => {
@@ -100,7 +100,7 @@ export default class PostView extends Component {
     formData.append("fecha", moment(currentDate).format("YYYY-MM-DD"));
 
     await fetch(
-      `http://10.0.2.2:5000/comentarios/addComment/${this.state.post.publicacionNoticiaGUID}`,
+      `https://homebrewersapis.onrender.com/comentarios/addComment/${this.state.post.publicacionNoticiaGUID}`,
       {
         method: "POST",
         body: formData,

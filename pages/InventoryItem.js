@@ -21,7 +21,7 @@ export default class ProductDetail extends Component {
 
   deleteProduct = async () => {
     const id = this.props.route.params.id;
-    await fetch(`http://10.0.2.2:5000/producto/deleteProduct/${id}`, {
+    await fetch(`https://homebrewersapis.onrender.com/producto/deleteProduct/${id}`, {
       method: "DELETE",
     })
       .then((response) => response.json())
@@ -47,7 +47,7 @@ export default class ProductDetail extends Component {
 
   async getSpecificProduct() {
     const id = this.props.route.params.id;
-    await fetch(`http://10.0.2.2:5000/producto/getSpecificProduct/${id}`, {
+    await fetch(`https://homebrewersapis.onrender.com/producto/getSpecificProduct/${id}`, {
       method: "GET",
     })
       .then((response) => response.json())

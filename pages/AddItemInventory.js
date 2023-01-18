@@ -53,7 +53,7 @@ export default class SignUp extends Component {
 
   getUserInventory = async () => {
     await fetch(
-      `http://10.0.2.2:5000/inventario/getUserInventory/${this.state.usuarioLogeado}`,
+      `https://homebrewersapis.onrender.com/inventario/getUserInventory/${this.state.usuarioLogeado}`,
       {
         method: "GET",
       }
@@ -163,7 +163,7 @@ export default class SignUp extends Component {
       formData.append("fotoProducto", this.state.resultURL);
 
       await fetch(
-        `http://10.0.2.2:5000/producto/addProduct/${this.state.inventoryId}`,
+        `https://homebrewersapis.onrender.com/producto/addProduct/${this.state.inventoryId}`,
         {
           method: "POST",
           body: formData,

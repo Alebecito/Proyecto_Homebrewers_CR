@@ -41,7 +41,7 @@ export default class ProfileView extends Component {
   };
 
   loadUserData = async () => {
-    await fetch(`http://10.0.2.2:5000/usuario/getSpecificUser/${this.state.id}`)
+    await fetch(`https://homebrewersapis.onrender.com/usuario/getSpecificUser/${this.state.id}`)
       .then((response) => response.json())
       .then((json) => {
         this.setState({ userData: json[0] });
@@ -53,7 +53,7 @@ export default class ProfileView extends Component {
 
   loadPosts = async () => {
     await fetch(
-      `http://10.0.2.2:5000/publicacionesnoticias/getallPublicationsfromUser/${this.state.id}`
+      `https://homebrewersapis.onrender.com/publicacionesnoticias/getallPublicationsfromUser/${this.state.id}`
     )
       .then((response) => response.json())
       .then((json) => {
@@ -70,7 +70,7 @@ export default class ProfileView extends Component {
 
   loadReviews = async () => {
     await fetch(
-      `http://10.0.2.2:5000/resena/getAllReviewsFromUser/${this.state.id}`
+      `https://homebrewersapis.onrender.com/resena/getAllReviewsFromUser/${this.state.id}`
     )
       .then((response) => response.json())
       .then((json) => {

@@ -28,7 +28,7 @@ export default class ContactsView extends Component {
 
   checkIfBlocked = async (id) => {
       
-    await fetch(`http://10.0.2.2:5000/relaciones/CheckIfUserBlocked/${id}/${this.state.UsuarioLogeado}`,
+    await fetch(`https://homebrewersapis.onrender.com/relaciones/CheckIfUserBlocked/${id}/${this.state.UsuarioLogeado}`,
       { method: 'GET', }).then((response) => response.json()).then((responseJson) => {
         
         this.setState({ bloqueadoAuxiliar: responseJson[0].length>0?true:false });
@@ -72,7 +72,7 @@ export default class ContactsView extends Component {
   }
 
   loadUsers = async () => {
-    await fetch('http://10.0.2.2:5000/usuario/getAllEnabledUsersInfo/',
+    await fetch('https://homebrewersapis.onrender.com/usuario/getAllEnabledUsersInfo/',
       { method: 'GET', }).then((response) => response.json()).then(async(responseJson) => {
         var temporalData = [];
         for (var i = 0; i < responseJson.length; i++) {

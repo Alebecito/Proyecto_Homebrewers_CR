@@ -24,7 +24,7 @@ export default class Users extends Component {
   }
 
   loadUsers = async () => {
-    await fetch(`http://10.0.2.2:5000/relaciones/getFollowingFromUser/${this.state.idOtroUsuario}`, 
+    await fetch(`https://homebrewersapis.onrender.com/relaciones/getFollowingFromUser/${this.state.idOtroUsuario}`, 
     {method: 'GET'}).then((response) => response.json()).then(async (responseJson) => {
       var temporalData = [];
       for (var i = 0; i < responseJson[0].length; i++) {
@@ -77,7 +77,7 @@ export default class Users extends Component {
   checkIfFollows = async (id) => {
    
     await fetch(
-      `http://10.0.2.2:5000/relaciones/CheckIfUserFollowsAnother/${this.state.UsuarioLogeado}/${id}`,
+      `https://homebrewersapis.onrender.com/relaciones/CheckIfUserFollowsAnother/${this.state.UsuarioLogeado}/${id}`,
       { method: "GET" }
     )
       .then((response) => response.json())
@@ -107,12 +107,12 @@ export default class Users extends Component {
           formData.append("hacia", item.id);
           formData.append("tipo", "seguir");
           if(item.relacion==="Seguir"){
-            await fetch("http://10.0.2.2:5000/relaciones/createRelation", {method: "POST", body: formData});
+            await fetch("https://homebrewersapis.onrender.com/relaciones/createRelation", {method: "POST", body: formData});
             Alert.alert("Sistema", "Usuario Seguido")
             await this.componentDidMount();
             
           }else{
-            await fetch("http://10.0.2.2:5000/relaciones/deleteRelation", {method: "DELETE", body: formData});
+            await fetch("https://homebrewersapis.onrender.com/relaciones/deleteRelation", {method: "DELETE", body: formData});
             Alert.alert("Sistema", "Usuario Dejado de Seguir")
             await this.componentDidMount();
             

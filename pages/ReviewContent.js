@@ -57,7 +57,7 @@ export default class PostView extends Component {
     formData.append("estado", "abierto");
     formData.append("realizadoPor", this.state.data.deGUID);
 
-    await fetch("http://10.0.2.2:5000/reportes/createReport", {
+    await fetch("https://homebrewersapis.onrender.com/reportes/createReport", {
       method: "POST",
       body: formData,
     });

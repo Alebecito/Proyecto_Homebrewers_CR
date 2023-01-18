@@ -29,7 +29,7 @@ export default class ContactsView extends Component {
 
   checkIfBlocked = async (id) => {
       
-    await fetch(`http://10.0.2.2:5000/relaciones/CheckIfUserBlocked/${id}/${this.state.UsuarioLogeado}`,
+    await fetch(`https://homebrewersapis.onrender.com/relaciones/CheckIfUserBlocked/${id}/${this.state.UsuarioLogeado}`,
       { method: 'GET', }).then((response) => response.json()).then((responseJson) => {
         
         this.setState({ bloqueadoAuxiliar: responseJson[0].length>0?true:false });
@@ -45,7 +45,7 @@ export default class ContactsView extends Component {
 
 checkBlockOther = async (id) => {
       
-  await fetch(`http://10.0.2.2:5000/relaciones/CheckIfUserBlocked/${this.state.UsuarioLogeado}/${id}`,
+  await fetch(`https://homebrewersapis.onrender.com/relaciones/CheckIfUserBlocked/${this.state.UsuarioLogeado}/${id}`,
     { method: 'GET', }).then((response) => response.json()).then((responseJson) => {
       
       this.setState({ blockedOther: responseJson[0].length>0?true:false });
@@ -89,7 +89,7 @@ checkBlockOther = async (id) => {
   }
 
   loadUsers = async () => {
-    await fetch(`http://10.0.2.2:5000/mensajes/getMyInbox/${this.state.UsuarioLogeado}`,
+    await fetch(`https://homebrewersapis.onrender.com/mensajes/getMyInbox/${this.state.UsuarioLogeado}`,
       { method: 'GET', }).then((response) => response.json()).then(async(responseJson) => {
         var temporalData = [];
         for (var i = 0; i < responseJson.length; i++) {

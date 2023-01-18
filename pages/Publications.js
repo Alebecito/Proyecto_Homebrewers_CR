@@ -33,7 +33,7 @@ export default class Store extends Component {
 
   checkIfBlocked = async (id) => {
       
-      await fetch(`http://10.0.2.2:5000/relaciones/CheckIfUserBlocked/${this.state.UsuarioLogeado}/${id}`,
+      await fetch(`https://homebrewersapis.onrender.com/relaciones/CheckIfUserBlocked/${this.state.UsuarioLogeado}/${id}`,
         { method: 'GET', }).then((response) => response.json()).then((responseJson) => {
           
           this.setState({ bloqueadoAuxiliar: responseJson[0].length>0?true:false });
@@ -48,7 +48,7 @@ export default class Store extends Component {
 
   checkIfBlockedMe = async (id) => {
       
-    await fetch(`http://10.0.2.2:5000/relaciones/CheckIfUserBlocked/${id}/${this.state.UsuarioLogeado}`,
+    await fetch(`https://homebrewersapis.onrender.com/relaciones/CheckIfUserBlocked/${id}/${this.state.UsuarioLogeado}`,
       { method: 'GET', }).then((response) => response.json()).then((responseJson) => {
         
         this.setState({ bloqueadoAuxiliarMe: responseJson[0].length>0?true:false });
@@ -63,7 +63,7 @@ export default class Store extends Component {
 
   checkIfLike = async (id) => {
 
-    await fetch(`http://10.0.2.2:5000/relaciones/getSpecificLikeState/${this.state.UsuarioLogeado}/${id}`,
+    await fetch(`https://homebrewersapis.onrender.com/relaciones/getSpecificLikeState/${this.state.UsuarioLogeado}/${id}`,
        { method: 'GET', }).then((response) => response.json()).then((responseJson) => {
  
          
@@ -101,7 +101,7 @@ export default class Store extends Component {
   }
 
   loadPublications = async () => {
-    await fetch(`http://10.0.2.2:5000/publicacionesnoticias/getAllActivePublications/${this.state.UsuarioLogeado}`,
+    await fetch(`https://homebrewersapis.onrender.com/publicacionesnoticias/getAllActivePublications/${this.state.UsuarioLogeado}`,
     { method: 'GET', }).then((response) => response.json()).then(async (responseJson) => {
       var temporalData = [];
         for (var i = 0; i < responseJson.length; i++) {
@@ -139,12 +139,12 @@ export default class Store extends Component {
           formData.append("hacia", item.id);
           formData.append("tipo", "meGusta");
           if(item.teGusta===false){
-            await fetch("http://10.0.2.2:5000/relaciones/createRelation", {method: "POST", body: formData});
+            await fetch("https://homebrewersapis.onrender.com/relaciones/createRelation", {method: "POST", body: formData});
             Alert.alert("Sistema", "Te gusta esta publicación")
             await this.componentDidMount();
             
           }else{
-            await fetch("http://10.0.2.2:5000/relaciones/deleteRelation", {method: "DELETE", body: formData});
+            await fetch("https://homebrewersapis.onrender.com/relaciones/deleteRelation", {method: "DELETE", body: formData});
             Alert.alert("Sistema", "Ya no te gusta esta publicación")
             await this.componentDidMount();
             

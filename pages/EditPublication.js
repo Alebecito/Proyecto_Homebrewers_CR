@@ -62,7 +62,7 @@ export default class SignUp extends Component {
       Alert.alert("Error", "El precio mínimo son 500 CRC");
       return;
     }else{
-      await fetch(`http://10.0.2.2:5000/publicacionesnoticias/updatePricePublication/${this.state.post.publicacionNoticiaGUID}`, {method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({precio: this.state.precio})});
+      await fetch(`https://homebrewersapis.onrender.com/publicacionesnoticias/updatePricePublication/${this.state.post.publicacionNoticiaGUID}`, {method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({precio: this.state.precio})});
       Alert.alert("Éxito", "Precio editado con éxito");
       this.props.navigation.navigate("HomePage");
     }
@@ -72,7 +72,7 @@ export default class SignUp extends Component {
 
   getUserProducts = async () => {
     await fetch(
-      `http://10.0.2.2:5000/producto/getAllProductsFromUser/${this.state.post.usuarioGUID}`
+      `https://homebrewersapis.onrender.com/producto/getAllProductsFromUser/${this.state.post.usuarioGUID}`
     )
       .then((response) => response.json())
       .then((responseJson) => {
@@ -85,7 +85,7 @@ export default class SignUp extends Component {
 
   getSpecificProduct = async () => {
     await fetch(
-      `http://10.0.2.2:5000/producto/getSpecificProduct/${this.state.productoGUID}`
+      `https://homebrewersapis.onrender.com/producto/getSpecificProduct/${this.state.productoGUID}`
     )
       .then((response) => response.json())
       .then((responseJson) => {
